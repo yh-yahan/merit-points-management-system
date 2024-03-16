@@ -1,0 +1,14 @@
+.navLink {
+  font-weight: 500;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #c20008;
+  background-color: white;
+}
+
+.navLink.active {
+  color: #c20008 !important;
+}
