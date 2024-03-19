@@ -27,16 +27,19 @@ function AdminNavbar(){
                 <NavLink className={`nav-link navLink ${isActive('/dashboard') ? 'active' : ''}`} to="/dashboard">Dashboard</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className={`nav-link navLink ${isActive('/managemeritpoints') ? 'active' : ''}`} to="/managemeritpoints">Manage-merit-points</NavLink>
+                <NavLink className={`nav-link navLink disabled ${isActive('/reports') ? 'active' : ''}`} to="/reports">Reports</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className={`nav-link navLink ${isActive('/managemeritpoints') ? 'active' : ''}`} to="/manage-merit-points">Manage-merit-points</NavLink>
               </li>
               <li className="nav-item dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <a className="nav-link dropdown-toggle navLink" href="#">Manage users</a>
                 <ul className="dropdown-menu">
                   <li>
-                    <NavLink className={`nav-link navLink ${isActive('/managestudents') ? 'active' : ''}`} to="/managestudents">Manage students</NavLink>
+                    <NavLink className={`nav-link navLink ${isActive('/managestudents') ? 'active' : ''}`} to="/manage-students">Manage students</NavLink>
                   </li>
                   <li>
-                    <NavLink className={`nav-link navLink ${isActive('/manageteachers') ? 'active' : ''}`} to="/manageteachers">Manage teachers</NavLink>
+                    <NavLink className={`nav-link navLink ${isActive('/manageteachers') ? 'active' : ''}`} to="/manage-teachers">Manage teachers</NavLink>
                   </li>
                 </ul>
               </li>
@@ -46,10 +49,10 @@ function AdminNavbar(){
             </ul>
             <ul className="navbar-nav ml-auto mb-2 mb-lg-0 me-5">
               <li>
-                <NavLink className={`nav-link navLink ${isActive('/settings') ? 'active' : ''}`} to="/settings">Settings</NavLink>
+                <NavLink className={`nav-link navLink ${isActive('/notifications') ? 'active' : ''}`} to="/notifications">Notifications</NavLink>
               </li>
               <li>
-                <NavLink className={`nav-link navLink ${isActive('/about') ? 'active' : ''}`} to="/about">About</NavLink>
+                <NavLink className={`nav-link navLink ${isActive('/settings') ? 'active' : ''}`} to="/settings">Settings</NavLink>
               </li>
               <li>
                 <NavLink className={`nav-link navLink ${isActive('/logout') ? 'active' : ''}`} to="/logout"><i className="bi bi-box-arrow-left"></i> Logout</NavLink>
