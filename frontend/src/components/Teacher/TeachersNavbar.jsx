@@ -26,7 +26,7 @@ function TeachersNavbar(){
                 <NavLink className={`nav-link navLink ${isActive('/manage-merit-points') ? 'active' : ''}`} to="manage-merit-points">Manage-merit-points</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className={`nav-link navLink disabled ${isActive('/reports') ? 'active' : ''}`} to="reports">Reports</NavLink>
+                <NavLink className={`nav-link navLink disabled ${isActive('/reports') ? 'active' : ''}`} to="reports">Statistics</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className={`nav-link navLink ${isActive('/leaderboard') ? 'active' : ''}`} to="leaderboard">Leaderboard</NavLink>
