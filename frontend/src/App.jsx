@@ -3,12 +3,13 @@ import TeachersNavbar from "./components/Teacher/TeachersNavbar.jsx"
 import StudentsNavbar from "./components/Student/StudentsNavbar.jsx"
 import Login from "./components/Utility/Authentication/Login.jsx"
 import Signup from "./components/Utility/Authentication/Signup.jsx"
+import Footer from "./components/Utility/Footer.jsx"
 import { Routes, Route } from "react-router-dom"
 import { useState } from 'react'
 
 function App() {
   const [userRole, setUserRoles] = useState("admin");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   return (
     <>
@@ -19,6 +20,10 @@ function App() {
         { !isLoggedIn && <Route path="/" element={<Login />} /> }
         { !isLoggedIn && <Route path="/signup" element={<Signup isLoggedIn={isLoggedIn} />} /> }
       </Routes>
+      <div style={{ height: "100vh"}}>
+
+      </div>
+      <Footer />
     </>
   )
 }
