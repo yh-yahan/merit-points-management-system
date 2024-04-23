@@ -30,6 +30,9 @@ function StudentsNavbar(){
               </li>
             </ul>
             <ul className="navbar-nav ml-auto mb-2 mb-lg-0 me-5">
+              <li>
+                <NavLink className={`nav-link navLink ${isActive('/announcements') ? 'active' : ''}`} to="/announcements">Announcements</NavLink>
+              </li>
               <li className="nav-item">
                 <NavLink className={`nav-link navLink ${isActive('/settings') ? 'active' : ''}`} to="settings">Settings</NavLink>
               </li>

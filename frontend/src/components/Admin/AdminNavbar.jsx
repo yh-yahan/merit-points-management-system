@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import '../css/navbar.css'
 
-function AdminNavbar(){
+function AdminNavbar({ isLoggedIn }){
   const location = useLocation();
 
   const isActive = (path) => {
@@ -23,26 +23,9 @@ function AdminNavbar(){
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item" title="General information for admin">
+              {/* <li className="nav-item" title="General information for admin">
                 <NavLink className={`nav-link navLink ${isActive('/dashboard') ? 'active' : ''}`} to="/dashboard">Dashboard</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink className={`nav-link navLink ${isActive('/reports') ? 'active' : ''}`} to="/reports">Statistics</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink className={`nav-link navLink ${isActive('/managemeritpoints') ? 'active' : ''}`} to="/manage-merit-points">Manage-merit-points</NavLink>
-              </li>
-              <li className="nav-item dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <a className="nav-link dropdown-toggle navLink" href="#">Manage users</a>
-                <ul className="dropdown-menu">
-                  <li>
-                    <NavLink className={`nav-link navLink ${isActive('/managestudents') ? 'active' : ''}`} to="/manage-students">Manage students</NavLink>
-                  </li>
-                  <li>
-                    <NavLink className={`nav-link navLink ${isActive('/manageteachers') ? 'active' : ''}`} to="/manage-teachers">Manage teachers</NavLink>
-                  </li>
-                </ul>
-              </li>
+              </li> */}
               <li>
                 <NavLink className={`nav-link navLink ${isActive('/leaderboard') ? 'active' : ''}`} to="/leaderboard">Leaderboard</NavLink>
               </li>
@@ -51,6 +34,9 @@ function AdminNavbar(){
               <li>
                 <NavLink className={`nav-link navLink ${isActive('/notifications') ? 'active' : ''}`} to="/notifications">Notifications</NavLink>
               </li>
+              {/* <li>
+                <NavLink className={`nav-link navLink ${isActive('/announcements') ? 'active' : ''}`} to="/announcements">Announcements</NavLink>
+              </li> */}
               <li>
                 <NavLink className={`nav-link navLink ${isActive('/settings') ? 'active' : ''}`} to="/settings">Settings</NavLink>
               </li>

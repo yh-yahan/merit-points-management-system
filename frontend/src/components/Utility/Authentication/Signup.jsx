@@ -24,11 +24,12 @@ function Signup({ isLoggedIn }){
                       <label>Email</label>
                     </div>
                     <select className="form-select mb-3 p-3">
-                      <option value="" disabled selected>Select stage level</option>
-                      <option value="SLA">SLA</option>
-                      <option value="SL1">SL1</option>
-                      <option value="SL2">SL2</option>
-                      <option value="SL4">SL4</option>
+                      <option value="" disabled selected>Select year</option>
+                      <option value="year 7">Year 7</option>
+                      <option value="year 8">Year 8</option>
+                      <option value="year 9">Year 9</option>
+                      <option value="year 10">Year 10</option>
+                      <option value="year 11">Year 11</option>
                     </select>
                     <select className="form-select mb-3 p-3">
                       <option value="" disabled selected>Select stream</option>

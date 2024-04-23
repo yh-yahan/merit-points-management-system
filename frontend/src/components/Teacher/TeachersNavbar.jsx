@@ -23,16 +23,16 @@ function TeachersNavbar(){
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <NavLink className={`nav-link navLink ${isActive('/manage-merit-points') ? 'active' : ''}`} to="manage-merit-points">Manage-merit-points</NavLink>
+                <NavLink className={`nav-link navLink ${isActive('/manage_merit_points') ? 'active' : ''}`} to="/manage_merit_points">Manage-merit-points</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className={`nav-link navLink ${isActive('/reports') ? 'active' : ''}`} to="reports">Statistics</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink className={`nav-link navLink ${isActive('/leaderboard') ? 'active' : ''}`} to="leaderboard">Leaderboard</NavLink>
+                <NavLink className={`nav-link navLink ${isActive('/leaderboard') ? 'active' : ''}`} to="/leaderboard">Leaderboard</NavLink>
               </li>
             </ul>
             <ul className="navbar-nav ml-auto mb-2 mb-lg-0 me-5">
+              <li>
+                <NavLink className={`nav-link navLink ${isActive('/announcements') ? 'active' : ''}`} to="/announcements">Announcements</NavLink>
+              </li>
               <li>
                 <NavLink className={`nav-link navLink ${isActive('/settings') ? 'active' : ''}`} to="/settings">Settings</NavLink>
               </li>

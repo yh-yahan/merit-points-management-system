@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 function Footer(){
   return(
@@ -37,7 +37,7 @@ function Footer(){
                   <Link to="/feedback" className="text-reset">Feedback Form</Link>
                 </p>
                 <p className="ms-3">
-                  <Link to="/updates" className="text-reset">Updates</Link>
+                  <Link to="/announcements" className="text-reset">Announcements</Link>
                 </p>
                 <p className="ms-3">
                   <Link to="/faq" className="text-reset">FAQs</Link>
