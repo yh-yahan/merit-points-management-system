@@ -1,8 +1,8 @@
 # Merit points management system
-##Overview
+## Overview
 This is a website designed for school who use the merit point system to track and manage student's merit points.
 
-##Technologies Used
+## Technologies Used
 - **Frontend**: React.js, Bootstrap
 - **Backend**: Laravel
 - **Database**: Mysql
