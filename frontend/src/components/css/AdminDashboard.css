@@ -9,3 +9,12 @@
   z-index: 600;
   font-weight: 500;
 }
+
+.navLink:hover {
+  color: #c20008;
+  background-color: white;
+}
+
+.isActive{
+  color: #c20008 !important;
+}

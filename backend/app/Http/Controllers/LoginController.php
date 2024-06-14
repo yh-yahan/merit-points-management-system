@@ -30,16 +30,28 @@ class LoginController extends Controller
       }
 
       // check email
+
       $user = null;
       $userToken = null;
+      $userType = null;
 
-      if($user = Admin::where('email', $fields['email'])->first()){
+      $adminUser = Admin::where('email', $fields['email'])->first();
+      $teacherUser = Teachers::where('email', $fields['email'])->first();
+      $studentUser = Students::where('email', $fields['email'])->first();
+
+      if($adminUser){
+        $user = $adminUser;
+        $userType = "admin";
         $userToken = "adminToken";
       }
-      elseif($user = Teachers::where('email', $fields['email'])->first()){
+      elseif($teacherUser){
+        $user = $teacherUser;
+        $userType = "teacher";
         $userToken = "teachersToken";
       }
-      elseif($user = Students::where('email', $fields['email'])->first()){
+      elseif($studentUser){
+        $user = $studentUser;
+        $userType = "student";
         $userToken = "studentsToken";
       }
 
@@ -60,11 +72,15 @@ class LoginController extends Controller
       // Generate token
       $token = $user->createToken($userToken)->plainTextToken;
 
+      $tokenExpiration = $fields['remember'] ? 60*24*30 : 60*24;
+      $cookie = cookie('auth_token', $token, $tokenExpiration, null, null, true, true, false, "Lax");
+
       $response = [
-          'user' => $user,
-          'token' => $token
+        'user' => $user,
+        'userType' =>  $userType, 
+        'token' => $token
       ];
 
-      return response($response, 201);
+      return response($response, 201)->cookie($cookie);
     }
 }

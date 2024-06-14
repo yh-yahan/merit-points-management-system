@@ -25,14 +25,14 @@ function Signup({ isLoggedIn }){
                     </div>
                     <select className="form-select mb-3 p-3">
                       <option value="" disabled selected>Select year</option>
-                      <option value="year 7">Year 7</option>
-                      <option value="year 8">Year 8</option>
-                      <option value="year 9">Year 9</option>
-                      <option value="year 10">Year 10</option>
-                      <option value="year 11">Year 11</option>
+                      <option value="year_7">Year 7</option>
+                      <option value="year_8">Year 8</option>
+                      <option value="year_9">Year 9</option>
+                      <option value="year_10">Year 10</option>
+                      <option value="year_11">Year 11</option>
                     </select>
                     <select className="form-select mb-3 p-3">
-                      <option value="" disabled selected>Select stream</option>
+                      <option value="" disabled selected>Select stream(optional)</option>
                       <option value="Science">Science</option>
                       <option value="Business">Business</option>
                     </select>
@@ -41,7 +41,6 @@ function Signup({ isLoggedIn }){
                         Sign up
                       </button>
                     </div>
-                    <p className="mt-3">Already have an account? { !isLoggedIn && <Link to="/">login</Link> }</p>
                   </form>
                 </div>
               </div>

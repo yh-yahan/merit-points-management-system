@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import '../css/navbar.css'
 
-function AdminNavbar({ isLoggedIn }){
+function AdminNavbar(){
   const location = useLocation();
 
   const isActive = (path) => {

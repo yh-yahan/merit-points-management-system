@@ -49,7 +49,7 @@ function Footer(){
                   <a href="#" className="text-reset"><i className="bi bi-geo-alt-fill"></i> Some location...</a>
                 </p>
                 <p className="ms-3">
-                  <a href="#" className="text-reset"><i className="bi bi-envelope-fill"></i> mail@gmail.com</a>
+                  <a href="#" className="text-reset"><i className="bi bi-envelope-fill"></i> mail@example.com</a>
                 </p>
                 <p className="ms-3">
                   <a href="#" className="text-reset"><i className="bi bi-telephone-fill"></i> (+11) 11-111 1111</a>
