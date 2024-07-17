@@ -21,7 +21,13 @@ class AdminController extends Controller
         'password' => Hash::make($fields['password']), 
       ]);
 
-      $token = $admin->createToken('adminToken')->plainTextToken;
+      // $token = $admin->createToken('adminToken')->plainTextToken;
+      
+      $token = $admin->createToken(
+        'adminToken', 
+        ['*'], 
+        now()->addDays(7)
+      )->plainTextToken;
 
       $response = [
         'admin' => $admin, 

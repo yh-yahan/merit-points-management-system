@@ -16,5 +16,11 @@ class Admin extends Authenticatable
     'email',
     'password',
   ];
-    use HasFactory;
+
+  use HasFactory;
+
+  public function invitationCodes()
+  {
+    return $this->hasMany(Invitation_codes::class, 'created_by');
+  }
 }

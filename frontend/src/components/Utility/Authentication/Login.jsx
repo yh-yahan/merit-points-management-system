@@ -1,14 +1,19 @@
-import { Link } from 'react-router-dom'
+import Student from '../../Student/Student.jsx'
+import Admin from '../../Admin/Admin.jsx'
+import Teacher from '../../Teacher/Teacher.jsx'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import api from '../../../api.js'
-import '../../css/login.css'
 
-function Login({ setIsLoggedIn, setUserRoles }){
+function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
 
+  const navigate = useNavigate();
+
+  // login user upon submit button pressed
   async function login(e){
     e.preventDefault();
 
@@ -21,13 +26,23 @@ function Login({ setIsLoggedIn, setUserRoles }){
 
       const { user, userType } = response.data;
 
-      setUserRoles(userType);
+      setUserRole(userType);
+      setUser(user);
       setIsLoggedIn(true);
       setError("");
+
+      navigate('/');
     }
     catch(err){
-      console.log(err);
-      setError("Invalid email or password");
+      if(err.response.status === 429){
+        setError("Too many login attempts. Please try again later.");
+      }
+      else if(err.response.status === 401){
+        setError("Invalid email or password");
+      }
+      else{
+        setError("An error occurred. Please try again later.");
+      }
     }
   }
 
@@ -35,6 +50,16 @@ function Login({ setIsLoggedIn, setUserRoles }){
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  // if(userRole == "student"){
+  //   return <Student />
+  // }
+  // else if(userRole == "teacher"){
+  //   return <Teacher />
+  // }
+  // else if(userRole == "admin"){
+  //   return <Admin />
+  // }
 
   return(
     <>

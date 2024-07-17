@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom'
-import StudentsNavbar from './StudentsNavbar';
+import StudentsNavbar from './StudentsNavbar'
+import { Routes, Route } from "react-router-dom"
 
 function Student(){
   return (
     <>
-      <nav>
+      {/* <nav>
         <ul>
           <li><Link to="/navbar">Manage</Link></li>
-          {/* Add more admin-specific links here */}
         </ul>
-      </nav>
+      </nav> */}
       <Routes>
         <Route path="/navbar" element={<StudentsNavbar />} />
       </Routes>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Students;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class StudentsController extends Controller
 {
@@ -15,7 +16,7 @@ class StudentsController extends Controller
         'email' => 'required|unique:admins,email|unique:teachers,email|unique:students,email|email', 
         'password' => 'required|confirmed|min:6', 
         'stage' => 'required|string', 
-        'stream' => 'nullable|string', 
+        'stream' => 'required|string', 
       ]);
 
       $students = Students::create([
@@ -27,13 +28,20 @@ class StudentsController extends Controller
         'stream' => $fields['stream'], 
       ]);
 
-      $token = $students->createToken('studentsToken')->plainTextToken;
+      // $token = $students->createToken('studentsToken')->plainTextToken;
+      $token = $students->createToken(
+        'studentsToken', 
+        ['*'], 
+        now()->addDays(7)
+      )->plainTextToken;
+
+      $cookie = New Cookie('auth_token', $token, now()->addDays(7)->timestamp, '/', null, true, true, false, 'None', true);
 
       $response = [
         'students' => $students, 
-        'token' => $token, 
+        // 'token' => $token, 
       ];
 
-      return response($response, 201);
+      return response($response, 201)->withCookie($cookie);
     }
 }

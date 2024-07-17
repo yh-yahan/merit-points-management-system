@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Teachers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class TeachersController extends Controller
 {
@@ -23,13 +24,20 @@ class TeachersController extends Controller
         'description' => $fields['description'], 
       ]);
 
-      $token = $teacher->createToken('teachersToken')->plainTextToken;
+      // $token = $teacher->createToken('teachersToken')->plainTextToken;
+      $token = $teacher->createToken(
+        'teachersToken', 
+        ['*'], 
+        now()->addDays(7)
+      )->plainTextToken;
+
+      $cookie = New Cookie('auth_token', $token, now()->addDays(7)->timestamp, '/', null, true, true, false, 'None', true);
 
       $response = [
         'teacher' => $teacher, 
-        'token' => $token, 
+        // 'token' => $token, 
       ];
 
-      return response($response, 201);
+      return response($response, 201)->withCookie($cookie);
     }
 }
