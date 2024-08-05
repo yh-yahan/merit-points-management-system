@@ -1,0 +1,15 @@
+.show-detail-btn, .show-detail-btn:hover{
+  border: solid;
+  border-color: black;
+  border-width: 2px;
+}
+
+.show-more-btn, .show-more-btn:hover{
+  border: solid;
+  border-color: #909090;
+  border-width: 1px;
+}
+
+.chart-container{
+  height: 85%;
+}

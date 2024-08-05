@@ -148,7 +148,7 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser }){
                     <select 
                     className="form-select mb-3 p-3" 
                     onChange={(e) => setStage(e.target.value)}>
-                      <option value="" disabled selected>Select year</option>
+                      <option value="" disabled selected>Select class</option>
                       <option value="Year 7">Year 7</option>
                       <option value="Year 8">Year 8</option>
                       <option value="Year 9">Year 9</option>

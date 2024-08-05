@@ -16,23 +16,38 @@ function App() {
   const [userRole, setUserRole] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   async function checkAuth(){
-  //     try {
-  //       const response = await api.post('/check_auth', { withCredentials: true });
-  //       setIsLoggedIn(true);
-  //       setUserRole(response.data.userType);
-  //       setUser(response.data);
-  //     }
-  //     catch(err){
-  //       console.log(err);
-  //     }
-  //   };
-  //   checkAuth();
-  //   navigate('/');
-  // }, []);
+  useEffect(() => {
+    async function checkAuth(){
+      try {
+        const response = await api.post('/check_auth', { withCredentials: true });
+        setIsLoggedIn(true);
+        setUserRole(response.data.userType);
+        setUser(response.data);
+      }
+      catch(err){
+        // console.log(err);
+      }
+      finally{
+        setLoading(false);
+      }
+    };
+    checkAuth();
+    navigate('/');
+  }, []);
+
+  if(loading){
+    return (
+      <div className="d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+        <div className="spinner-border text-danger mb-3" role="status" style={{ width: '6rem', height: '6rem' }}>
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <span className="text-danger">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <>

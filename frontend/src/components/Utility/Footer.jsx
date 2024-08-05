@@ -36,9 +36,9 @@ function Footer(){
                 <p className="ms-3">
                   <Link to="/feedback" className="text-reset">Feedback Form</Link>
                 </p>
-                <p className="ms-3">
+                {/* <p className="ms-3">
                   <Link to="/announcements" className="text-reset">Announcements</Link>
-                </p>
+                </p> */}
                 <p className="ms-3">
                   <Link to="/faq" className="text-reset">FAQs</Link>
                 </p>
@@ -55,7 +55,7 @@ function Footer(){
                   <a href="#" className="text-reset"><i className="bi bi-telephone-fill"></i> (+11) 11-111 1111</a>
                 </p>
                 <p className="ms-3">
-                  <a href="#" className="text-reset"><i className="bi bi-clock-fill"></i> Monday-Friday 10am to 5pm</a>
+                  <a href="#" className="text-reset"><i className="bi bi-clock-fill"></i> Monday-Friday 7am to 5pm</a>
                 </p>
               </div>
             </div>

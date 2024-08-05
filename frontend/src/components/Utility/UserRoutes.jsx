@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import Admin from "../Admin/Admin";
-import Teacher from "../Teacher/Teacher";
-import Student from "../Student/Student";
+import Admin from "../Admin/Admin.jsx";
+import Teacher from "../Teacher/Teacher.jsx";
+import Student from "../Student/Student.jsx";
 
 function UserRoutes({ userRole }){
   return (
