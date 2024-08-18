@@ -17,8 +17,9 @@ return new class extends Migration
           $table->string('username');
           $table->string('email');
           $table->string('password');
-          $table->string('stage');
+          $table->string('class');
           $table->string('stream')->nullable();
+          $table->date('date_joined');
           $table->rememberToken();
           $table->timestamps();
         });

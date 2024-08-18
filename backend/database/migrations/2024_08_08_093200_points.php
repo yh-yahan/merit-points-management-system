@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teachers', function(Blueprint $table){
+        Schema::create('points', function(Blueprint $table){
           $table->id();
-          $table->string('name');
-          $table->string('email');
-          $table->string('password');
-          $table->string('description')->nullable();
-          $table->string('profile_pic')->nullable();
-          $table->rememberToken();
+          $table->unsignedBigInteger('receiver')->nullable();
+          $table->foreign('receiver')
+                ->references('id')
+                ->on('students')
+                ->onDelete('set null');
+          $table->integer('total_points');
           $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-      Schema::dropIfExists('teachers');
+      Schema::dropIfExists('points');
     }
 };

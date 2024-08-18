@@ -19,7 +19,10 @@ return new class extends Migration
           $table->date('valid_until');
           $table->timestamps();
 
-          $table->foreign('created_by')->references('id')->on('admins')->onDelete('cascade');
+          $table->foreign('created_by')
+                ->references('id')
+                ->on('admins')
+                ->onDelete('cascade');
         });
     }
 

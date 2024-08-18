@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teachers', function(Blueprint $table){
+        Schema::create('merit_points_rules', function(Blueprint $table){
           $table->id();
-          $table->string('name');
-          $table->string('email');
-          $table->string('password');
-          $table->string('description')->nullable();
-          $table->string('profile_pic')->nullable();
-          $table->rememberToken();
+          $table->string("name");
+          $table->string("description");
+          $table->integer("points");
+          $table->enum('operation_type', ["add", "deduct"]);
           $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-      Schema::dropIfExists('teachers');
+      Schema::dropIfExists('merit_points_rules');
     }
 };

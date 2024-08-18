@@ -89,8 +89,8 @@ function AdminManageStudents() {
               <option value="nameDesc">Descending alphabetical order by student name</option>
               <option value="pointsAsc">Highest points</option>
               <option value="pointsDesc">Lowest points</option>
-              <option value="dateAsc">Earliest date joined</option>
-              <option value="dateDesc">Most recent date joined</option>
+              <option value="dateDesc">Earliest date joined</option>
+              <option value="dateAsc">Most recent date joined</option>
             </select>
           </div>
         </div>

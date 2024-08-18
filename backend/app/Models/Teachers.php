@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Teachers extends Authenticatable
 {
   use HasApiTokens;
+  use HasFactory;
 
   protected $fillable = [
     'name', 
@@ -18,5 +19,7 @@ class Teachers extends Authenticatable
     'description',
   ];
 
-    use HasFactory;
+  public function transactions(){
+    return $this->morphMany(Transaction::class, 'creator');
+  }
 }
