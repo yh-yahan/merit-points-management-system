@@ -8,20 +8,19 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TeachersController;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
 Route::prefix('v1')->group(function (){
   Route::post('check_auth', [LoginController::class, 'check_auth']);
 
-  Route::post('login', [LoginController::class, 'login']);
-  Route::post('logout', [LoginController::class, 'logout']);
+  Route::post('login', [LoginController::class, 'Login']);
+  Route::post('logout', [LoginController::class, 'Logout']);
 
-  Route::post('create_inv_code', [InvitationCodeController::class, 'CreateInvitationCode']);
-  Route::post('validate_inv_code', [InvitationCodeController::class, 'ValidateInvitationCode']);
-
-  Route::post('admin/signup', [AdminController::class, 'signup']);
-  Route::post('teacher/signup', [TeachersController::class, 'signup']);
-  Route::post('student/signup', [StudentsController::class, 'signup']);
+  Route::prefix('admin')->group(function(){
+    Route::post('signup', [AdminController::class, 'SignUp']);
+    Route::post('create_inv_code', [AdminController::class, 'CreateInvitationCode']);
+    Route::post('validate_inv_code', [AdminController::class, 'ValidateInvitationCode']);
+    // admin dashboard routes
+    Route::get('overview', [AdminController::class, 'Overview']);
+  });
+  Route::post('teacher/signup', [TeachersController::class, 'SignUp']);
+  Route::post('student/signup', [StudentsController::class, 'SignUp']);
 });

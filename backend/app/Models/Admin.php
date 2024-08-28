@@ -24,7 +24,7 @@ class Admin extends Authenticatable
     return $this->hasMany(InvitationCodes::class, 'created_by');
   }
 
-  public function transaction(){
+  public function transactions(){
     return $this->morphMany(Transaction::class, 'creator');
   }
 }

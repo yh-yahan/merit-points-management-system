@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class TeachersController extends Controller
 {
-    public function signup(Request $request){
+    public function SignUp(Request $request){
       $fields = $request->validate([
         'name' => 'required|string', 
         'email' => 'required|unique:admins,email|unique:teachers,email|unique:students,email|email', 

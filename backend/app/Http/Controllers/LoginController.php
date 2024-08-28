@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class LoginController extends Controller
 {
-    public function login(Request $request){
+    public function Login(Request $request){
       $fields = $request->validate([
         'email' => 'required|email', 
         'password' => 'required|string|min:6', 
@@ -83,7 +83,7 @@ class LoginController extends Controller
       $response = [
         'user' => $user,
         'userType' => $userType, 
-        'token' => $token, 
+        // 'token' => $token, 
       ];
 
       return response($response, 201)->withCookie($cookie);
@@ -125,7 +125,7 @@ class LoginController extends Controller
       return response($response, 200);
     }
 
-    public function logout(Request $request){
+    public function Logout(Request $request){
       $token = $request->cookie('auth_token');
       $personalAccessToken = PersonalAccessToken::findToken($token);
 

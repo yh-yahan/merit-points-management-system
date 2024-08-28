@@ -17,13 +17,20 @@ class StudentsFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'name' => fake()->lastName(), 
-            'username' => fake()->userName(), 
-            'email' => fake()->unique()->safeEmail(), 
-            'password' => Hash::make('student'),
-            'stage' => fake()->randomElement(["Year 7", "Year 8", "Year 9", "Year 10"]),
-            'stream' => fake()->randomElement(["Science", "Business"]), 
-        ];
+      $startDate = new \DateTime('2022-01-01');
+      $endDate = new \DateTime('2024-12-31');
+
+      $randomDate = $this->faker->dateTimeBetween($startDate, $endDate)->format('Y-m-d');
+
+      return [
+          'name' => $this->faker->lastName(), 
+          'username' => $this->faker->userName(), 
+          'email' => $this->faker->unique()->safeEmail(), 
+          'password' => Hash::make('student'),
+          'class' => $this->faker->randomElement(["Year 7B", "Year 8A", "Year 9", "Year 10"]),
+          'stream' => $this->faker->randomElement(["Science", "Business", "Art"]), 
+          'status' => $this->faker->randomElement(["active", "inactive", "graduated"]), 
+          'date_joined' => $randomDate,
+      ];
     }
 }

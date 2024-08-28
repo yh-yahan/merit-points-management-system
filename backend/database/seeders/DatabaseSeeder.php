@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\MeritPointsRules;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,7 +24,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
           AdminSeeder::class,
           StudentsSeeder::class,
-          TeachersSeeder::class, 
+          TeachersSeeder::class,
+          MeritPointsRulesSeeder::class, 
+          TransactionSeeder::class, 
+          PointsSeeder::class, 
         ]);
     }
 }

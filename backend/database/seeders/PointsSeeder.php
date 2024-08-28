@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Admin;
-use Illuminate\Database\Seeder;
+use App\Models\Points;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
-class AdminSeeder extends Seeder
+class PointsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Admin::factory()->count(2)->create();
+      Points::factory()->count(40)->create();
     }
 }

@@ -5,7 +5,8 @@ import '../css/AdminOverview.css'
 
 function Overview(){
   const [lineChartData, setLineChartData] = useState({labels: [], datasets: []});
-  const [barChartData, setBarChartData] = useState({labels: [], datasets: []});
+  const [barChartDataDeducted, setBarChartDataDeducted] = useState({labels: [], datasets: []});
+  const [barChartDataAwarded, setBarChartDataAwarded] = useState({labels: [], datasets: []});
 
   useEffect(() => {
     const months = [
@@ -33,7 +34,33 @@ function Overview(){
       ]
     });
 
-    setBarChartData({
+    setBarChartDataAwarded({
+      labels: currentMonths,
+      datasets: [
+        {
+          label: 'Scored A* in exam',
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          data: [10, 10, 0, 0, 0, 20].slice(0, currentMonthIndex + 1)
+        },
+        {
+          label: 'Scored A in exam',
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          data: [15, 7, 9, 6, 10, 5].slice(0, currentMonthIndex + 1)
+        },
+        {
+          label: 'Participation in events',
+          backgroundColor: 'rgba(255, 206, 86, 0.5)',
+          data: [5, 3, 6, 2, 8, 3].slice(0, currentMonthIndex + 1)
+        }, 
+        {
+          label: 'Full attendance',
+          backgroundColor: 'rgba(0, 204, 102, 0.5)',
+          data: [3, 5, 6, 2, 9, 4].slice(0, currentMonthIndex + 1)
+        }
+      ]
+    });
+
+    setBarChartDataDeducted({
       labels: currentMonths,
       datasets: [
         {
@@ -106,7 +133,8 @@ function Overview(){
             <div className="col-lg-10">
               <select className="form-select mb-3 p-2" onChange={handleSelectChange}>
                 <option value="opt1" selected>Total merit points awarded & deducted by month</option>
-                <option value="opt2">Most deducted merit points by category in month</option>
+                <option value="opt2">Most awarded merit points by category in month</option>
+                <option value="opt3">Most deducted merit points by category in month</option>
               </select>
             </div>
             <div className="col-lg-2">
@@ -134,8 +162,8 @@ function Overview(){
               }}
             />
             :
-            <Bar 
-            data={barChartData}
+            showStat == "opt2" ? <Bar 
+            data={barChartDataAwarded}
             options={{
               responsive: true,
               maintainAspectRatio: false,
@@ -148,7 +176,23 @@ function Overview(){
                 }
               }
             }}
-            />}
+            /> : 
+            <Bar 
+            data={barChartDataDeducted}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  beginAtZero: true
+                },
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }}
+            />
+          }
           </div>
         </div>
       </div>

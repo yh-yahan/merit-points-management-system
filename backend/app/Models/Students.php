@@ -22,7 +22,7 @@ class Students extends Authenticatable
 
     use HasFactory;
 
-    public function transactions(){
+    public function transaction(){
       return $this->hasMany(Transaction::class, 'receiver_id');
     }
 

@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MeritPointsRules>
  */
-class TeachersFactory extends Factory
+class MeritPointsRulesFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,10 +17,10 @@ class TeachersFactory extends Factory
     public function definition(): array
     {
         return [
-          'name' => fake()->lastName(),
-          'email' => fake()->unique()->safeEmail(), 
-          'password' => Hash::make('teacher'), 
+          'name' => $this->faker->word,
           'description' => $this->faker->sentence,
+          'points' => $this->faker->numberBetween(1, 10),
+          'operation_type' => $this->faker->randomElement(['add', 'deduct']),
         ];
     }
 }
