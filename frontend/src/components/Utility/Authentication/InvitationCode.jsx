@@ -18,7 +18,7 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
   async function handleInvitationCodeSubmit(e){
     e.preventDefault();
     try{
-      const response = await api.post('/validate_inv_code', {
+      const response = await api.post('/validate-inv-code', {
         invitationCode: invitationCode
       });
 

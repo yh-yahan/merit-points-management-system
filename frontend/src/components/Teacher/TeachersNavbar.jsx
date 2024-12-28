@@ -23,7 +23,7 @@ function TeachersNavbar(){
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <NavLink className={`nav-link navLink ${isActive('/manage_merit_points') ? 'active' : ''}`} to="/manage_merit_points">Manage-merit-points</NavLink>
+                <NavLink className={`nav-link navLink ${isActive('/manage-merit-points') ? 'active' : ''}`} to="/manage-merit-points">Manage-merit-points</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className={`nav-link navLink ${isActive('/leaderboard') ? 'active' : ''}`} to="/leaderboard">Leaderboard</NavLink>

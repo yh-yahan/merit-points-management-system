@@ -43,6 +43,7 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
       else{
         setError("An error occurred. Please try again later.");
       }
+      // console.log(err);
     }
   }
 

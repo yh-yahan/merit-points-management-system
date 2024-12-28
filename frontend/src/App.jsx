@@ -22,7 +22,7 @@ function App() {
   useEffect(() => {
     async function checkAuth(){
       try {
-        const response = await api.post('/check_auth', { withCredentials: true });
+        const response = await api.post('/check-auth', { withCredentials: true });
         setIsLoggedIn(true);
         setUserRole(response.data.userType);
         setUser(response.data);

@@ -9,7 +9,7 @@ function Admin(){
         <Route path="/" element={<AdminDashboard />} />
         <Route path="/manage/students" element={<AdminDashboard />} />
         <Route path="/manage/teachers" element={<AdminDashboard />} />
-        <Route path="/transaction_history" element={<AdminDashboard />} />
+        <Route path="/transaction-history" element={<AdminDashboard />} />
         <Route path="/merit_points_rules" element={<AdminDashboard />} />
         <Route path="/edit_merit_points" element={<AdminDashboard />} />
         <Route path="/add_rule" element={<AdminDashboard />} />

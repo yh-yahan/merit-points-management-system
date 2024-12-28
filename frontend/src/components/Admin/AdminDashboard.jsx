@@ -20,7 +20,7 @@ function AdminDashboard(){
         { location == '/' && <AdminOverview /> }
         { location == '/manage/students' && <AdminManageStudents /> }
         { location == '/manage/teachers' && <AdminManageTeachers /> }
-        { location == '/transaction_history' && <AdminTransactionHistory /> }
+        { location == '/transaction-history' && <AdminTransactionHistory /> }
         { location == '/merit_points_rules' && <AdminMeritPointRules /> }
         { location == '/edit_merit_points' && <AdminEditMeritPoints />}
         { location == '/add_rule' && <AdminAddRule />}

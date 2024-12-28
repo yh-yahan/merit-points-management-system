@@ -89,7 +89,7 @@ class LoginController extends Controller
       return response($response, 201)->withCookie($cookie);
     }
 
-    function check_auth(Request $request){
+    function CheckAuth(Request $request){
       $token = $request->cookie('auth_token');
 
       $user = PersonalAccessToken::findToken($token);

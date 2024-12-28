@@ -1,165 +1,113 @@
 import { useState, useEffect } from 'react'
+import api from '../../api'
 
 function AdminTransactionHistory(){
   const [historys, setHistorys] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortDirection, setSortDirection] = useState('desc');
 
   useEffect(() => {
-    const historyData = [
-      {
-        id: 1, 
-        date: "2/3/24", 
-        points: "+2", 
-        description: "A description...Lorem ipsum dolor sit amet.", 
-        pointsAfter: 95, 
-        pointsBefore: 93, 
-        from: "teacherName", 
-        to: "studentName"
-      }, 
-      {
-        id: 2, 
-        date: "2/3/24", 
-        points: "+2", 
-        description: "A description...Lorem ipsum dolor sit amet.", 
-        pointsAfter: 95, 
-        pointsBefore: 93, 
-        from: "teacherName", 
-        to: "studentName"
-      }, 
-      {
-        id: 3, 
-        date: "2/3/24", 
-        points: "+2", 
-        description: "A description...Lorem ipsum dolor sit amet.", 
-        pointsAfter: 95, 
-        pointsBefore: 93, 
-        from: "teacherName", 
-        to: "studentName"
-      }, 
-      {
-        id: 4, 
-        date: "2/3/24", 
-        points: "+2", 
-        description: "A description...Lorem ipsum dolor sit amet.", 
-        pointsAfter: 95, 
-        pointsBefore: 93, 
-        from: "teacherName", 
-        to: "studentName"
-      }, 
-      {
-        id: 5, 
-        date: "2/3/24", 
-        points: "+2", 
-        description: "A description...Lorem ipsum dolor sit amet.", 
-        pointsAfter: 95, 
-        pointsBefore: 93, 
-        from: "teacherName", 
-        to: "studentName"
-      }, 
-      {
-        id: 6, 
-        date: "2/3/24", 
-        points: "+2", 
-        description: "A description...Lorem ipsum dolor sit amet.", 
-        pointsAfter: 95, 
-        pointsBefore: 93, 
-        from: "teacherName", 
-        to: "studentName"
-      }, 
-      {
-        id: 7, 
-        date: "2/3/24", 
-        points: "+2", 
-        description: "A description...Lorem ipsum dolor sit amet.", 
-        pointsAfter: 95, 
-        pointsBefore: 93, 
-        from: "teacherName", 
-        to: "studentName"
-      }, 
-    ];
+    async function fetchHistoryData(){
+      try{
+        const response = await api.get(`/admin/transaction-history?page=${currentPage}&sort=${sortDirection}&search=${searchTerm}`);
+        const transformedData = response.data.data.map(transaction => ({
+          id: transaction.id,
+          date: new Date(transaction.date).toLocaleDateString(), 
+          points: transaction.operation_type == "add" ? `+${transaction.points}` : `-${transaction.points}`,
+          description: transaction.description,
+          pointsAfter: transaction.total_points_after,
+          pointsBefore: transaction.total_points_before,
+          from: transaction.from,
+          to: transaction.to,
+        }));
+        setHistorys(transformedData);
+        setTotalPages(response.data.last_page);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+    fetchHistoryData();
+  }, [currentPage, sortDirection, searchTerm]);
 
-    setHistorys(historyData);
-  }, []);
+  function handleSearchChange(event){
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // reset to first page on search
+  };
+  function handleSortChange(event){
+    setSortDirection(event.target.value);
+    setCurrentPage(1);
+  };
 
   return(
     <>
-      <div className="mt-5 ms-5 container-fluid me-4" style={{height: "700px"}}>
+      <div className="mt-5 ms-5 container-fluid me-4 mb-5" style={{height: "100vh"}}>
         <div>
           <h3 classname="mt-5">Merit points transaction history</h3>
           <div className="row">
             <div className="col-md-6">
-              <input type="text" className="form-control" placeholder="Search..." />
+              <input type="text" className="form-control" placeholder="Search..."  value={searchTerm} onChange={handleSearchChange} />
             </div>
             <div className="col-md-6">
-              <select className="form-select mb-3 p-2">
+              <select className="form-select mb-3 p-2" value={sortDirection} onChange={handleSortChange}>
                 <option value="" selected disabled>Sort by</option>
-                <option value="latest">Latest</option>
-                <option value="oldest">Oldest</option>
+                <option value="desc">Latest</option>
+                <option value="asc">Oldest</option>
               </select>
             </div>
           </div>
           <div>
-            <table className="table">
+            {
+              historys.length ? 
+              <table className="table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Date</th>
                   <th scope="col">Points</th>
                   <th scope="col">Description</th>
-                  <th scope="col">Total points after</th>
-                  <th scope="col">Total points before</th>
                   <th scope="col">From</th>
                   <th scope="col">To</th>
                 </tr>
               </thead>
               <tbody>
-                {
-                  historys.map((history, index) => (
-                    <tr>
-                      <td scope="row">{history.id}</td>
-                      <td>{history.date}</td>
-                      <td>{history.points}</td>
-                      <td>{history.description}</td>
-                      <td>{history.pointsAfter}</td>
-                      <td>{history.pointsBefore}</td>
-                      <td><a href="#">{history.from}</a></td>
-                      <td><a href="#">{history.to}</a></td>
-                    </tr>
-                  ))
-                }
+                {historys.map((history, index) => (
+                <tr key={index}>
+                  <td scope="row">{history.id}</td>
+                  <td>{history.date}</td>
+                  <td>{history.points}</td>
+                  <td>{history.description}</td>
+                  <td><a href="#">{history.from ? history.from : "N/A"}</a></td>
+                  <td><a href="#">{history.to}</a></td>
+                </tr>
+              ))}
               </tbody>
-            </table>
-          </div>
-          <nav>
-          <ul className="pagination mt-3 d-flex justify-content-end">
-            <li className="page-item">
-              <a className="page-link" href="#">Previous</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">1</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">2</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">3</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">4</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">5</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">...</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">20</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </nav>
+              </table>
+              :
+              <div className="d-flex justify-content-center align-items-center text-danger mb-3" style={{height: "700px"}}>No data found</div>
+            }
+            </div>
+          {historys.length ? <nav>
+            <ul className="pagination mt-3 d-flex justify-content-end">
+              {currentPage > 1 && (
+                <li className="page-item">
+                  <a className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</a>
+                </li>
+              )}
+              {[...Array(totalPages)].map((_, index) => (
+                <li key={index + 1} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                  <a className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</a>
+                </li>
+              ))}
+              {currentPage < totalPages && (
+                <li className="page-item">
+                  <a className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</a>
+                </li>
+              )}
+            </ul>
+          </nav> : <div></div>}
         </div>
       </div>
     </>

@@ -27,6 +27,6 @@ class Students extends Authenticatable
     }
 
     public function points(){
-      return $this->hasOne(Points::class);
+      return $this->hasOne(Points::class, 'id');
     }
 }

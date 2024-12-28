@@ -20,7 +20,7 @@ function AdminDashboardSidebar(){
               <Link to="/" className={`navLink list-group-item list-group-item-action my-2 py-2 ripple ${ isActive('/') && 'isActive' }`} aria-current="true">
                 <i class="bi bi-graph-up"></i> Overview
               </Link>
-              <Link to="/transaction_history" className={`navLink list-group-item list-group-item-action my-2 py-2 ripple ${ isActive('/transaction_history') && 'isActive' }`} aria-current="true">
+              <Link to="/transaction-history" className={`navLink list-group-item list-group-item-action my-2 py-2 ripple ${ isActive('/transaction-history') && 'isActive' }`} aria-current="true">
                 <i class="bi bi-clock-history"></i> Merit point transaction history
               </Link>
               {/* <Link to="/statistics" className={`navLink list-group-item list-group-item-action my-2 py-2 ripple ${ isActive('/statistics') && 'isActive' }`} aria-current="true">
