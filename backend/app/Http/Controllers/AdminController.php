@@ -171,6 +171,7 @@ class AdminController extends Controller
       // line chart(total points awarded & deducted every month)
       $currentYear = Carbon::now()->year;
       // get summary for every month
+      $monthlyPoints = [];
       $monthlySummary = Transaction::selectRaw('
         YEAR(date) as year,
         MONTH(date) as month,
