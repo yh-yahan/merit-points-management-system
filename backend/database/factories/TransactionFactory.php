@@ -31,7 +31,7 @@ class TransactionFactory extends Factory
           'operation_type' => $this->faker->randomElement(['add', 'deduct']),
           'date' => function(){
             $start = new DateTime('2023-01-01');
-            $end = new DateTime('2024-12-31');
+            $end = new DateTime('2025-12-31');
             $interval = $start->diff($end);
             $days = $interval->days;
             $randomDay = rand(0, $days);

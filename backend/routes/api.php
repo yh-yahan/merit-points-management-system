@@ -7,6 +7,7 @@ use App\Http\Controllers\InvitationCodeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TeachersController;
+use App\Http\Controllers\LeaderboardController;
 
 Route::prefix('v1')->group(function (){
   Route::post('check-auth', [LoginController::class, 'CheckAuth']);
@@ -32,6 +33,8 @@ Route::prefix('v1')->group(function (){
     Route::patch('point/{receiver_id}', [AdminController::class, 'UpdatePoint']);
     Route::post('search-student', [AdminController::class, 'SearchStudent']);
   });
+  Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
+
   Route::post('teacher/signup', [TeachersController::class, 'SignUp']);
   Route::post('student/signup', [StudentsController::class, 'SignUp']);
 });

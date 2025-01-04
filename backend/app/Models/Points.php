@@ -15,6 +15,6 @@ class Points extends Model
     ];
 
     public function student(){
-      return $this->belongsTo(Students::class);
+      return $this->belongsTo(Students::class, 'receiver');
     }
 }

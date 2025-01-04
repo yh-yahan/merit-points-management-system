@@ -18,7 +18,7 @@ class StudentsFactory extends Factory
     public function definition(): array
     {
       $startDate = new \DateTime('2022-01-01');
-      $endDate = new \DateTime('2024-12-31');
+      $endDate = new \DateTime('2025-12-31');
 
       $randomDate = $this->faker->dateTimeBetween($startDate, $endDate)->format('Y-m-d');
 
