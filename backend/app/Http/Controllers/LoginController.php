@@ -109,7 +109,7 @@ class LoginController extends Controller
         $userType = "student";
       }
 
-      //check if token is expired
+      // check if token is expired
       $expired = now()->greaterThan($user->expires_at);
 
       if($user && !$expired){

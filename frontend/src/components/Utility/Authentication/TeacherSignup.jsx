@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import api from '../../../api';
 
-function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn }){
+function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }){
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +23,8 @@ function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn }){
         'email': email, 
         'password': password, 
         'password_confirmation': passwordConfirm, 
-        'description': ''
+        'description': '', 
+        'invitation_code': invitationCode
       });
 
       setUser(response.data);

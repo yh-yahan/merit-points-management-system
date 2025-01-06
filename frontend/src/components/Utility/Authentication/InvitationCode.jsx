@@ -45,6 +45,7 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
     setIsLoggedIn={setIsLoggedIn} 
     setUser={setUser}
     // userRole='student'
+    invitationCode={invitationCode}
     />;
   }
   else if(userRole == "teacher"){
@@ -52,6 +53,7 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
     isLoggedIn={isLoggedIn} 
     setIsLoggedIn={setIsLoggedIn} 
     setUser={setUser}
+    invitationCode={invitationCode}
     />;
   }
 

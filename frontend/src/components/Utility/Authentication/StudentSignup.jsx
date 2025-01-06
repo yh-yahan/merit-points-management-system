@@ -3,7 +3,7 @@ import api from '../../../api'
 import { useState } from 'react';
 import Student from '../../Student/Student';
 
-function Signup({ isLoggedIn, setIsLoggedIn, setUser }){
+function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
   const [fullName, setFullname] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -32,8 +32,9 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser }){
         'email': email, 
         'password': password, 
         'password_confirmation': passwordConfirm, 
-        'stage': stage, 
-        'stream': stream
+        'class': stage, 
+        'stream': stream, 
+        'invitation_code': invitationCode
       });
 
       setUser(response);

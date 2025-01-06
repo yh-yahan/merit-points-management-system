@@ -16,8 +16,10 @@ class Students extends Authenticatable
     'username', 
     'email', 
     'password', 
-    'stage', 
+    'class', 
     'stream', 
+    'date_joined',
+    'status',
   ];
 
     use HasFactory;

@@ -1,45 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '../../api';
 
 function AdminNotifications(){
-  const [notificationMessages, setNotificationMessages] = useState({
-    messages: [
-      {
-        id: 1,
-        title: 'New Sign up: ',
-        message: "Student 'Tim' signed up via invitation code of '02kd-f2d1-6fe3'",
-        time: "20 min ago",
-        new: true
-      },
-      {
-        id: 2,
-        title: 'New Sign up: ',
-        message: "Student 'Tim' signed up via invitation code of '02kd-f2d1-6fe3'",
-        time: "20 min ago",
-        new: true
-      },
-      {
-        id: 3,
-        title: 'New Sign up: ',
-        message: "Student 'Tom' signed up via invitation code of '02kd-f2d1-6fe3'",
-        time: "20 min ago",
-        new: true
-      },
-      {
-        id: 4,
-        title: 'New Sign up: ',
-        message: "Student 'John' signed up via invitation code of '02kd-f2d1-6fe3'",
-        time: "20 min ago",
-        new: true
-      },
-      {
-        id: 5,
-        title: 'New Sign up: ',
-        message: "Teacher 'Anna' signed up via invitation code of '93ec-z2d1-7fe9'",
-        time: "2/11/24",
-        new: false
-      },
-    ]
-  });
+  const [search, setSearch] = useState('');
+  const [notificationMessages, setNotificationMessages] = useState({messages: []});
+
+  useEffect(() => {
+    async function fetchNotification(){
+      try{
+        const response = await api.get(`/admin/notification?search=${search}`);
+        setNotificationMessages({ messages: response.data.messages });
+
+        await api.patch('/admin/mark-notification-as-read');
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    fetchNotification();
+  }, [search]);
+
+  const newMessageCount = notificationMessages.messages.filter((message) => message.new).length;
 
   return (
     <div className="container-fluid ms-5 mt-3">
@@ -47,21 +29,28 @@ function AdminNotifications(){
       <div className="container">
         <div className="row">
           <div className="col-12 mb-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
-            <p>New notifications: 5</p>
+            <p>New notifications: {newMessageCount}</p>
             <input 
             type="search" 
             placeholder="Search notifications" 
-            className="border p-2"/>
+            className="border p-2" 
+            onChange={(e) => setSearch(e.target.value)}/>
           </div>
-          {notificationMessages.messages.map((message) => (
-            <div key={message.id} className="col-12 mb-3 d-flex align-items-center border-bottom border-secondary-subtle p-3">
+          {notificationMessages.messages ? notificationMessages.messages.map((message, i) => (
+            <div key={i} className="col-12 mb-3 d-flex align-items-center border-bottom border-secondary-subtle p-3">
               <p>
                 {message.new && <span className="badge text-bg-primary">New</span>}
               </p>
               <p className="ms-3"><b>{message.title}</b> {message.message}</p>
               <p className="ms-auto text-secondary">{message.time}</p>
             </div>
-          ))}
+          ))
+          : <div 
+            className="col-12 mb-3 d-flex justify-content-center align-items-center p-3"
+            style={{height: '50vh'}}>
+              <p className="text-danger">No notifications found</p>
+            </div>
+          }
         </div>
       </div>
     </div>

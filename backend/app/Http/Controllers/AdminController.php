@@ -10,10 +10,10 @@ use App\Models\Students;
 use App\Models\Teachers;
 use App\Models\Transaction;
 use App\Models\PointsThreshold;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\InvitationCodes;
 use App\Models\MeritPointsRules;
-use Database\Seeders\AdminSeeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -119,37 +119,6 @@ class AdminController extends Controller
       ];
 
       return response($response, 201);
-    }
-
-    public function ValidateInvitationCode(Request $request){
-      $fields = $request->validate([
-        'invitationCode' => "required|string"
-      ]);
-
-      // add rate limits
-      $maxAttempts = 5;
-      $decayMinutes = 1;
-      $key = 'validate-invitation-code:' . $request->ip();
-      if(RateLimiter::tooManyAttempts($key, $maxAttempts)){
-        $seconds = RateLimiter::availableIn($key);
-        return response([
-          // 'message' => 'Too many attempts. Please try again in ' . $seconds . ' seconds.'
-          'message' => 'Too many attempts. Please try again later.'
-        ], 429);
-      }
-      RateLimiter::hit($key, $decayMinutes * 60);
-
-      $result = InvitationCodes::where('code', $fields['invitationCode'])->first();
-
-      if(!$result){
-        return response([
-          'message' => 'Invalid invitation code'
-      ], 401);
-      }
-      
-      return response([
-        'result' => $result
-      ], 200);
     }
 
     public function Overview(){
@@ -711,5 +680,44 @@ class AdminController extends Controller
       return response()->json([
         'currentPoint' => $currentPoint
       ]);
+    }
+
+    public function Notifications($notification){
+      $notification = Notification::create($notification);
+    }
+
+    public function GetNotification(Request $request){
+      $search = $request->input('search', '');
+
+      $query = Notification::select('id', 'title', 'message', 'is_read', 'created_at')
+      ->orderBy('created_at', 'desc');
+
+      if($search){
+        $query->where(function($q) use ($search) {
+            $q->where('title', 'LIKE', "%{$search}%")
+              ->orWhere('message', 'LIKE', "%{$search}%")
+              ->orWhere('created_at', 'LIKE', "%{$search}%");
+        });
+      }
+
+      $notifications = $query->get();
+
+      $formattedNotifications = $notifications->map(function ($notification) {
+        return [
+          'id' => $notification->id,
+          'title' => $notification->title,
+          'message' => $notification->message,
+          'time' => Carbon::parse($notification->created_at)->diffForHumans(),
+          'new' => !$notification->is_read
+        ];
+      });
+
+      return response()->json([
+        'messages' => $formattedNotifications
+      ]);
+    }
+
+    public function MarkNotificationAsRead(){
+      Notification::where('is_read', false)->update(['is_read' => true]);
     }
 }

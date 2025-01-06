@@ -18,7 +18,6 @@ Route::prefix('v1')->group(function (){
   Route::prefix('admin')->group(function(){
     Route::post('signup', [AdminController::class, 'SignUp']);
     Route::post('create-inv-code', [AdminController::class, 'CreateInvitationCode']);
-    Route::post('validate-inv-code', [AdminController::class, 'ValidateInvitationCode']);
     // admin dashboard routes
     Route::get('overview', [AdminController::class, 'Overview']);
     Route::get('transaction-history', [AdminController::class, 'TransactionHistory']);
@@ -32,9 +31,13 @@ Route::prefix('v1')->group(function (){
     Route::post('student-details', [AdminController::class, 'GetStudentDetails']);
     Route::patch('point/{receiver_id}', [AdminController::class, 'UpdatePoint']);
     Route::post('search-student', [AdminController::class, 'SearchStudent']);
+    Route::get('notification', [AdminController::class, 'GetNotification']);
+    Route::patch('mark-notification-as-read', [AdminController::class, 'MarkNotificationAsRead']);
   });
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
 
   Route::post('teacher/signup', [TeachersController::class, 'SignUp']);
   Route::post('student/signup', [StudentsController::class, 'SignUp']);
+
+  Route::post('validate-inv-code', [InvitationCodeController::class, 'ValidateInvitationCode']);
 });
