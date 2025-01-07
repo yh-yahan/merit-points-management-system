@@ -165,7 +165,7 @@ function AdminEditMeritPoints() {
     const selectedRuleDetails = rules.find(rule => rule.name === selectedRule);
     const pointUpdateInfo = {
       operation: mode, 
-      points: parseInt(points, 10), 
+      points: Math.abs(points), 
       description: description || '',  
       receiver_id: student.student.id, 
       rule_id: selectedRuleDetails.id, 
@@ -173,7 +173,7 @@ function AdminEditMeritPoints() {
     try{
       const response = await api.patch(`/admin/point/${student.student.id}`, pointUpdateInfo);
       const data = response.data;
-      setUpdateSuccess(`Updated successfully. Student's current point: ${data.currentPoint}`)
+      setUpdateSuccess(`Updated successfully. Student's current point: ${data.currentPoint}`);
     }
     catch(err){
       console.log(err);
@@ -184,6 +184,12 @@ function AdminEditMeritPoints() {
   function handleStudentClick(studentId) {
     fetchStudentDetails(studentId);
     setDisplayStudent(true);
+    setMode('');
+    setPoints('');
+    setRules('');
+    setDescription('');
+    setUpdateSuccess('');
+    setUpdateFail('');
     setSearch('');
     setFilteredStudents([]);
     setSelectedIndex(-1); // Reset selected index
