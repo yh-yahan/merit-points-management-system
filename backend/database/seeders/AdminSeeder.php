@@ -14,7 +14,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        Admin::factory()->count(2)->create();
+        // Admin::factory()->count(2)->create();
         // $hashed = Hash::make('adminPassword');
 
         // Admin::insert(array('name' => 'admin', 'email' => 'admin@example.com', 'password' => $hashed));

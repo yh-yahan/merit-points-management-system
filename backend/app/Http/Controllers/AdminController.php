@@ -29,6 +29,17 @@ class AdminController extends Controller
         'password' => 'required|confirmed|string|min:6', 
       ]);
 
+      // setup and assign default settings for the admin
+      AdminSetting::insert([
+        ['setting_name' => 'initial_point', 'setting_value' => 10], 
+        ['setting_name' => 'disable_leaderboard','setting_value' => false], 
+        ['setting_name' => 'leaderboard_visibility', 'setting_value' => 'username'],
+        ['setting_name' => 'logo', 'setting_value' => ''], 
+        ['setting_name' => 'primary_color', 'setting_value' => '#000000'], 
+        ['setting_name' => 'secondary_color', 'setting_value' => '#ffffff'], 
+        ['setting_name' => 'accent_color', 'setting_value' => '#0275d8'], 
+      ]);
+
       $admin = Admin::create([
         'name' => $fields['name'], 
         'email' => $fields['email'], 
@@ -719,5 +730,107 @@ class AdminController extends Controller
 
     public function MarkNotificationAsRead(){
       Notification::where('is_read', false)->update(['is_read' => true]);
+    }
+
+    public function GetSetting(Request $request){
+      $settings = AdminSetting::all();
+      $accountSettings = Admin::select('id', 'name', 'email')->get();
+      return response()->json([
+        'settings' => $settings, 
+        'accountSettings' => $accountSettings
+      ]);
+    }
+
+    public function Setting(Request $request){
+      $fields = $request->validate([
+        'setting_name' => 'required|string', 
+        'setting_value' => 'required|string'
+      ]);
+
+      $setting = AdminSetting::where('setting_name', $fields['setting_name'])->first();
+      if($setting){
+        $setting->setting_value = $fields['setting_value'];
+        $setting->save();
+        return response()->json(['setting' => $setting]);
+      }
+      else {
+        // return response()->json([
+        //   'setting' => $setting, 
+        //   'setting_name' => $fields['setting_name']
+        // ]);
+        AdminSetting::create([
+          'setting_name' => $fields['setting_name'], 
+          'setting_value' => $fields['setting_value']
+        ]);
+        return response()->json(['setting' => $setting]);
+      }
+    }
+
+    public function ChangeBasicInfo(Request $request){
+      $fields = $request->validate([
+        'id' => 'required', 
+        'name' => 'required|string', 
+        'email' => 'required|string|email'
+      ]);
+
+      Admin::where('id', $fields['id'])
+      ->update(['name' => $fields['name'], 'email' => $fields['email']]);
+
+      $admin = Admin::select('id', 'name', 'email')->where('id', $fields['id'])->get();
+
+      return response()->json([
+        $admin
+      ]);
+    }
+
+    public function UpdatePassword(Request $request){
+      $fields = $request->validate([
+        'id' => 'required', 
+        'current_password' => 'required|string', 
+        'password' => 'required|confirmed|string|min:6'
+      ]);
+
+      $adminPassword = Admin::select('password')->where('id', $fields['id'])->pluck('password')->first();
+
+      if(!Hash::check($fields['current_password'], $adminPassword)){
+        return response(['message' => 'Incorrect password'], 401);
+      }
+      elseif(Hash::check($fields['password'], $adminPassword)){
+        return response(['message' => 'New password cannot be the same as the current password'], 400);
+      }
+
+      Admin::where('id', $fields['id'])
+      ->update(['password' => Hash::make($fields['password'])]);
+
+      $token = $request->cookie('auth_token');
+      $personalAccessToken = PersonalAccessToken::findToken($token);
+      if($personalAccessToken){
+        $personalAccessToken->delete();
+
+        cookie()->queue(cookie()->forget('auth_token'));
+      }
+
+      return response(['message' => 'Password updated successfully. Please log in again.'], 200);
+    }
+
+    public function NewAdmin(Request $request){
+      $fields = $request->validate([
+        'name' => 'required|string', 
+        'email' => 'required|unique:admins,email|unique:teachers,email|unique:students,email|email', 
+        'password' => 'required|confirmed|string|min:6'
+      ]);
+
+      if(!Admin::where('email', $fields['email'])->exists()){
+        Admin::create([
+          'name' => $fields['name'], 
+          'email' => $fields['email'], 
+          'password' => Hash::make($fields['password'])
+        ]);
+      }
+      else{
+        return response(['message' => 'User already exists'], 400);
+      }
+
+      return response(['message' => 'User created successfully'], 201);
     }
 }

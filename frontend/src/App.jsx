@@ -70,7 +70,7 @@ function App() {
           //     )
           //   }
           // />
-          <Route path="/*" element={<UserRoutes userRole={userRole} />} />
+          <Route path="/*" element={<UserRoutes userRole={userRole} setIsLoggedIn={setIsLoggedIn} />} />
         ) : (
           <>
             <Route 

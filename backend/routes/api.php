@@ -17,6 +17,7 @@ Route::prefix('v1')->group(function (){
 
   Route::prefix('admin')->group(function(){
     Route::post('signup', [AdminController::class, 'SignUp']);
+    Route::post('new-admin', [AdminController::class, 'NewAdmin']);
     Route::post('create-inv-code', [AdminController::class, 'CreateInvitationCode']);
     // admin dashboard routes
     Route::get('overview', [AdminController::class, 'Overview']);
@@ -33,6 +34,10 @@ Route::prefix('v1')->group(function (){
     Route::post('search-student', [AdminController::class, 'SearchStudent']);
     Route::get('notification', [AdminController::class, 'GetNotification']);
     Route::patch('mark-notification-as-read', [AdminController::class, 'MarkNotificationAsRead']);
+    Route::get('setting', [AdminController::class, 'GetSetting']);
+    Route::post('setting', [AdminController::class, 'Setting']);
+    Route::patch('user-info', [AdminController::class, 'ChangeBasicInfo']);
+    Route::patch('update-password', [AdminController::class, 'UpdatePassword']);
   });
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
 
