@@ -11,6 +11,7 @@ function Leaderboard(){
       {}
     ]
   });
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function fetchLeaderboard(){
@@ -21,7 +22,12 @@ function Leaderboard(){
         setAllClasses(data.allClasses || []);
       }
       catch(err){
-        console.log(err);
+        if (err.response.status === 403){
+          setLeaderboard({
+            students: []
+          });
+          setError(err.response.data.message);
+        }
       }
     }
 
@@ -30,7 +36,8 @@ function Leaderboard(){
 
   return (
     <div className="container-fluid ms-5 mt-3">
-      <h2 className="ms-5 d-flex justify-content-evenly align-items-center">Leaderboard</h2>
+      { error && <div className="alert alert-danger me-5 mb-5">{error}</div> }
+      { !error && <div> <h2 className="ms-5 d-flex justify-content-evenly align-items-center">Leaderboard</h2>
       <div className="d-flex justify-content-evenly align-items-center row me-5">
         <button 
         className="btn btn-primary col-4 rounded-0 border-end"
@@ -83,7 +90,7 @@ function Leaderboard(){
             ))}
           </tbody>
         </table>
-      </div>
+      </div> </div> }
     </div>
   );
 }

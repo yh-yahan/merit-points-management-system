@@ -38,6 +38,7 @@ function AdminSettings({ setIsLoggedIn }) {
   const [showAdminNewPassword, setShowAdminNewPassword] = useState(false);
 
   const [passwordChangeError, setPasswordChangeError] = useState("");
+  const [disableLeaderboardError, setDisableLeaderboardError] = useState("");
 
   const navigate = useNavigate();
 
@@ -102,6 +103,7 @@ function AdminSettings({ setIsLoggedIn }) {
       const response = await api.post('/admin/setting', 
         settings
       );
+      // console.log(response);
     }
     catch(err){
       console.log(err);
@@ -232,11 +234,19 @@ function AdminSettings({ setIsLoggedIn }) {
           <div className="row">
             <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
               <p>Disable leaderboard</p>
+              { disableLeaderboardError && <p className="text-danger">{disableLeaderboardError}</p> }
               <button 
               className="btn btn-primary" 
-              onClick={() => {
-                handleSettingInputChange("disable_leaderboard", !settings.disable_leaderboard);
-                changeSettings("disable_leaderboard", !settings.disable_leaderboard);
+              onClick={async () => {
+                const newDisableLeaderboard = !settings.disable_leaderboard;
+                handleSettingInputChange("disable_leaderboard", newDisableLeaderboard);
+                try {
+                  await changeSettings("disable_leaderboard", newDisableLeaderboard);
+                } catch (err) {
+                  console.error("Failed to update leaderboard setting:", err);
+                  handleSettingInputChange("disable_leaderboard", !newDisableLeaderboard);
+                  setDisableLeaderboardError("Failed to update leaderboard setting");
+                }
               }}
               >{
                 settings.disable_leaderboard ? "Enable" : "Disable"

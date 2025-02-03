@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Points;
 use App\Models\Students;
 use App\Models\Transaction;
+use App\Models\AdminSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +14,15 @@ class LeaderboardController extends Controller
 {
     public function Leaderboard(Request $request)
     {
-        $leaderboardType = $request->input('leaderboard', 'alltime');
+        $disabled = AdminSetting::where('setting_name', 'disable_leaderboard')->value('setting_value');
+
+        if ($disabled == 'true') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Leaderboard is disabled'
+            ], 403);
+        } else {
+            $leaderboardType = $request->input('leaderboard', 'alltime');
         $classFilter = $request->input('classfilter', 'all');
 
         $leaderboard = [];
@@ -113,5 +122,6 @@ class LeaderboardController extends Controller
             'students' => $leaderboard,
             'allClasses' => $allClasses,
         ]);
+        }
     }
 }
