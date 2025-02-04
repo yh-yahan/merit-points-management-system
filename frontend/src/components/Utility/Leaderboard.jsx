@@ -71,6 +71,12 @@ function Leaderboard(){
               <th>Points</th>
             </tr>
           </thead>
+          { leaderboard.students.length === 0 && <tbody>
+              <tr>
+                <td colSpan="4" className="text-danger">No data available</td>
+              </tr> 
+            </tbody> 
+          }
           <tbody>
             {leaderboard.students.map((student) => (
               <tr 
@@ -83,7 +89,7 @@ function Leaderboard(){
                    student.rank === 3 ? <i className="bi bi-star"></i> : null}
                   {student.rank}
                 </td>
-                <td>{student.name}</td>
+                <td>{student.name_or_username}</td>
                 <td>{student.class}</td>
                 <td>{student.points}</td>
               </tr>
