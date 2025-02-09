@@ -1,13 +1,17 @@
 .show-detail-btn, .show-detail-btn:hover{
-  border: solid;
-  border-color: black;
-  border-width: 2px;
+  border: solid !important;
+  border-color: black !important;
+  border-width: 2px !important;
+  background-color: white !important;
+  color: black !important;
 }
 
 .show-more-btn, .show-more-btn:hover{
-  border: solid;
-  border-color: #909090;
-  border-width: 1px;
+  border: solid !important;
+  border-color: #909090 !important;
+  border-width: 1px !important;
+  background-color: white !important;
+  color: black !important;
 }
 
 .chart-container{

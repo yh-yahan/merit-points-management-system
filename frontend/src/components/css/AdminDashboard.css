@@ -11,10 +11,10 @@
 }
 
 .navLink:hover {
-  color: #c20008;
+  color: var(--primary-color);
   background-color: white;
 }
 
 .isActive{
-  color: #c20008 !important;
+  color: var(--primary-color) !important;
 }

@@ -8,6 +8,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TeachersController;
 use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\ColorSchemeController;
+use App\Http\Controllers\LogoController;
 
 Route::prefix('v1')->group(function (){
   Route::post('check-auth', [LoginController::class, 'CheckAuth']);
@@ -19,7 +21,7 @@ Route::prefix('v1')->group(function (){
     Route::post('signup', [AdminController::class, 'SignUp']);
     Route::post('new-admin', [AdminController::class, 'NewAdmin']);
     Route::post('create-inv-code', [AdminController::class, 'CreateInvitationCode']);
-    // admin dashboard routes
+    
     Route::get('overview', [AdminController::class, 'Overview']);
     Route::get('transaction-history', [AdminController::class, 'TransactionHistory']);
     Route::get('manage-students', [AdminController::class, 'ManageStudents']);
@@ -32,17 +34,22 @@ Route::prefix('v1')->group(function (){
     Route::post('student-details', [AdminController::class, 'GetStudentDetails']);
     Route::patch('point/{receiver_id}', [AdminController::class, 'UpdatePoint']);
     Route::post('search-student', [AdminController::class, 'SearchStudent']);
+
     Route::get('notification', [AdminController::class, 'GetNotification']);
     Route::patch('mark-notification-as-read', [AdminController::class, 'MarkNotificationAsRead']);
+    
     Route::get('setting', [AdminController::class, 'GetSetting']);
     Route::post('setting', [AdminController::class, 'Setting']);
     Route::patch('user-info', [AdminController::class, 'ChangeBasicInfo']);
     Route::patch('update-password', [AdminController::class, 'UpdatePassword']);
+    Route::post('logo', [AdminController::class, 'UploadLogo']);
   });
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
 
+  Route::post('validate-inv-code', [InvitationCodeController::class, 'ValidateInvitationCode']);
   Route::post('teacher/signup', [TeachersController::class, 'SignUp']);
   Route::post('student/signup', [StudentsController::class, 'SignUp']);
 
-  Route::post('validate-inv-code', [InvitationCodeController::class, 'ValidateInvitationCode']);
+  Route::get('logo', [LogoController::class, 'GetLogo']);
+  Route::get('primary-color', [ColorSchemeController::class, 'PrimaryColor']);
 });

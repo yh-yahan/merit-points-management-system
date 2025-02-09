@@ -1,17 +1,32 @@
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api.js'
 import '../css/navbar.css'
 
 function AdminNavbar({ setIsLoggedIn }){
   const [popup, setPopup] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(null);
   const navigate = useNavigate();
 
   const location = useLocation();
 
-  const isActive = (path) => {
+  function isActive(path){
     return location.pathname === path;
   };
+
+  useEffect(() => {
+    async function getLogo(){
+      try{
+        const response = await api.get('/logo');
+        setLogoUrl(response.data.path);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    getLogo();
+  }, []);
 
   async function handleLogout(e){
     e.preventDefault();
@@ -34,7 +49,7 @@ function AdminNavbar({ setIsLoggedIn }){
         <div className="container-fluid">
           <Link className="navbar-brand ms-4" to="/">
             <div style={{ maxWidth: "73px" }}>
-              <img src="src/assets/LOGO.png" className="img-fluid" alt="Logo" />
+              <img src={logoUrl} className="img-fluid" alt="Logo" />
             </div>
           </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-label="Toggle navigation">

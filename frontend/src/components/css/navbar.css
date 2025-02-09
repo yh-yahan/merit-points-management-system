@@ -5,12 +5,12 @@
 }
 
 .navLink:hover {
-  color: #c20008;
+  color: var(--primary-color);
   background-color: white;
 }
 
 .active {
-  color: #c20008 !important;
+  color: var(--primary-color) !important;
 }
 
 .cursor-pointer{

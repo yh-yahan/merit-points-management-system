@@ -9,8 +9,6 @@ function AdminSettings({ setIsLoggedIn }) {
     leaderboard_visibility: "username", 
     logo: "",
     primary_color: "",
-    secondary_color: "",
-    accent_color: "",
   });
   const [admin, setAdmin] = useState({
     unchangedName: "",
@@ -40,6 +38,8 @@ function AdminSettings({ setIsLoggedIn }) {
   const [passwordChangeError, setPasswordChangeError] = useState("");
   const [disableLeaderboardError, setDisableLeaderboardError] = useState("");
 
+  const [logoFile, setLogoFile] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,12 +60,6 @@ function AdminSettings({ setIsLoggedIn }) {
               break;
             case "primary_color":
               acc.primary_color = setting_value;
-              break;
-            case "secondary_color":
-              acc.secondary_color = setting_value;
-              break;
-            case "accent_color":
-              acc.accent_color = setting_value;
               break;
             default:
               break;
@@ -168,11 +162,36 @@ function AdminSettings({ setIsLoggedIn }) {
     }
   }
 
-  function handleAdminInputChange(field, value){
-    setAdmin(prevState => ({
-      ...prevState,
-      [field]: value,
-    }));
+  async function uploadLogo() {
+    if (!logoFile) return;
+  
+    const formData = new FormData();
+    formData.append('logo', logoFile);
+  
+    try{
+      const response = await api.post('/admin/logo', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', 
+        },
+      });
+
+      setSettings(prevState => ({
+        ...prevState,
+        logo: response.data.path,
+      }));
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
+
+  function handleLogoChange(e) {
+    const file = e.target.files[0];
+    setLogoFile(file);
+
+    if(file){
+      uploadLogo(file);
+    }
   }
 
   function handleSettingInputChange(field, value){
@@ -284,16 +303,6 @@ function AdminSettings({ setIsLoggedIn }) {
               className="btn btn-primary float-end" 
               >Add students to be excluded</button>
             </div>
-
-            <div className="col-12 mb-3 border-bottom border-secondary-subtle p-3">
-              <div className="d-flex flex-column">
-                <p>Reset Leaderboard</p>
-                <p className="fw-light fs-6 text-danger">
-                  Warning: This will reset the leaderboard for all students
-                </p>
-              </div>
-              <button className="btn btn-primary float-end">Reset</button>
-            </div>
           </div>
         </div>
       </div>
@@ -302,21 +311,6 @@ function AdminSettings({ setIsLoggedIn }) {
         <h3 style={{ color: "#7d7d7d" }}>Appearance</h3>
         <div className="ms-5 container">
           <div className="row">
-            <div className="col-12 mb-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
-              <p>Theme</p>
-              <div className="ms-5 my-3">
-                {/* TODO: store theme on client side */}
-                {/* <button className="btn btn-primary me-3" onClick={() => {
-                  changeSettings("theme", settings.theme == "light" ? "dark" : "light");
-                  setSettings(prevState => ({
-                    ...prevState,
-                    theme: settings.theme == "light" ? "dark" : "light"
-                  }));
-                  }}>
-                  {settings.theme == "light" ? "Dark" : "Light"}
-                </button> */}
-              </div>
-            </div>
             <div>
               <h6>Website</h6>
               <div className="ms-5 mb-2">
@@ -325,41 +319,23 @@ function AdminSettings({ setIsLoggedIn }) {
               <div className="ms-5 mb-3">
                 <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
                   <p>Logo</p>
-                  <input type="file" accept="image/*" />
+                  <input type="file" accept="image/*" onChange={handleLogoChange} />
                 </div>
                 <div className="mt-3">
-                  <h6>Color scheme</h6>
+                  <h6>Color</h6>
                   <div>
                     <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
-                      <p>Primary color</p>
+                      <div className="d-flex flex-column">
+                        <p>Primary color</p>
+                        <p className="fw-light fs-6 text-body-secondary">The main color of the website (button and link colors)</p>
+                        <p className="fw-light fs-6 text-body-secondary fst-italic">Refresh required to see the changes</p>
+                      </div>
                       <input 
                       type="color" 
                       value={settings.primary_color}
                       onChange={(e) => {
                         handleSettingInputChange("primary_color", e.target.value);
                         changeSettings("primary_color", e.target.value);
-                      }}
-                      />
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
-                      <p>Secondary color</p>
-                      <input 
-                      type="color" 
-                      value={settings.secondary_color}
-                      onChange={(e) => {
-                        handleSettingInputChange("secondary_color", e.target.value);
-                        changeSettings("secondary_color", e.target.value);
-                      }}
-                      />
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
-                      <p>Accent color</p>
-                      <input 
-                      type="color" 
-                      value={settings.accent_color}
-                      onChange={(e) => {
-                        handleSettingInputChange("accent_color", e.target.value);
-                        changeSettings("accent_color", e.target.value)
                       }}
                       />
                     </div>

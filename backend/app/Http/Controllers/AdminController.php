@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -34,10 +35,7 @@ class AdminController extends Controller
         ['setting_name' => 'initial_point', 'setting_value' => 10], 
         ['setting_name' => 'disable_leaderboard','setting_value' => false], 
         ['setting_name' => 'leaderboard_visibility', 'setting_value' => 'username'],
-        ['setting_name' => 'logo', 'setting_value' => ''], 
-        ['setting_name' => 'primary_color', 'setting_value' => '#000000'], 
-        ['setting_name' => 'secondary_color', 'setting_value' => '#ffffff'], 
-        ['setting_name' => 'accent_color', 'setting_value' => '#0275d8'], 
+        ['setting_name' => 'primary_color', 'setting_value' => '#0275d8'], 
       ]);
 
       $admin = Admin::create([
@@ -832,5 +830,23 @@ class AdminController extends Controller
       }
 
       return response(['message' => 'User created successfully'], 201);
+    }
+
+    public function UploadLogo(Request $request){
+      $request->validate([
+        'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+      ]);
+
+      if($request->hasfile('logo')){
+        $file = $request->file('logo');
+        $path = $file->store('uploads', 'public');
+
+        AdminSetting::where('setting_name', 'logo')->update(['setting_value' => url(Storage::url($path))]);
+
+        return response(['path' => url(Storage::url($path))], 200);
+      }
+      else{
+        return response(['message' => 'No file uploaded'], 400);
+      }
     }
 }

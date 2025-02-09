@@ -17,6 +17,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [primaryColor, setPrimaryColor] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +37,22 @@ function App() {
     };
     checkAuth();
     navigate('/');
+  }, []);
+
+  useEffect(() => {
+    async function getPrimaryColor(){
+      try {
+        const response = await api.get('/primary-color');
+        const primaryColor = response.data.primary_color;
+        setPrimaryColor(primaryColor);
+        document.documentElement.style.setProperty('--primary-color', primaryColor);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    getPrimaryColor();
   }, []);
 
   if(loading){

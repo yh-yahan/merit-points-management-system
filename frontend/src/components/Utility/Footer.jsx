@@ -1,6 +1,24 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'
+import api from '../../api';
 
 function Footer(){
+  const [logoUrl, setLogoUrl] = useState(null);
+  
+  useEffect(() => {
+    async function getLogo(){
+      try{
+        const response = await api.get('/logo');
+        setLogoUrl(response.data.path);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    getLogo();
+  }, []);
+
   return(
     <>
       <footer className="text-lg-start bg-body-tertiary text-muted">
@@ -10,7 +28,7 @@ function Footer(){
               <div className="col-md-3 col-lg-4 col-xl-3 ms-3 mb-4">
                 <Link className="navbar-brand ms-4" to="/">
                   <div style={{ maxWidth: "73px" }}>
-                    <img src="src/assets/LOGO.png" className="img-fluid" alt="Logo" />
+                    <img src={logoUrl} className="img-fluid" alt="Logo" />
                   </div>
                 </Link>
                 <div className="mt-5">

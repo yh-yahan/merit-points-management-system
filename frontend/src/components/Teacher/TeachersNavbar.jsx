@@ -1,7 +1,23 @@
+import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
 function TeachersNavbar(){
+  const [logoUrl, setLogoUrl] = useState(null);
   const location = useLocation();
+
+  useEffect(() => {
+    async function getLogo(){
+      try{
+        const response = await api.get('/logo');
+        setLogoUrl(response.data.path);
+      }
+      catch(err){
+        console.log(err);
+      }
+    }
+
+    getLogo();
+  }, []);
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -13,7 +29,7 @@ function TeachersNavbar(){
         <div className="container-fluid">
           <Link className="navbar-brand ms-4" to="/">
             <div style={{ maxWidth: "73px" }}>
-              <img src="src/assets/LOGO.png" className="img-fluid" alt="Logo" />
+              <img src={logoUrl} className="img-fluid" alt="Logo" />
             </div>
           </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-label="Toggle navigation">

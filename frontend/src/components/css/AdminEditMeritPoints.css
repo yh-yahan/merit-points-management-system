@@ -1,4 +1,4 @@
 .selected{
-  background-color: #c20008;
+  background-color: var(--primary-color);
   color: white;
 }

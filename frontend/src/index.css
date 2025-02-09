@@ -3,6 +3,33 @@ body, *{
   overflow-x: hidden;
 }
 
+button {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+a {
+  color: black !important;
+  background-color: white !important;
+}
+
+a:hover {
+  color: var(--primary-color) !important;
+}
+
+.link-style {
+  color: black !important;
+  background-color: white !important;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: #9FA6B2 !important;
+  color: white !important;
+  border: none;
+}
+
 @media only screen and (max-width: 600px) {
   body, *{
     overflow-x: auto;
