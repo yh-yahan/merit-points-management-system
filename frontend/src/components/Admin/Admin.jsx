@@ -4,6 +4,8 @@ import { Routes, Route } from "react-router-dom"
 import AdminSettings from './AdminSettings.jsx';
 import Leaderboard from '../Utility/Leaderboard.jsx';
 import AdminNotifications from './AdminNotifications.jsx';
+import AdminInvitationCode from './AdminInvitationCode.jsx';
+import AdminCreateInvitationCode from './AdminCreateInvitationCode.jsx';
 
 function Admin({ setIsLoggedIn }){
   return (
@@ -19,6 +21,8 @@ function Admin({ setIsLoggedIn }){
         <Route path="/settings" element={<AdminSettings setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/notifications" element={<AdminNotifications />} />
+        <Route path="/invitation-code" element={<AdminInvitationCode />} />
+        <Route path="/invitation-code/create" element={<AdminCreateInvitationCode />} />
       </Routes>
     </>
   );

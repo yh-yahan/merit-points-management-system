@@ -43,7 +43,11 @@ Route::prefix('v1')->group(function (){
     Route::patch('user-info', [AdminController::class, 'ChangeBasicInfo']);
     Route::patch('update-password', [AdminController::class, 'UpdatePassword']);
     Route::post('logo', [AdminController::class, 'UploadLogo']);
+    
+    Route::get('invitation-code', [AdminController::class, 'GetInvitationCode']);
+    Route::delete('invitation-code/{id}', [AdminController::class, 'DeleteInvitationCode']);
   });
+  
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
 
   Route::post('validate-inv-code', [InvitationCodeController::class, 'ValidateInvitationCode']);

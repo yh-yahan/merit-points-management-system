@@ -81,7 +81,7 @@ function Leaderboard(){
             {leaderboard.students.map((student) => (
               <tr 
                 key={student.id} 
-                style={{ backgroundColor: student.rank <= 3 ? "#edcc24" : "white" }}
+                // style={{ backgroundColor: student.rank <= 3 ? "#edcc24" : "white" }}
               >
                 <td>
                   {student.rank === 1 ? <i className="bi bi-trophy-fill"></i> : 

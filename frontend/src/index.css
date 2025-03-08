@@ -1,3 +1,7 @@
+:root {
+  --bs-primary: var(--primary-color);
+}
+
 body, *{
   max-width: 100%;
   overflow-x: hidden;
@@ -7,6 +11,33 @@ button {
   background-color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
   color: white !important;
+}
+
+.btn-danger {
+  background-color: #dc4c64 !important;
+  color: white !important;
+  border: none;
+}
+
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.table-container {
+  --bs-table-color-type: initial;
+  --bs-table-bg-type: initial;
+  --bs-table-color-state: initial;
+  --bs-table-bg-state: initial;
+  /* --bs-table-color: var(--bs-emphasis-color); */
+  /* --bs-table-bg: var(--bs-body-bg); */
+  --bs-table-border-color: var(--bs-border-color);
+  --bs-table-accent-bg: transparent;
+  --bs-table-striped-color: var(--bs-emphasis-color);
+  --bs-table-striped-bg: rgba(var(--bs-emphasis-color-rgb), 0.05);
+  --bs-table-active-color: var(--bs-emphasis-color);
+  --bs-table-active-bg: rgba(var(--bs-emphasis-color-rgb), 0.1);
+  --bs-table-hover-color: var(--bs-emphasis-color);
+  --bs-table-hover-bg: rgba(var(--bs-emphasis-color-rgb), 0.075);
 }
 
 a {

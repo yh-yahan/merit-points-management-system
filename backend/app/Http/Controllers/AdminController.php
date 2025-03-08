@@ -62,13 +62,23 @@ class AdminController extends Controller
 
     public function CreateInvitationCode(Request $request){
       $fields = $request->validate([
-        'for_user_type' => "required|string", 
-        'valid_until' => "required|date|after:today", 
+        'for_user_type' => "required|string|in:student,teacher", 
+        'validaty_period' => "required", 
       ]);
 
+      if ($fields['validaty_period'] == "oneDay") {
+        $valid_until = Carbon::now()->addDay();
+      }
+      else if ($fields['validaty_period'] == "twoDays") {
+        $valid_until = Carbon::now()->addDays(2);
+      }
+      else if ($fields['validaty_period'] == "oneWeek") {
+        $valid_until = Carbon::now()->addWeek();
+      }
+      
       // check who created the invitation code
-      // get token from request
-      $token = $request->bearerToken();
+      // $token = $request->bearerToken();
+      $token = $request->cookie('auth_token');
       if(!$token){
         return response()->json(['error' => 'Token not provided'], 401);
       }
@@ -115,7 +125,7 @@ class AdminController extends Controller
         'code' => $code, 
         'for_user_type' => $fields['for_user_type'], 
         'created_by' => $created_by, 
-        'valid_until' => $fields['valid_until']
+        'valid_until' => $valid_until
       ]);
 
       $admin = InvitationCodes::with('admin')->find($created_by);
@@ -847,6 +857,22 @@ class AdminController extends Controller
       }
       else{
         return response(['message' => 'No file uploaded'], 400);
+      }
+    }
+
+    public function GetInvitationCode() {
+      $invitationCodes = InvitationCodes::orderBy('created_at', 'desc')->get();
+      return response()->json($invitationCodes);
+    }
+
+    public function DeleteInvitationCode($id) {
+      $invitationCode = InvitationCodes::find($id);
+      if ($invitationCode) {
+        $invitationCode->delete();
+        return response()->json(['message' => 'Invitation code deleted successfully']);
+      }
+      else {
+        return response()->json(['message' => 'Invitation code not found'], 404);
       }
     }
 }

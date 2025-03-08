@@ -67,6 +67,9 @@ function AdminNavbar({ setIsLoggedIn }){
             </ul>
             <ul className="navbar-nav ml-auto mb-2 mb-lg-0 me-5">
               <li>
+                <NavLink className={`nav-link navLink ${isActive('/invitation-code') ? 'active' : ''}`} to="/invitation-code">Invitation code</NavLink>
+              </li>
+              <li>
                 <NavLink className={`nav-link navLink ${isActive('/notifications') ? 'active' : ''}`} to="/notifications">Notifications</NavLink>
               </li>
               {/* <li>

@@ -31,7 +31,7 @@ class InvitationCodeController extends Controller
         if(!$result){
           return response([
             'message' => 'Invalid invitation code'
-        ], 401);
+          ], 401);
         }
         
         return response([

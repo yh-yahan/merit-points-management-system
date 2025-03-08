@@ -57,11 +57,15 @@ function App() {
 
   if(loading){
     return (
-      <div className="d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-        <div className="spinner-border text-danger mb-3" role="status" style={{ width: '6rem', height: '6rem' }}>
+      <div 
+        className="d-flex flex-column justify-content-center align-items-center" 
+        style={{ minHeight: '100vh' }}>
+        <div 
+          className="spinner-border mb-3" role="status"
+          style={{ width: '6rem', height: '6rem', color: primaryColor }}>
           <span className="visually-hidden">Loading...</span>
         </div>
-        <span className="text-danger">Loading...</span>
+        <span className="" style={{ color: primaryColor }}>Loading...</span>
       </div>
     );
   }
