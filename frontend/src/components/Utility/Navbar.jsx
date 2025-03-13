@@ -9,8 +9,10 @@ function Navbar({ isLoggedIn, userRole, setIsLoggedIn }){
         isLoggedIn && userRole=="admin" && <AdminNavbar 
         setIsLoggedIn={setIsLoggedIn} 
         /> || 
-        isLoggedIn && userRole=="teacher" && <TeachersNavbar /> ||
-        isLoggedIn && userRole=="student" && <StudentsNavbar setIsLoggedIn={setIsLoggedIn} />
+        isLoggedIn && userRole=="teacher" && <TeachersNavbar 
+        setIsLoggedIn={setIsLoggedIn} /> ||
+        isLoggedIn && userRole=="student" && <StudentsNavbar 
+        setIsLoggedIn={setIsLoggedIn} />
       }
     </>
   );

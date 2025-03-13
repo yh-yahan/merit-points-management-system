@@ -1,7 +1,12 @@
-function Teacher(){
+import { Routes, Route } from "react-router-dom"
+import TeacherDashboard from './TeacherDashboard.jsx'
+
+function Teacher({ setIsLoggedIn }){
   return (
     <>
-      <h1>This is teacher page</h1>
+      <Routes>
+        <Route path="/" element={<TeacherDashboard />} />
+      </Routes>
     </>
   );
 }

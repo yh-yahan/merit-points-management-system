@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import api from '../../api';
 
-function TeachersNavbar(){
+function TeachersNavbar({ setIsLoggedIn }){
   const [logoUrl, setLogoUrl] = useState(null);
+  const [popup, setPopup] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getLogo(){
@@ -22,6 +25,21 @@ function TeachersNavbar(){
   const isActive = (path) => {
     return location.pathname === path;
   };
+
+  async function handleLogout(e){
+    e.preventDefault();
+    setPopup(false);
+
+    try{
+      const response = await api.post('/logout');
+
+      setIsLoggedIn(false);
+      navigate('/');
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
 
   return(
     <>
@@ -53,12 +71,30 @@ function TeachersNavbar(){
                 <NavLink className={`nav-link navLink ${isActive('/settings') ? 'active' : ''}`} to="/settings">Settings</NavLink>
               </li>
               <li>
-                <NavLink className={`nav-link navLink ${isActive('/logout') ? 'active' : ''}`} to="/logout"><i className="bi bi-box-arrow-left"></i> Logout</NavLink>
+                <a 
+                className={`nav-link navLink cursor-progress cursor-pointer`} 
+                onClick={() => setPopup(true)}>
+                  <i className="bi bi-box-arrow-right"></i> Logout
+                </a>
               </li>
             </ul>
           </div>
         </div>
       </nav>
+      {
+        popup && (
+          <div className="popup d-flex justify-content-center align-items-center">
+            <div className="popup-content p-4 bg-white rounded shadow">
+              <h5>Confirm Logout</h5>
+              <p>Are you sure you want to logout?</p>
+              <div className="d-flex justify-content-end">
+                <button className="btn btn-danger me-3" onClick={handleLogout}>Yes, Logout</button>
+                <button className="btn btn-secondary" onClick={() => setPopup(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+        )
+      }
     </>
   )
 }

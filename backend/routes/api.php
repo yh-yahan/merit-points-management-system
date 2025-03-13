@@ -47,6 +47,10 @@ Route::prefix('v1')->group(function (){
     Route::get('invitation-code', [AdminController::class, 'GetInvitationCode']);
     Route::delete('invitation-code/{id}', [AdminController::class, 'DeleteInvitationCode']);
   });
+
+  Route::prefix('teacher')->group(function (){
+    Route::get('recent-transactions', [TeachersController::class, 'RecentTransactions']);
+  });
   
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
 
