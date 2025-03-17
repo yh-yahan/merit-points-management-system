@@ -50,6 +50,10 @@ Route::prefix('v1')->group(function (){
 
   Route::prefix('teacher')->group(function (){
     Route::get('recent-transactions', [TeachersController::class, 'RecentTransactions']);
+    Route::get('student-by-class', [TeachersController::class, 'GetStudentByClass']);
+    Route::post('student-details', [TeachersController::class, 'GetStudentDetails']);
+    Route::patch('point/{receiver_id}', [TeachersController::class, 'UpdatePoint']);
+    Route::post('search-student', [TeachersController::class, 'SearchStudent']);
   });
   
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);

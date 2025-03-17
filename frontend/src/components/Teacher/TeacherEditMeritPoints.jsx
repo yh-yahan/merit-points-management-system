@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
-import '../css/AdminEditMeritPoints.css'
-import api from "../../api"
+import { useState, useRef, useEffect } from 'react';
+import api from '../../api';
 
-function AdminEditMeritPoints() {
+function TeacherEditMeritPoints () {
   const [search, setSearch] = useState("");
   const [displayStudent, setDisplayStudent] = useState(false);
   const [student, setStudent] = useState(null);
@@ -10,14 +9,6 @@ function AdminEditMeritPoints() {
   const [points, setPoints] = useState("");
   const [selectedRule, setSelectedRule] = useState();
   const [rules, setRules] = useState([{}]);
-  const [students, setStudents] = useState([
-    {
-      id: 0,
-      name: '',
-      class: '',
-      totalPoints: 0
-    },
-  ]);
   const [studentTransaction, setStudentTransaction] = useState({
     titles: [],
     diffInWordsList: [],
@@ -43,7 +34,7 @@ function AdminEditMeritPoints() {
   useEffect(() => {
     async function fetchGroupedStudent() {
       try {
-        const response = await api.get("/admin/student-by-class");
+        const response = await api.get("/teacher/student-by-class");
         const data = response.data;
         setGroupedStudent(data);
       }
@@ -103,7 +94,7 @@ function AdminEditMeritPoints() {
   useEffect(() => {
     async function searchStudent(){
       try{
-        const response = await api.post("/admin/search-student", {
+        const response = await api.post("/teacher/search-student", {
           'search': search
         });
         const data = response.data;
@@ -122,7 +113,7 @@ function AdminEditMeritPoints() {
 
   async function fetchStudentDetails(studentId) {
     try {
-      const response = await api.post("/admin/student-details", {
+      const response = await api.post("/teacher/student-details", {
         'id': studentId
       });
       const data = response.data;
@@ -171,7 +162,7 @@ function AdminEditMeritPoints() {
       rule_id: selectedRuleDetails.id, 
     }
     try{
-      const response = await api.patch(`/admin/point/${student.student.id}`, pointUpdateInfo);
+      const response = await api.patch(`/teacher/point/${student.student.id}`, pointUpdateInfo);
       const data = response.data;
       setUpdateSuccess(`Updated successfully. Student's current point: ${data.currentPoint}`);
     }
@@ -350,4 +341,4 @@ function AdminEditMeritPoints() {
   );
 }
 
-export default AdminEditMeritPoints;
+export default TeacherEditMeritPoints;
