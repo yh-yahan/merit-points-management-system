@@ -7,7 +7,7 @@ function UserRoutes({ userRole, setIsLoggedIn }){
   return (
     <Routes>
       {userRole === "admin" && <Route path="/*" element={<Admin setIsLoggedIn={setIsLoggedIn} />} />}
-      {userRole === "teacher" && <Route path="/*" element={<Teacher />} />}
+      {userRole === "teacher" && <Route path="/*" element={<Teacher setIsLoggedIn={setIsLoggedIn} />} />}
       {userRole === "student" && <Route path="/*" element={<Student />} />}
     </Routes>
   );

@@ -13,8 +13,10 @@ use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Cookie;
 use Laravel\Sanctum\PersonalAccessToken;
 
-class TeachersController extends Controller{
-  public function SignUp(Request $request){
+class TeachersController extends Controller
+{
+  public function SignUp(Request $request)
+  {
     $fields = $request->validate([
       'name' => 'required|string',
       'email' => 'required|unique:admins,email|unique:teachers,email|unique:students,email|email',
@@ -55,7 +57,8 @@ class TeachersController extends Controller{
     return response($response, 201)->withCookie($cookie);
   }
 
-  public function RecentTransactions(){
+  public function RecentTransactions()
+  {
     $activities = Transaction::with(['creator', 'student', 'meritPointRule'])
       ->orderBy('created_at', 'desc')
       ->limit(5)
@@ -118,31 +121,33 @@ class TeachersController extends Controller{
     return response($recentActivityData, 200);
   }
 
-  public function GetStudentByClass(){
+  public function GetStudentByClass()
+  {
     $students = Students::select('id', 'name', 'class')
       ->where('status', 'active')
       ->get();
-    
-      $groupedStudents = $students->groupBy('class');
 
-      $groupedStudentsWithId = $groupedStudents->map(function ($students, $className){
-        $classId = strtolower(str_replace(' ', '-', $className));
-        
-        return [
-          'classId' => $classId,
-          'students' => $students
-        ];
-      });
-      
-      return $groupedStudentsWithId;
+    $groupedStudents = $students->groupBy('class');
+
+    $groupedStudentsWithId = $groupedStudents->map(function ($students, $className) {
+      $classId = strtolower(str_replace(' ', '-', $className));
+
+      return [
+        'classId' => $classId,
+        'students' => $students
+      ];
+    });
+
+    return $groupedStudentsWithId;
   }
 
-  public function SearchStudent(Request $request){
+  public function SearchStudent(Request $request)
+  {
     $search = $request->input('search', '');
     $query = Students::select('id', 'name', 'username', 'class', 'stream');
 
-    if($search){
-      $query->where(function($q) use ($search){
+    if ($search) {
+      $query->where(function ($q) use ($search) {
         $q->where('name', 'LIKE', "%{$search}%")
           ->orWhere('username', 'LIKE', "%{$search}%")
           ->orWhere('class', 'LIKE', "%{$search}%")
@@ -155,26 +160,27 @@ class TeachersController extends Controller{
     return response()->json($students);
   }
 
-  public function GetStudentDetails(Request $request){
+  public function GetStudentDetails(Request $request)
+  {
     $student_id = $request->validate([
       'id' => 'required|numeric'
     ]);
     $student_id = (int) $student_id['id'];
 
     $student = Students::select('id', 'name', 'username', 'class', 'stream', 'status')
-    // ->where('status', 'active')
-    ->where('id', $student_id)
-    ->first();
+      // ->where('status', 'active')
+      ->where('id', $student_id)
+      ->first();
 
     $transactions = Transaction::with('creator', 'student', 'meritPointRule')
-    ->orderBy('created_at', 'desc')
-    ->limit(3)
-    ->where('receiver_id', $student_id)
-    ->get()
-    ->map(function ($activity) {
-      $activity->formattedCreatedAt = $activity->created_at->format('H:i:s d/n/y l');
-      return $activity;
-    });
+      ->orderBy('created_at', 'desc')
+      ->limit(3)
+      ->where('receiver_id', $student_id)
+      ->get()
+      ->map(function ($activity) {
+        $activity->formattedCreatedAt = $activity->created_at->format('H:i:s d/n/y l');
+        return $activity;
+      });
     $titles = [];
     $diffInWordsList = [];
     $ruleNames = [];
@@ -185,10 +191,10 @@ class TeachersController extends Controller{
       $now = Carbon::now();
       $diffInWords = $databaseDateTime->diffForHumans($now);
       $diffInWordsList[] = $diffInWords;
-  
+
       $titles[] = $transaction->operation_type == 'add' ? $transaction->points . " point(s) awarded" : $transaction->points . " point(s) deducted";
       $descriptions[] = $transaction->meritPointRule->description ?? "N/A";
-  
+
       $ruleNames[] = $transaction->meritPointRule->name ?? "N/A";
       $cardSignature = "From " . ($transaction->creator ? $transaction->creator->name : 'Unknown') . " to " . ($transaction->student ? $transaction->student->name : 'Unknown');
       $cardSignatures[] = $cardSignature;
@@ -214,48 +220,47 @@ class TeachersController extends Controller{
     ]);
   }
 
-  public function UpdatePoint(Request $request, $receiver_id){
+  public function UpdatePoint(Request $request, $receiver_id)
+  {
     $fields = $request->validate([
-      'operation' => 'required|string|in:add,deduct', 
-      'points' => 'required|numeric', 
-      'description' => 'nullable|string', 
-      'receiver_id' => 'numeric|required', 
+      'operation' => 'required|string|in:add,deduct',
+      'points' => 'required|numeric',
+      'description' => 'nullable|string',
+      'receiver_id' => 'numeric|required',
       'rule_id' => 'numeric|required'
     ]);
 
     $token = $request->cookie('auth_token');
     $accessToken = PersonalAccessToken::findToken($token);
-    if(!$accessToken){
+    if (!$accessToken) {
       return response()->json(['error' => 'Unauthorized'], 401);
     }
     // insert a new record, transactions table
     $created_by = $accessToken->tokenable_id;
     $created_by_type = get_class($accessToken->tokenable);
     $transaction = [
-      'created_by_id' => $created_by, 
-      'created_by_type' => $created_by_type, 
+      'created_by_id' => $created_by,
+      'created_by_type' => $created_by_type,
       'receiver_id' => $receiver_id,
       'rule_id' => $fields['rule_id'],
-      'description' => $fields['description'] ?? 'No description provided', 
-      'points' => $fields['points'], 
-      'operation_type' => $fields['operation'], 
-      'date' => now()->format('Y-m-d'), 
+      'description' => $fields['description'] ?? 'No description provided',
+      'points' => $fields['points'],
+      'operation_type' => $fields['operation'],
+      'date' => now()->format('Y-m-d'),
     ];
     Transaction::create($transaction);
     // update points table
     $pointsToAdjust = $fields['points'];
     $pointsRecord = Points::where('receiver', $receiver_id)->first();
 
-    if($pointsRecord){
-      if($fields['operation'] == 'add'){
+    if ($pointsRecord) {
+      if ($fields['operation'] == 'add') {
         $pointsRecord->total_points += $pointsToAdjust;
-      }
-      elseif($fields['operation'] == 'deduct'){
+      } elseif ($fields['operation'] == 'deduct') {
         $pointsRecord->total_points -= $pointsToAdjust;
       }
       $pointsRecord->save();
-    }
-    else{
+    } else {
       return response()->json(['error' => 'Receiver not found'], 404);
     }
 
@@ -264,5 +269,100 @@ class TeachersController extends Controller{
     return response()->json([
       'currentPoint' => $currentPoint
     ]);
+  }
+
+  public function GetSetting(Request $request)
+  {
+    $token = $request->cookie('auth_token');
+    $accessToken = PersonalAccessToken::findToken($token);
+    $tokenableId = $accessToken->tokenable_id;
+    
+    $settings = Teachers::where('id', $tokenableId)
+    ->select(
+      'id',
+      'email',
+      'name',
+      // 'password',
+      'description',
+      'profile_pic'
+    )->get();
+
+    return response($settings, 200);
+  }
+
+  public function ChangeBasicInfo(Request $request)
+  {
+    // doesn't update profile pic
+    $fields = $request->validate([
+      'name' => 'required|string',
+      'email' => 'required|email',
+      'description' => 'nullable|string'
+    ]);
+
+    $token = $request->cookie('auth_token');
+    $accessToken = PersonalAccessToken::findToken($token);
+    if (!$accessToken) {
+      return response()->json(['error' => 'Unauthorized'], 401);
+    }
+    $tokenableId = $accessToken->tokenable_id;
+
+    $teacher = Teachers::find($tokenableId);
+    if (!$teacher) {
+      return response()->json(['error' => 'Teacher not found'], 404);
+    }
+
+    // update teacher's information
+    $teacher->name = $fields['name'];
+    $teacher->email = $fields['email'];
+    $teacher->description = $fields['description'];
+
+    $teacher->save();
+
+    return response()->json([
+      // 'message' => 'Updated successfully', 
+      'teacher' => [
+        'id' => $teacher->id,
+        'name' => $teacher->name,
+        'email' => $teacher->email,
+        'description' => $teacher->description,
+      ]
+    ], 200);
+  }
+
+  public function UpdatePassword(Request $request)
+  {
+    $fields = $request->validate([
+      'old_password' => 'required|string',
+      'new_password' => 'required|string|min:6|confirmed'
+    ]);
+
+    $token = $request->cookie('auth_token');
+    $accessToken = PersonalAccessToken::findToken($token);
+    if (!$accessToken) {
+      return response()->json(['error' => 'Unauthorized'], 401);
+    }
+    $tokenableId = $accessToken->tokenable_id;
+
+    $teacher = Teachers::find($tokenableId);
+    if (!$teacher) {
+      return response()->json(['error' => 'Teacher not found'], 404);
+    }
+
+    if (!Hash::check($fields['old_password'], $teacher->password)) {
+      return response()->json(['error' => 'Old password is incorrect'], 401);
+    }
+    elseif (Hash::check($fields['new_password'], $teacher->password)) {
+      return response(['message' => 'New password cannot be the same as the current password'], 400);
+    }
+    else {
+      Teachers::where('id', $tokenableId)
+      ->update(['password' => Hash::make($fields['new_password'])]);
+      if($accessToken){
+        $accessToken->delete();
+
+        cookie()->queue(cookie()->forget('auth_token'));
+      }
+      return response(['message' => 'Password updated successfully. Please log in again.'], 200);
+    }
   }
 }

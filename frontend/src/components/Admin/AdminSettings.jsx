@@ -511,7 +511,7 @@ function AdminSettings({ setIsLoggedIn }) {
             <div className="popup-content p-4 bg-white rounded shadow">
               <h5>Confirm password update</h5>
               <p>Are you sure you want to update your password?</p>
-              <p className="fw-light fst-italic">You will be automatically logged out once you updated your password.</p>
+              <p className="fw-light fst-italic text-danger">You will be automatically logged out once you updated your password.</p>
               <div className="d-flex justify-content-end">
                 <button 
                 className="btn btn-primary me-3"
