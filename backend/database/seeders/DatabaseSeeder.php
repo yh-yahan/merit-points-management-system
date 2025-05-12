@@ -23,11 +23,12 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
           // AdminSeeder::class,
-          // StudentsSeeder::class,
-          // TeachersSeeder::class,
+          // TeachersSeeder::class, 
+          // StudentsSeeder::class, 
           // MeritPointsRulesSeeder::class, 
           // TransactionSeeder::class, 
-          // PointsSeeder::class, 
+          PointsSeeder::class, 
+          AdminSettingSeeder::class, 
         ]);
     }
 }

@@ -17,19 +17,19 @@ class MeritPointsRulesSeeder extends Seeder
         [
             'name' => 'Score A*',
             'description' => 'Scored A* in exam',
-            'points' => 5,
+            'points' => 10,
             'operation_type' => 'add',
         ],
         [
             'name' => 'Score A',
             'description' => 'Scored A in exam',
-            'points' => 3,
+            'points' => 5,
             'operation_type' => 'add',
         ],
         [
             'name' => 'Late to class',
             'description' => 'Late to class (more than twice per month)',
-            'points' => 3,
+            'points' => 1,
             'operation_type' => 'deduct',
         ],
         [

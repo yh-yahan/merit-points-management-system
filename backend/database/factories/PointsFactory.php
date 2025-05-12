@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Students;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,11 +23,22 @@ class PointsFactory extends Factory
         $numStudents = count($studentIds);
 
         if(count($studentIds) > 0){
-            $receiver = $studentIds[self::$currentIndex];
+            $receiverId = $studentIds[self::$currentIndex];
             self::$currentIndex = (self::$currentIndex + 1) % $numStudents;
+
+            $transactions = Transaction::where('receiver_id', $receiverId)->get();
+            $total_points = $transactions->reduce(function ($carry, $transaction) {
+                if ($transaction->operation_type === 'add') {
+                    return $carry + $transaction->points;
+                } elseif ($transaction->operation_type === 'deduct') {
+                    return $carry - $transaction->points;
+                }
+                return $carry;
+            }, 0);
+
             return [
-                'receiver' => $receiver,
-                'total_points' => $this->faker->numberBetween(50, 300),
+                'receiver' => $receiverId,
+                'total_points' => $total_points,
             ];
         }
         else{

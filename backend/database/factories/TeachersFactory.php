@@ -20,8 +20,9 @@ class TeachersFactory extends Factory
         return [
           'name' => fake()->lastName(),
           'email' => fake()->unique()->safeEmail(), 
-          'password' => Hash::make('teacher'), 
-          'description' => $this->faker->sentence,
+          'password' => Hash::make('teacherPassword'), 
+          'description' => $this->faker->sentence, 
+          'profile_pic' => "", 
         ];
     }
 }

@@ -26,7 +26,7 @@ class StudentsFactory extends Factory
           'name' => $this->faker->lastName(), 
           'username' => $this->faker->userName(), 
           'email' => $this->faker->unique()->safeEmail(), 
-          'password' => Hash::make('student'),
+          'password' => Hash::make('studentPassword'),
           'class' => $this->faker->randomElement(["Year 7B", "Year 8A", "Year 9", "Year 10"]),
           'stream' => $this->faker->randomElement(["Science", "Business", "Art"]), 
           'status' => $this->faker->randomElement(["active", "inactive", "graduated"]), 

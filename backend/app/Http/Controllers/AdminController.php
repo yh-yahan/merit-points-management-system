@@ -32,7 +32,7 @@ class AdminController extends Controller
 
       // setup and assign default settings for the admin
       AdminSetting::insert([
-        ['setting_name' => 'initial_point', 'setting_value' => 10], 
+        ['setting_name' => 'initial_point', 'setting_value' => 60], 
         ['setting_name' => 'disable_leaderboard','setting_value' => false], 
         ['setting_name' => 'leaderboard_visibility', 'setting_value' => 'username'],
         ['setting_name' => 'primary_color', 'setting_value' => '#0275d8'], 
