@@ -59,7 +59,13 @@ class LeaderboardController extends Controller
 
                 $weeklyLeaderboard = Transaction::whereBetween('date', [$startOfWeek, $endOfWeek])
                     ->groupBy('receiver_id')
-                    ->select('receiver_id', DB::raw('SUM(points) as total_points'))
+                    ->select('receiver_id', DB::raw("
+                        SUM(CASE 
+                            WHEN operation_type = 'add' THEN points 
+                            WHEN operation_type = 'deduct' THEN -points 
+                            ELSE 0 
+                        END) as total_points
+                    "))
                     ->when($classFilter !== 'all', function ($query) use ($classFilter) {
                         return $query->whereHas('student', function ($query) use ($classFilter) {
                             $query->where('class', $classFilter);
@@ -91,7 +97,13 @@ class LeaderboardController extends Controller
 
                 $monthlyLeaderboard = Transaction::whereBetween('date', [$startOfMonth, $endOfMonth])
                     ->groupBy('receiver_id')
-                    ->select('receiver_id', DB::raw('SUM(points) as total_points'))
+                    ->select('receiver_id', DB::raw("
+                        SUM(CASE 
+                            WHEN operation_type = 'add' THEN points 
+                            WHEN operation_type = 'deduct' THEN -points 
+                            ELSE 0 
+                        END) as total_points
+                    "))
                     ->when($classFilter !== 'all', function ($query) use ($classFilter) {
                         return $query->whereHas('student', function ($query) use ($classFilter) {
                             $query->where('class', $classFilter);

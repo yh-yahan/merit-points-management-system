@@ -95,7 +95,8 @@ function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }){
                       <input 
                       type={showPassword ? 'text' : 'password'} 
                       className="form-control" 
-                      onChange={(e) => setPassword(e.target.value)}/>
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete='new-password'/>
                       <label>Password</label>
                       <i
                         onClick={togglePasswordVisibility}
@@ -107,7 +108,8 @@ function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }){
                       <input 
                       type={showPassword ? 'text' : 'password'} 
                       className="form-control" 
-                      onChange={(e) => setPasswordConfirm(e.target.value)}/>
+                      onChange={(e) => setPasswordConfirm(e.target.value)}
+                      autoComplete='new-password'/>
                       <label>Confirm password</label>
                     </div>
                     {passwordError && <div className="text-danger mb-3">{passwordError}</div>}

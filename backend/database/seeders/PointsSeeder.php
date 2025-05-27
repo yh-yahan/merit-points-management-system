@@ -14,5 +14,9 @@ class PointsSeeder extends Seeder
     public function run(): void
     {
       Points::factory()->count(40)->create();
+      // Points::factory()->create([
+      //   'receiver' => 41,
+      //   'total_points' => 60,
+      // ]);
     }
 }

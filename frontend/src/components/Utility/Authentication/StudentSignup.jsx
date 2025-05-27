@@ -123,7 +123,8 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
                         className="form-control"
                         id="password"
                         required
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => setPassword(e.target.value)} 
+                        autoComplete='new-password'
                       />
                       <label>Password</label>
                       <i
@@ -137,6 +138,7 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
                       type={showPassword ? 'text' : 'password'}
                       className="form-control" 
                       onChange={(e) => setPasswordConfrim(e.target.value)} 
+                      autoComplete='new-password'
                       />
                       <label>Confirm password</label>
                       {/* <i
