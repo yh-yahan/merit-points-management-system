@@ -58,6 +58,10 @@ Route::prefix('v1')->group(function (){
     Route::post('setting', [TeachersController::class, 'ChangeBasicInfo']);
     Route::patch('update-password', [TeachersController::class, 'UpdatePassword']);
   });
+
+  Route::prefix('student')->group(function (){
+    Route::get('dashboard', [StudentsController::class, 'Dashboard']);
+  });
   
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
 
