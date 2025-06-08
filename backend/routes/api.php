@@ -10,6 +10,7 @@ use App\Http\Controllers\TeachersController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\LogoController;
+use App\Models\Students;
 
 Route::prefix('v1')->group(function (){
   Route::post('check-auth', [LoginController::class, 'CheckAuth']);
@@ -61,6 +62,7 @@ Route::prefix('v1')->group(function (){
 
   Route::prefix('student')->group(function (){
     Route::get('dashboard', [StudentsController::class, 'Dashboard']);
+    Route::get('leaderboard', [StudentsController::class, 'Leaderboard']);
   });
   
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);

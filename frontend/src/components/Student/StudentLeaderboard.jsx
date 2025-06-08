@@ -1,77 +1,91 @@
+import { useState, useEffect } from 'react';
+import api from '../../api';
 import badge1 from '../../assets/1.png';
 import badge2 from '../../assets/2.png';
 import badge3 from '../../assets/3.png';
 
 function StudentLeaderboard() {
+  const [currentClass, setCurrentClass] = useState("");
+  const [leaderboardType, setLeaderboardType] = useState('alltime');
+  const [classFilter, setClassFilter] = useState('all');
+  const [leaderboard, setLeaderboard] = useState({
+    students: [
+      {}
+    ]
+  });
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    async function fetchLeaderboard() {
+      try {
+        const response = await api.get(`student/leaderboard?leaderboard=${leaderboardType}&classfilter=${classFilter}`);
+        const data = response.data;
+
+        setLeaderboard(data);
+        setCurrentClass(data.studentClass);
+      }
+      catch (err) {
+        if (err.response.status === 403){
+          setLeaderboard({
+            students: []
+          });
+          setError(err.response.data.message);
+        }
+      }
+    }
+
+    fetchLeaderboard();
+  }, [leaderboardType, classFilter]);
+
   return (
     <div className="container-fluid ms-5 mt-3">
       <div className="d-flex justify-content-evenly align-items-center row me-5">
-        <button 
-        className="btn btn-primary col-4 rounded-0 border-end">All time</button>
-        <button 
-        className="btn btn-primary col-4 rounded-0 border-end">Weekly</button>
-        <button 
-        className="btn btn-primary col-4 rounded-0">Monthly</button>
+        <button
+          className="btn btn-primary col-4 rounded-0 border-end"
+          onClick={() => setLeaderboardType("alltime")}>All time</button>
+        <button
+          className="btn btn-primary col-4 rounded-0 border-end"
+          onClick={() => setLeaderboardType("weekly")}>Weekly</button>
+        <button
+          className="btn btn-primary col-4 rounded-0"
+          onClick={() => setLeaderboardType("monthly")}>Monthly</button>
       </div>
       <div className="d-flex justify-content-center align-items-center mt-3">
-        <select className="form-select mt-3" style={{ width: "200px" }}>
+        <select className="form-select mt-3" style={{ width: "200px" }} onChange={(e) => setClassFilter(e.target.value)}>
           <option value="all">All</option>
-          <option value="myClass">My class</option>
+          <option value={currentClass}>
+            My class ({currentClass})
+          </option>
         </select>
       </div>
       <div className="container mt-3">
         <div className="row d-flex">
-          <div className="col-12 d-flex align-items-center py-4 px-3">
-            <div className="me-2" style={{ width: '50px' }}>
-              <img className="img-fluid" src={badge1} />
-            </div>
-            <div className="flex-grow-1">
-              <span>studentName</span>
-              <div className="text-secondary small"><span>Year 7A</span></div>
-            </div>
-            <div className="me-3"><span>321 P</span></div>
-          </div>
-          <div className="col-12 d-flex align-items-center py-4 px-3">
-            <div className="me-2" style={{ width: '50px' }}>
-              <img className="img-fluid" src={badge2} />
-            </div>
-            <div className="flex-grow-1">
-              <span>studentName</span>
-              <div className="text-secondary small"><span>Year 7B</span></div>
-            </div>
-            <div className="me-3"><span>315 P</span></div>
-          </div>
-          <div className="col-12 d-flex align-items-center py-4 px-3">
-            <div className="me-2" style={{ width: '50px' }}>
-              <img className="img-fluid" src={badge3} />
-            </div>
-            <div className="flex-grow-1">
-              <span>studentName</span>
-              <div className="text-secondary small"><span>Year 8</span></div>
-            </div>
-            <div className="me-3"><span>312 P</span></div>
-          </div>
-          <div className="col-12 d-flex align-items-center py-4 px-3">
-            <div className="ms-3" style={{ width: '40px' }}>
-              <span>4</span>
-            </div>
-            <div className="flex-grow-1">
-              <span>studentName</span>
-              <div className="text-secondary small"><span>Year 7A</span></div>
-            </div>
-            <div className="me-3"><span>312 P</span></div>
-          </div>
-          <div className="col-12 d-flex align-items-center py-4 px-3" 
-          style={{backgroundColor: "#e8e8e8"}}>
-            <div className="ms-3" style={{ width: '40px' }}>
-              <span>5</span>
-            </div>
-            <div className="flex-grow-1">
-              <span>studentName</span>
-              <div className="text-secondary small"><span>Year 9A</span></div>
-            </div>
-            <div className="me-3"><span>210 P</span></div>
-          </div>
+        { error && <div className="alert alert-danger me-5 mb-5">{error}</div> }
+        { leaderboard.students.length === 0 && <p className="text-danger">No data available</p>}
+          {
+            leaderboard.students.map((student) => (
+              <div
+                className="col-12 d-flex align-items-center py-4 px-3"
+                style={{ backgroundColor: student.is_current_user ? "#e8e8e8" : "" }}
+              >
+                <div className="me-2" style={{ width: '50px' }}>
+                  {
+                    student.rank == 1 ? <img className="img-fluid" src={badge1} /> :
+                    student.rank == 2 ? <img className="img-fluid" src={badge2} /> :
+                    student.rank == 3 ? <img className="img-fluid" src={badge3} /> :
+                    <div className="ms-3" style={{ width: '40px' }}>
+                      <span>{student.rank}</span>
+                    </div>
+                  }
+                </div>
+                <div className="flex-grow-1">
+                  <span>{student.name_or_username}</span>
+                  <div className="text-secondary small"><span>{student.class}</span></div>
+                </div>
+                <div className="me-3"><span>{student.points} P</span></div>
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
