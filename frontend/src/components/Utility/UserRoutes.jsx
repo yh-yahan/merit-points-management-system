@@ -8,7 +8,7 @@ function UserRoutes({ userRole, setIsLoggedIn }){
     <Routes>
       {userRole === "admin" && <Route path="/*" element={<Admin setIsLoggedIn={setIsLoggedIn} />} />}
       {userRole === "teacher" && <Route path="/*" element={<Teacher setIsLoggedIn={setIsLoggedIn} />} />}
-      {userRole === "student" && <Route path="/*" element={<Student />} />}
+      {userRole === "student" && <Route path="/*" element={<Student setIsLoggedIn={setIsLoggedIn} />} />}
     </Routes>
   );
 }

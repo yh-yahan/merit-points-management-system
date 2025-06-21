@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Students;
 use App\Models\Transaction;
 use App\Models\AdminSetting;
+use App\Models\StudentSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -284,5 +285,141 @@ class StudentsController extends Controller
         'studentClass' => $studentClass,
       ]);
     }
+  }
+
+  public function GetSettings(Request $request)
+  {
+    $token = $request->cookie('auth_token');
+    $accessToken = PersonalAccessToken::findToken($token);
+    $studentId = $accessToken->tokenable_id;
+
+    $leaderboard_settings = [];
+    $allow_student_opt_out_leaderboard = AdminSetting::where('setting_name', 'student_opt_out_leaderboard')
+      ->first();
+    $leaderboard_visibility = AdminSetting::where('setting_name', 'leaderboard_visibility')
+      ->first();
+
+    $optOutEnabled = $allow_student_opt_out_leaderboard->setting_value === "1";
+    $visibilityEnabled = $leaderboard_visibility->setting_value === "choose";
+    $student_setting = StudentSetting::where('student_id', $studentId)->first();
+
+    if ($optOutEnabled && $visibilityEnabled) {
+      $opt_out_lb = $student_setting->opt_out_lb;
+      $lb_visibility = $student_setting->name_preference_lb;
+
+      $leaderboard_settings = [
+        'opt_out_lb' => $opt_out_lb,
+        'lb_visibility' => $lb_visibility
+      ];
+    } elseif ($optOutEnabled) {
+      $opt_out_lb = $student_setting->opt_out_lb;
+      $leaderboard_settings = [
+        'opt_out_lb' => $opt_out_lb,
+      ];
+    } elseif ($visibilityEnabled) {
+      $lb_visibility = $student_setting->name_preference_lb;
+
+      $leaderboard_settings = [
+        'lb_visibility' => $lb_visibility
+      ];
+    } else {
+      $leaderboard_settings = [];
+    }
+
+    $student = Students::select('name', 'username', 'email', 'class', 'stream')
+      ->where('id', $studentId)
+      ->first();
+
+    return response()->json([
+      'leaderboard_settings' => $leaderboard_settings,
+      'student' => $student,
+    ]);
+  }
+
+  public function Setting(Request $request)
+  {
+    $fields = $request->validate([
+      'opt_out_lb' => 'required|boolean',
+      'name_preference_lb' => 'required|in:name,username'
+    ]);
+
+    $token = $request->cookie('auth_token');
+    $accessToken = PersonalAccessToken::findToken($token);
+    $studentId = $accessToken->tokenable_id;
+
+    $setting = StudentSetting::where('student_id', $studentId)->first();
+
+    if ($setting) {
+      $setting->update([
+        'opt_out_lb' => $fields['opt_out_lb'],
+        'name_preference_lb' => $fields['name_preference_lb']
+      ]);
+    } else {
+      $setting = StudentSetting::create($fields);
+    }
+
+    return response()->json(['setting' => $setting]);
+  }
+
+  public function ChangeBasicInfo(Request $request)
+  {
+    $fields = $request->validate([
+      'student_name' => 'required',
+      'student_username' => 'required',
+      'student_email' => 'required|email',
+      'student_class' => 'required',
+      'student_stream' => 'required',
+    ]);
+
+    $token = $request->cookie('auth_token');
+    $accessToken = PersonalAccessToken::findToken($token);
+    $studentId = $accessToken->tokenable_id;
+
+    Students::where('id', $studentId)
+      ->update([
+        'name' => $fields['student_name'],
+        'username' => $fields['student_username'],
+        'email' => $fields['student_email'],
+        'class' => $fields['student_class'],
+        'stream' => $fields['student_stream'],
+      ]);
+
+    $student = Students::select('id', 'name', 'username', 'email', 'class', 'stream')
+      ->where('id', $studentId)->get();
+
+    return response()->json([
+      'student' => $student,
+    ]);
+  }
+
+  public function UpdatePassword(Request $request)
+  {
+    $fields = $request->validate([
+      'current_password' => 'required',
+      'password' => 'required|confirmed|string|min:6'
+    ]);
+
+    $token = $request->cookie('auth_token');
+    $accessToken = PersonalAccessToken::findToken($token);
+    $student_id = $accessToken->tokenable_id;
+
+    $student_password = Students::where('id', $student_id)->value('password');
+
+    if (!Hash::check($fields['current_password'], $student_password)) {
+      return response(['message' => 'Incorrect password'], 401);
+    } elseif (Hash::check($fields['password'], $student_password)) {
+      return response(['message' => 'New password cannot be the same as the current password'], 400);
+    }
+
+    Students::where('id', $student_id)
+      ->update(['password' => Hash::make($fields['password'])]);
+
+    if ($accessToken) {
+      $accessToken->delete();
+
+      cookie()->queue(cookie()->forget('auth_token'));
+    }
+
+    return response(['message' => 'Password updated successfully. Please log in again.'], 200);
   }
 }

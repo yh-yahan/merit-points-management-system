@@ -4,13 +4,16 @@ import StudentSettings from './StudentSettings';
 import Leaderboard from './StudentLeaderboard';
 import { Routes, Route } from "react-router-dom";
 
-function Student(){
+function Student({ setIsLoggedIn }){
   return (
     <>
       <Routes>
         <Route path="/" element={<StudentDashboard />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/settings" element={<StudentSettings />} />
+        <Route 
+          path="/settings" 
+          element={<StudentSettings setIsLoggedIn={setIsLoggedIn} />} 
+        />
       </Routes>
     </>
   );

@@ -15,15 +15,15 @@ class StudentsSeeder extends Seeder
     public function run(): void
     {
         Students::factory()->count(40)->create();
-        // Students::factory()->create([
-        //     'name' => 'studentName',
-        //     'username' => 'studentUsername',
-        //     'email' => 'studentEmail@example.com', 
-        //     'password' => Hash::make('teacherPassword'), 
-        //     'class' => 'year 11',
-        //     'stream' => 'Science', 
-        //     'status' => "active", 
-        //     'date_joined' => date("Y-m-d"),
-        // ]);
+        Students::factory()->create([
+            'name' => 'studentName',
+            'username' => 'studentUsername',
+            'email' => 'studentEmail@example.com', 
+            'password' => Hash::make('studentPassword'), 
+            'class' => 'year 11',
+            'stream' => 'Science', 
+            'status' => "active", 
+            'date_joined' => date("Y-m-d"),
+        ]);
     }
 }

@@ -12,23 +12,30 @@ class Students extends Authenticatable
   use HasApiTokens;
 
   protected $fillable = [
-    'name', 
-    'username', 
-    'email', 
-    'password', 
-    'class', 
-    'stream', 
+    'name',
+    'username',
+    'email',
+    'password',
+    'class',
+    'stream',
     'date_joined',
     'status',
   ];
 
-    use HasFactory;
+  use HasFactory;
 
-    public function transaction(){
-      return $this->hasMany(Transaction::class, 'receiver_id');
-    }
+  public function transaction()
+  {
+    return $this->hasMany(Transaction::class, 'receiver_id');
+  }
 
-    public function points(){
-      return $this->hasOne(Points::class, 'id');
-    }
+  public function points()
+  {
+    return $this->hasOne(Points::class, 'id');
+  }
+
+  public function setting()
+  {
+    return $this->hasOne(StudentSetting::class);
+  }
 }

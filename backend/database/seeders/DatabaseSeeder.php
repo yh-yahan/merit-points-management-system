@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
           TransactionSeeder::class, 
           PointsSeeder::class, 
           AdminSettingSeeder::class, 
+          StudentSettingSeeder::class,
         ]);
     }
 }

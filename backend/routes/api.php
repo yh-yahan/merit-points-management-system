@@ -63,6 +63,10 @@ Route::prefix('v1')->group(function (){
   Route::prefix('student')->group(function (){
     Route::get('dashboard', [StudentsController::class, 'Dashboard']);
     Route::get('leaderboard', [StudentsController::class, 'Leaderboard']);
+    Route::get('settings', [StudentsController::class, 'GetSettings']);
+    Route::post('settings', [StudentsController::class, 'Setting']);
+    Route::patch('user-info',[StudentsController::class, 'ChangeBasicInfo']);
+    Route::patch('update-password', [StudentsController::class, 'UpdatePassword']);
   });
   
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
