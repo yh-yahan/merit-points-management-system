@@ -183,7 +183,7 @@ class AdminController extends Controller
       $totalDeducted = array_column($monthlyPoints, 'total_deducted');
 
       // bar chart(top 5 most awarded point rules every mouth)
-      $topAwarded = Transaction::select(
+      $topAwardedRaw = Transaction::select(
         DB::raw('MONTH(date) as month'),
         'transaction.rule_id',
         DB::raw('SUM(transaction.points) as total_points'),
@@ -191,12 +191,16 @@ class AdminController extends Controller
       )
       ->join('merit_points_rules', 'transaction.rule_id', '=', 'merit_points_rules.id')
       ->where('transaction.operation_type', 'add')
+      ->where('merit_points_rules.operation_type', 'add')
       ->whereYear('transaction.date', $currentYear)
       ->groupBy(DB::raw('MONTH(date)'), 'rule_id', 'merit_points_rules.name')
       ->orderBy(DB::raw('MONTH(date)'))
       ->get()
       ->groupBy('month');
       $barChartData = [];
+      $topAwarded = $topAwardedRaw->map(function ($items) {
+        return $items->sortByDesc('total_points')->take(5);
+      });
       foreach($topAwarded as $month => $items){
         foreach($items as $item){
           // Initialize the month entry for this name if not set
@@ -213,7 +217,7 @@ class AdminController extends Controller
         $barChartDataAwarded[$formattedKey] = $data;
       }
       // bar chart(top 5 most deducted point rules every mouth)
-      $topDeducted = Transaction::select(
+      $topDeductedRaw = Transaction::select(
         DB::raw('MONTH(date) as month'),
         'transaction.rule_id',
         DB::raw('SUM(transaction.points) as total_points'),
@@ -221,6 +225,7 @@ class AdminController extends Controller
       )
       ->join('merit_points_rules', 'transaction.rule_id', '=', 'merit_points_rules.id')
       ->where('transaction.operation_type', 'deduct')
+      ->where('merit_points_rules.operation_type', 'deduct')
       ->whereYear('transaction.date', $currentYear)
       ->groupBy(DB::raw('MONTH(date)'), 'rule_id', 'merit_points_rules.name')
       ->orderBy(DB::raw('MONTH(date)'))
@@ -228,6 +233,9 @@ class AdminController extends Controller
       ->groupBy('month');
 
       $barChartData2 = [];
+      $topDeducted = $topDeductedRaw->map(function ($items) {
+        return $items->sortByDesc('total_points')->take(5);
+      });
       foreach($topDeducted as $month => $items){
         foreach($items as $item){
           // Initialize the month entry for this name if not set
@@ -239,7 +247,7 @@ class AdminController extends Controller
         }
       }
       $barChartDataDeducted = [];
-      foreach($barChartData as $name => $data) {
+      foreach($barChartData2 as $name => $data) {
         $formattedKey = $name;
         $barChartDataDeducted[$formattedKey] = $data;
       }

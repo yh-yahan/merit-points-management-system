@@ -9,6 +9,7 @@ use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TeachersController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ColorSchemeController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\LogoController;
 use App\Models\Students;
 
@@ -47,6 +48,8 @@ Route::prefix('v1')->group(function (){
     
     Route::get('invitation-code', [AdminController::class, 'GetInvitationCode']);
     Route::delete('invitation-code/{id}', [AdminController::class, 'DeleteInvitationCode']);
+
+    Route::get('export/chart', [ExportController::class, 'AdminChartExport']);
   });
 
   Route::prefix('teacher')->group(function (){
