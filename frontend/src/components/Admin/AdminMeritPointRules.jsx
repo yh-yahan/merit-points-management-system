@@ -11,17 +11,23 @@ function AdminMeritPointRules() {
   const [initialPoints, setInitialPoints] = useState('');
   const [hasUserChanged, setHasUserChanged] = useState(false);
   const [pointThreshold, setPointThreshold] = useState({});
+  const [newRuleName, setNewRuleName] = useState('');
+  const [newRuleDescription, setNewRuleDescription] = useState('');
+  const [newRulePoints, setNewRulePoints] = useState();
+  const [addRuleDupErr, setAddRuleDupErr] = useState('');
+  const [addDuplicateRule, setAddDuplicateRule] = useState(false);
+  const [addRuleErr, setAddRuleErr] = useState('');
 
   useEffect(() => {
-    async function fetchData(){
+    async function fetchData() {
       const response = await api.get(`/admin/manage-merit-points?search=${search}`);
       const data = response.data;
       const transformedData = response.data.rules.map(rule => ({
-        id: rule.id, 
-        name: rule.name, 
-        description: rule.description, 
-        points: rule.operation_type == "add" ? "+" + rule.points : "-" + rule.points, 
-        operation_type: rule.operation_type, 
+        id: rule.id,
+        name: rule.name,
+        description: rule.description,
+        points: rule.operation_type == "add" ? "+" + rule.points : "-" + rule.points,
+        operation_type: rule.operation_type,
       }));
       setTotalRules(data.totalRules);
       setRules(transformedData);
@@ -45,23 +51,23 @@ function AdminMeritPointRules() {
   }, [initialPoints, hasUserChanged]);
 
   useEffect(() => {
-    async function fetchInitial(){
-      try{
+    async function fetchInitial() {
+      try {
         const response = await api.get('admin/initial');
         const initial = response.data;
         setInitialPoints(initial.toString());
       }
-      catch(err){
+      catch (err) {
         console.log(err);
       }
     }
 
-    async function fetchPointThreshold(){
-      try{
+    async function fetchPointThreshold() {
+      try {
         const response = await api.get('admin/point-threshold');
         setPointThreshold(response.data);
       }
-      catch(err){
+      catch (err) {
         console.log(err);
       }
     }
@@ -69,6 +75,43 @@ function AdminMeritPointRules() {
     fetchInitial();
     fetchPointThreshold();
   }, []);
+
+  async function handleAddRule() {
+    if (!newRuleName.trim() || !newRuleDescription.trim() || newRulePoints === '' || isNaN(newRulePoints)) {
+      setAddRuleErr("Please fill out all fields before adding the rule.");
+      return;
+    }
+
+    try {
+      const response = await api.post('/admin/add-rule', {
+        ruleName: newRuleName,
+        description: newRuleDescription,
+        points: newRulePoints,
+        addDuplicate: addDuplicateRule,
+      });
+      const data = response.data;
+
+      const transformedData = response.data.rules.map(rule => ({
+        id: rule.id,
+        name: rule.name,
+        description: rule.description,
+        points: rule.operation_type == "add" ? "+" + rule.points : "-" + rule.points,
+        operation_type: rule.operation_type,
+      }));
+      setTotalRules(data.totalRules);
+      setRules(transformedData);
+
+      setNewRuleName('');
+      setNewRuleDescription('');
+      setNewRulePoints(0);
+    }
+    catch (err) {
+      console.log(err);
+      if (err.response.status == 409) {
+        setAddRuleDupErr(err.response.data.message);
+      }
+    }
+  }
 
   function handleInitialPointsChange(e) {
     const value = e.target.value;
@@ -166,13 +209,52 @@ function AdminMeritPointRules() {
                     <p className="text-danger">No match found</p>
                   </div>
                 }
+                <tr className="table-secondary">
+                  <td>#</td>
+                  <td>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="name"
+                      value={newRuleName}
+                      onChange={(e) => setNewRuleName(e.target.value)}
+                      placeholder="Rule name"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="description"
+                      value={newRuleDescription}
+                      onChange={(e) => setNewRuleDescription(e.target.value)}
+                      placeholder="Description"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="form-control"
+                      name="points"
+                      value={newRulePoints}
+                      onChange={(e) => setNewRulePoints(e.target.value)}
+                      placeholder="Points"
+                    />
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-success"
+                      onClick={handleAddRule}
+                    >
+                      <i className="bi bi-plus-circle"></i> Add Rule
+                    </button>
+                  </td>
+                </tr>
               </tbody>
             </table>
             <p className="fw-lighter">Total rules: {totalRules}</p>
           </div>
-          <div>
-            <a href="/add_rule" className="btn btn-primary">Add rule</a>
-          </div>
+
           <div>
             <h2 className="mt-5">Advanced</h2>
             <label className="mx-3">Initial points for newly joined students: </label>
@@ -186,27 +268,27 @@ function AdminMeritPointRules() {
             </div>
             <div className="mx-3 mt-5">
               <h2 className="mb-4">Point Threshold Actions</h2>
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Threshold (points)</th>
-                      <th>Actions</th>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Threshold (points)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pointThreshold.length > 0 ? pointThreshold.map((threshold, index) => (
+                    <tr key={index}>
+                      <td scope="row">{threshold.points}</td>
+                      <td>{threshold.actions}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {pointThreshold.length > 0 ? pointThreshold.map((threshold, index) => (
-                      <tr key={index}>
-                        <td scope="row">{threshold.points}</td>
-                        <td>{threshold.actions}</td>
-                      </tr>
-                    )) :
-                      <div className="mb-5">
-                        <p className="text-danger">Something went wrong.</p>
-                      </div>
-                    }
-                  </tbody>
-                </table>
-                <button className="btn btn-primary">Add new threshold</button>
+                  )) :
+                    <div className="mb-5">
+                      <p className="text-danger">Something went wrong.</p>
+                    </div>
+                  }
+                </tbody>
+              </table>
+              <button className="btn btn-primary">Add new threshold</button>
             </div>
           </div>
         </div>
@@ -221,6 +303,47 @@ function AdminMeritPointRules() {
               <div className="d-flex justify-content-end">
                 <button className="btn btn-danger me-3">Delete</button>
                 <button className="btn btn-secondary" onClick={() => setPopup(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        addRuleDupErr && (
+          <div className="popup d-flex justify-content-center align-items-center">
+            <div className="popup-content p-4 bg-white rounded shadow">
+              <h5>Duplicate rules</h5>
+              <p>{addRuleDupErr}</p>
+              <div className="d-flex justify-content-end">
+                <button
+                  className="btn btn-primary me-3"
+                  onClick={() => {
+                    handleAddRule();
+                    setAddDuplicateRule(true);
+                  }}
+                >Add anyway</button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setAddRuleDupErr(false)}
+                >Cancel</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        addRuleErr && (
+          <div className="popup d-flex justify-content-center align-items-center">
+            <div className="popup-content p-4 bg-white rounded shadow">
+              <h5>Error</h5>
+              <p>{addRuleErr}</p>
+              <div className="d-flex justify-content-end">
+                <button
+                  className="btn btn-primary" 
+                  onClick={() => setAddRuleErr('')}
+                >Ok</button>
               </div>
             </div>
           </div>

@@ -1,3 +1,4 @@
+import { Chart } from 'chart.js/auto'
 import { Line, Bar } from "react-chartjs-2"
 import { useState, useEffect, useRef } from "react"
 import jsPDF from 'jspdf';

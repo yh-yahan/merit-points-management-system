@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function (){
     Route::get('manage-students', [AdminController::class, 'ManageStudents']);
     Route::get('manage-teachers', [AdminController::class, 'ManageTeachers']);
     Route::get('manage-merit-points', [AdminController::class, 'ManageMeritPoints']);
+    Route::post('add-rule', [AdminController::class, 'AddMeritPointRule']);
     Route::post('initial', [AdminController::class, 'SetInitial']);
     Route::get('initial', [AdminController::class, 'GetInitial']);
     Route::get('point-threshold', [AdminController::class, 'GetPointThreshold']);

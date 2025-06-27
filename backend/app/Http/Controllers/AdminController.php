@@ -532,6 +532,43 @@ class AdminController extends Controller
       ]);
     }
 
+    public function AddMeritPointRule(Request $request) {
+      $fields = $request->validate([
+        'ruleName' => 'required|string', 
+        'description' => 'required|string', 
+        'points' => 'required|numeric', 
+        'addDuplicate' => 'required|boolean'
+      ]);
+
+      if(!$fields['addDuplicate']) {
+        $existingRule = MeritPointsRules::whereRaw('LOWER(name) = ?', [strtolower($fields['ruleName'])])->first();
+        if ($existingRule) {
+          return response()->json([
+            'message' => 'A rule with the name "' . $fields['ruleName'] . '" already exists.',
+          ], 409);
+        }
+      }
+
+      $points = abs($fields['points']);
+      $operation_type = $fields['points'] < 0 ? 'deduct' : 'add';
+
+      MeritPointsRules::create([
+        'name' => $fields['ruleName'], 
+        'description' => $fields['description'], 
+        'points' => $points, 
+        'operation_type' => $operation_type, 
+      ]);
+
+      $rules = MeritPointsRules::all();
+
+      $totalRules = MeritPointsRules::count();
+
+      return response()->json([
+        "totalRules" => $totalRules, 
+        "rules" => $rules
+      ]);
+    }
+
     public function SetInitial(Request $request){
       $validated = $request->validate([
         'initial' => 'required'
