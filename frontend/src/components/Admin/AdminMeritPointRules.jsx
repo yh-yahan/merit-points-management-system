@@ -4,6 +4,7 @@ import api from '../../api'
 function AdminMeritPointRules() {
   const [popup, setPopup] = useState(false);
   const [ruleToDelete, setRuleToDelete] = useState(null);
+  const [ruleIdToDelete, setRuleIdToDelete] = useState();
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState('');
   const [rules, setRules] = useState([]);
@@ -17,6 +18,9 @@ function AdminMeritPointRules() {
   const [addRuleDupErr, setAddRuleDupErr] = useState('');
   const [addDuplicateRule, setAddDuplicateRule] = useState(false);
   const [addRuleErr, setAddRuleErr] = useState('');
+  const [editingRuleId, setEditingRuleId] = useState(null);
+  const [editedRule, setEditedRule] = useState({});
+  const [editRuleError, setEditRuleError] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -113,6 +117,68 @@ function AdminMeritPointRules() {
     }
   }
 
+  async function handleSaveEdit(ruleId) {
+    setEditRuleError('');
+    try {
+      const response = await api.patch('/admin/edit-rule', {
+        id: ruleId,
+        name: editedRule.name,
+        description: editedRule.description,
+        points: editedRule.points
+      });
+      const updatedRule = response.data.rule;
+
+      const formattedRule = {
+        id: updatedRule.id,
+        name: updatedRule.name,
+        description: updatedRule.description,
+        points: updatedRule.operation_type === "add"
+          ? "+" + updatedRule.points
+          : "-" + updatedRule.points,
+        operation_type: updatedRule.operation_type,
+      };
+
+      setRules(prevRules =>
+        prevRules.map(rule => rule.id === ruleId ? formattedRule : rule)
+      );
+
+      setEditingRuleId(null);
+      setEditedRule({});
+    }
+    catch (err) {
+      console.log(err);
+      if (err.response && err.response.data && err.response.data.message) {
+        setEditRuleError(err.response.data.message);
+      } else {
+        setEditRuleError('An unexpected error occurred.');
+      }
+    }
+  }
+
+  async function handleDelete() {
+    try {
+      await api.delete(`/admin/merit-point/${ruleIdToDelete}`);
+
+      const response = await api.get(`/admin/manage-merit-points?search=${search}`);
+      const transformedData = response.data.rules.map(rule => ({
+        id: rule.id,
+        name: rule.name,
+        description: rule.description,
+        points: rule.operation_type === "add" ? "+" + rule.points : "-" + rule.points,
+        operation_type: rule.operation_type,
+      }));
+      setRules(transformedData);
+      setTotalRules(response.data.totalRules);
+
+      setPopup(false);
+      setRuleToDelete(null);
+      setRuleIdToDelete(null);
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
   function handleInitialPointsChange(e) {
     const value = e.target.value;
     setInitialPoints(value);
@@ -138,6 +204,11 @@ function AdminMeritPointRules() {
     const rule = rules.find(rule => rule.id === ruleId);
     setRuleToDelete(rule);
     setPopup(true);
+    setRuleIdToDelete(ruleId);
+  }
+
+  function handleEditClick(rule) {
+    setEditingRuleId(rule.id);
   }
 
   return (
@@ -190,18 +261,66 @@ function AdminMeritPointRules() {
               </thead>
               <tbody>
                 {rules.length > 0 ? rules.map((rule, index) => (
-                  <tr key={index}>
+                  <tr key={index} className={editingRuleId == rule.id ? 'table-primary' : ''}>
                     <td scope="row">{rule.id}</td>
-                    <td>{rule.name}</td>
-                    <td>{rule.description}</td>
-                    <td>{rule.points}</td>
                     <td>
-                      <button className="btn btn-primary me-5">
-                        <i className="bi bi-pencil-square"></i> Edit
-                      </button>
-                      <button className="btn btn-danger" onClick={() => handleDeleteClick(rule.id)}>
-                        <i className="bi bi-trash3"></i> Delete
-                      </button>
+                      {editingRuleId == rule.id ? (
+                        <input
+                          className="form-control"
+                          type="text"
+                          value={editedRule.name ?? rule.name}
+                          onChange={(e) => setEditedRule(prev => ({ ...prev, name: e.target.value }))}
+                        />
+                      ) : (rule.name)}
+                    </td>
+                    <td>
+                      {editingRuleId == rule.id ? (
+                        <input
+                          className="form-control"
+                          type="text"
+                          value={editedRule.description ?? rule.description}
+                          onChange={(e) => setEditedRule(prev => ({ ...prev, description: e.target.value }))}
+                        />
+                      ) : (rule.description)}
+                    </td>
+                    <td>
+                      {editingRuleId == rule.id ? (
+                        <input
+                          className="form-control"
+                          type="number"
+                          value={editedRule.points ?? rule.points.replace('+', '')}
+                          onChange={(e) => setEditedRule(prev => ({ ...prev, points: e.target.value }))}
+                        />
+                      ) : (rule.points)}
+                    </td>
+                    <td>
+                      {editingRuleId == rule.id ? (
+                        <>
+                          <button
+                            className="btn btn-success me-5"
+                            onClick={() => handleSaveEdit(rule.id)}
+                          >Save</button>
+                          <button
+                            className="btn btn-secondary"
+                            onClick={() => {
+                              setEditingRuleId(null);
+                              setEditedRule({});
+                            }}
+                          >Cancel</button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="btn btn-primary me-5"
+                            onClick={() => handleEditClick(rule)}
+                          >
+                            <i className="bi bi-pencil-square"></i> Edit
+                          </button>
+                          <button className="btn btn-danger" onClick={() => handleDeleteClick(rule.id)}>
+                            <i className="bi bi-trash3"></i> Delete
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 )) :
@@ -301,7 +420,7 @@ function AdminMeritPointRules() {
               <p>Are you sure you want to delete the rule '{ruleToDelete?.name}'?</p>
               <p className="fw-light text-danger">This action will permanently delete the rule and cannot be undone.</p>
               <div className="d-flex justify-content-end">
-                <button className="btn btn-danger me-3">Delete</button>
+                <button className="btn btn-danger me-3" onClick={() => handleDelete()}>Delete</button>
                 <button className="btn btn-secondary" onClick={() => setPopup(false)}>Cancel</button>
               </div>
             </div>
@@ -341,8 +460,25 @@ function AdminMeritPointRules() {
               <p>{addRuleErr}</p>
               <div className="d-flex justify-content-end">
                 <button
-                  className="btn btn-primary" 
+                  className="btn btn-primary"
                   onClick={() => setAddRuleErr('')}
+                >Ok</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        editRuleError && (
+          <div className="popup d-flex justify-content-center align-items-center">
+            <div className="popup-content p-4 bg-white rounded shadow">
+              <h5>Error</h5>
+              <p>{editRuleError}</p>
+              <div className="d-flex justify-content-end">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setEditRuleError('')}
                 >Ok</button>
               </div>
             </div>

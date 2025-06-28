@@ -532,6 +532,41 @@ class AdminController extends Controller
       ]);
     }
 
+    public function EditMeritPointRule(Request $request) {
+      $fields = $request->validate([
+        'id' => 'required', 
+        'name' => 'sometimes|string', 
+        'description' => 'sometimes|string', 
+        'points' => 'sometimes|numeric', 
+      ]);
+    
+      $updateData = [];
+    
+      if (isset($fields['name'])) {
+        $updateData['name'] = $fields['name'];
+      }
+    
+      if (isset($fields['description'])) {
+        $updateData['description'] = $fields['description'];
+      }
+    
+      if (isset($fields['points'])) {
+        $points = abs($fields['points']);
+        $operation_type = $fields['points'] < 0 ? 'deduct' : 'add';
+    
+        $updateData['points'] = $points;
+        $updateData['operation_type'] = $operation_type;
+      }
+    
+      MeritPointsRules::where('id', $fields['id'])->update($updateData);
+    
+      $rule = MeritPointsRules::find($fields['id']);
+    
+      return response()->json([
+        'rule' => $rule
+      ]);
+    }
+
     public function AddMeritPointRule(Request $request) {
       $fields = $request->validate([
         'ruleName' => 'required|string', 
@@ -566,6 +601,15 @@ class AdminController extends Controller
       return response()->json([
         "totalRules" => $totalRules, 
         "rules" => $rules
+      ]);
+    }
+
+    public function DeleteMeritPointRule($id)
+    {
+      MeritPointsRules::findOrFail($id)->delete();
+
+      return response()->json([
+        'message' => 'Rule deleted successfully.',
       ]);
     }
 
