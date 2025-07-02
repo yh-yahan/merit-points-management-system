@@ -35,6 +35,9 @@ function StudentSettings({ setIsLoggedIn }) {
   const [basicInfoUpdateFailMsg, setBasicInfoUpdateFailMsg] = useState();
   const [passwordUpdateError, setPasswordUpdateError] = useState();
 
+  const [allClasses, setAllClasses] = useState([]);
+  const [allStreams, setAllStreams] = useState([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,8 +54,16 @@ function StudentSettings({ setIsLoggedIn }) {
   useEffect(() => {
     async function fetchSettings() {
       try {
-        const response = await api.get('student/settings');
-        const data = response.data;
+        const [settingsRes, structureRes] = await Promise.all([
+          api.get('student/settings'),
+          api.get('/student/academic-structure'),
+        ]);
+
+        const data = settingsRes.data;
+        const { studentClass, studentStream } = structureRes.data;
+
+        setAllClasses(studentClass);
+        setAllStreams(studentStream);
 
         if (data.leaderboard_settings) {
           if ('opt_out_lb' in data.leaderboard_settings) {
@@ -80,8 +91,7 @@ function StudentSettings({ setIsLoggedIn }) {
           setChangedClass(data.student.class);
           setChangedStream(data.student.stream);
         }
-      }
-      catch (err) {
+      } catch (err) {
         console.log(err);
       }
     }
@@ -276,11 +286,11 @@ function StudentSettings({ setIsLoggedIn }) {
                   onChange={(e) => setChangedClass(e.target.value)}
                 >
                   <option value="" disabled>Select Class</option>
-                  <option value="Year 7">Year 7</option>
-                  <option value="Year 8">Year 8</option>
-                  <option value="Year 9">Year 9</option>
-                  <option value="Year 10">Year 10</option>
-                  <option value="Year 11">Year 11</option>
+                  {allClasses.map((studentClass) => (
+                    <option key={studentClass.id} value={studentClass.class}>
+                      {studentClass.class}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -291,9 +301,12 @@ function StudentSettings({ setIsLoggedIn }) {
                   onChange={(e) => setChangedStream(e.target.value)}
                 >
                   <option value="" disabled>Select Stream</option>
-                  <option value="Science">Science</option>
-                  <option value="Business">Business</option>
-                  <option value="None">None</option>
+                  {allStreams.map((stream) => (
+                    <option key={stream.id} value={stream.stream}>
+                      {stream.stream}
+                    </option>
+                  ))}
+                  <option value="none">None</option>
                 </select>
               </div>
             </div>
@@ -317,8 +330,8 @@ function StudentSettings({ setIsLoggedIn }) {
                   className="form-control"
                   id="floatingInputCurrentPassword"
                   placeholder="Current password"
-                  autoComplete="new-password" 
-                  value={currentPassword} 
+                  autoComplete="new-password"
+                  value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                 />
                 <label for="floatingInputCurrentPassword">Current Password</label>
@@ -334,8 +347,8 @@ function StudentSettings({ setIsLoggedIn }) {
                   className="form-control"
                   id="floatingInputNewPassword"
                   placeholder="New password"
-                  autoComplete="new-password" 
-                  value={newPassword} 
+                  autoComplete="new-password"
+                  value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
                 <label for="floatingInputNewPassword">New Password</label>
@@ -351,8 +364,8 @@ function StudentSettings({ setIsLoggedIn }) {
                   className="form-control"
                   id="floatingInputConfirmNewPassword"
                   placeholder="New password"
-                  autoComplete="new-password" 
-                  value={newPasswordConfirm} 
+                  autoComplete="new-password"
+                  value={newPasswordConfirm}
                   onChange={(e) => setNewPasswordConfirm(e.target.value)}
                 />
                 <label for="floatingInputConfirmNewPassword">Confirm New Password</label>

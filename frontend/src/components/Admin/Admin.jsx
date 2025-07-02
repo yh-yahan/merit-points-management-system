@@ -18,6 +18,7 @@ function Admin({ setIsLoggedIn }){
         <Route path="/merit_points_rules" element={<AdminDashboard />} />
         <Route path="/edit_merit_points" element={<AdminDashboard />} />
         <Route path="/add_rule" element={<AdminDashboard />} />
+        <Route path="/academic-structure" element={<AdminDashboard />} />
         <Route path="/settings" element={<AdminSettings setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/notifications" element={<AdminNotifications />} />

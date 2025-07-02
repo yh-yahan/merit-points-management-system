@@ -14,6 +14,8 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\InvitationCodes;
 use App\Models\MeritPointsRules;
+use App\Models\StudentClass;
+use App\Models\StudentStream;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -789,6 +791,60 @@ class AdminController extends Controller
       return response()->json([
         'currentPoint' => $currentPoint
       ]);
+    }
+
+    public function AcademicStructure() {
+      $studentClass = StudentClass::all();
+      $studentStream = StudentStream::all();
+
+      return response([
+        'studentClass' => $studentClass, 
+        'studentStream' => $studentStream, 
+      ], 200);
+    }
+
+    public function AddStudentClass(Request $request) {
+      $fields = $request->validate([
+        'class' => 'required|string', 
+      ]);
+
+      StudentClass::insert([
+        'class' => $fields['class'], 
+      ]);
+
+      $studentClass = StudentClass::all();
+
+      return response([$studentClass], 200);
+    }
+
+    public function AddStudentStream(Request $request) {
+      $fields = $request->validate([
+        'stream' => 'required|string', 
+      ]);
+
+      StudentStream::insert([
+        'stream' => $fields['stream'], 
+      ]);
+
+      $studentStream = StudentStream::all();
+
+      return response([$studentStream], 200);
+    }
+
+    public function ClassDeletion($id) {
+      StudentClass::where('id', $id)->delete();
+
+      $studentClass = StudentClass::select('id', 'class')->get();
+
+      return response(['studentClass' => $studentClass], 200);
+    }
+
+    public function StreamDeletion($id) {
+      StudentStream::where('id', $id)->delete();
+  
+      $studentStream = StudentStream::select('id', 'stream')->get();
+  
+      return response(['studentStream' => $studentStream], 200);
     }
 
     public function Notifications($notification){

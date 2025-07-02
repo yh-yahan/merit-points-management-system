@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
           PointsSeeder::class, 
           AdminSettingSeeder::class, 
           StudentSettingSeeder::class,
+          StreamSeeder::class, 
+          ClassSeeder::class, 
         ]);
     }
 }

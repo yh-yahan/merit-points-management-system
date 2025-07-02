@@ -8,6 +8,7 @@ import AdminManageTeachers from "./AdminManageTeachers.jsx"
 import AdminTransactionHistory from "./AdminTransactionHistory.jsx"
 import AdminMeritPointRules from "./AdminMeritPointRules.jsx"
 import AdminEditMeritPoints from "./AdminEditMeritPoints.jsx"
+import AdminAcademicStructure from "./AdminAcademicStructure.jsx"
 
 function AdminDashboard(){
   const location = useLocation().pathname;
@@ -22,6 +23,7 @@ function AdminDashboard(){
         { location == '/transaction-history' && <AdminTransactionHistory /> }
         { location == '/merit_points_rules' && <AdminMeritPointRules /> }
         { location == '/edit_merit_points' && <AdminEditMeritPoints />}
+        { location == '/academic-structure' && <AdminAcademicStructure />}
       </div>
     </>
   );

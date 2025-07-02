@@ -1,15 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../../../api'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Student from '../../Student/Student';
 
-function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
+function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
   const [fullName, setFullname] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfrim] = useState("");
-  const [stage, setStage] = useState("");
+  const [studentClass, setStudentClass] = useState("");
   const [stream, setStream] = useState("");
 
   // const [user, setUser] = useState("");
@@ -18,63 +18,82 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [streamError, setStreamError] = useState("");
-  const [stageError, setStageError] = useState("");
+  const [classError, setClassError] = useState("");
   const [fullnameError, setFullnameError] = useState("");
+
+  const [allClasses, setAllClasses] = useState();
+  const [allStreams, setAllStreams] = useState();
 
   const navigate = useNavigate();
 
-  async function handleStudentSignup(e){
+  async function handleStudentSignup(e) {
     e.preventDefault();
-    try{
+    try {
       const response = await api.post('student/signup', {
-        'name': fullName, 
-        'username': username, 
-        'email': email, 
-        'password': password, 
-        'password_confirmation': passwordConfirm, 
-        'class': stage, 
-        'stream': stream, 
+        'name': fullName,
+        'username': username,
+        'email': email,
+        'password': password,
+        'password_confirmation': passwordConfirm,
+        'class': studentClass,
+        'stream': stream,
         'invitation_code': invitationCode
       });
 
       setUser(response);
       setIsLoggedIn(true);
-      
+
       setEmailError("");
       setPasswordError("");
-      setStageError("");
+      setClassError("");
       setStreamError("");
       setFullnameError("");
       setError("");
 
       navigate('/');
     }
-    catch(err){
+    catch (err) {
       setEmailError("");
       setPasswordError("");
-      setStageError("");
+      setClassError("");
       setStreamError("");
       setFullnameError("");
       setError("");
 
-      if(err.response){
+      if (err.response) {
         const errors = err.response.data.errors;
-  
-        if(err.response && err.response.status === 422){
-          if(errors.email || errors.password || errors.stream || errors.stage || errors.name){
+
+        if (err.response && err.response.status === 422) {
+          if (errors.email || errors.password || errors.stream || errors.studentClass || errors.name) {
             setEmailError(errors.email);
             setPasswordError(errors.password);
             setStreamError(errors.stream);
-            setStageError(errors.stage);
+            setClassError(errors.studentClass);
             setFullnameError(errors.name);
           }
         }
-        else{
+        else {
           setError("Something went wrong. Please try again later.");
         }
       }
     }
   }
+
+  async function fetchAcademicStructure() {
+    try {
+      const response = await api.get('/student/academic-structure');
+      const { studentClass, studentStream } = response.data;
+
+      setAllClasses(studentClass);
+      setAllStreams(studentStream);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchAcademicStructure();
+  }, []);
 
   const [showPassword, setShowPassword] = useState(false);
   // const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -82,7 +101,7 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
     setShowPassword(!showPassword);
   };
 
-  return(
+  return (
     <>
       <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
         <div className="container mt-5">
@@ -93,26 +112,26 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
                   <h2 className="text-center mb-4">Sign up</h2>
                   <form onSubmit={handleStudentSignup}>
                     <div className="form-floating mb-3">
-                      <input type="text" 
-                      className="form-control" 
-                      onChange={(e) => setFullname(e.target.value)}
+                      <input type="text"
+                        className="form-control"
+                        onChange={(e) => setFullname(e.target.value)}
                       />
                       <label>Full name</label>
                     </div>
                     {fullnameError && <div className="text-danger mb-3">{fullnameError}</div>}
                     <div className="form-floating mb-3">
                       <input
-                      type="text" 
-                      className="form-control" 
-                      onChange={(e) => setUsername(e.target.value)}
+                        type="text"
+                        className="form-control"
+                        onChange={(e) => setUsername(e.target.value)}
                       />
                       <label>Username</label>
                     </div>
                     <div className="form-floating mb-3">
-                      <input 
-                      type="email" 
-                      className="form-control" 
-                      onChange={(e) => setEmail(e.target.value)} 
+                      <input
+                        type="email"
+                        className="form-control"
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                       <label>Email</label>
                     </div>
@@ -123,7 +142,7 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
                         className="form-control"
                         id="password"
                         required
-                        onChange={(e) => setPassword(e.target.value)} 
+                        onChange={(e) => setPassword(e.target.value)}
                         autoComplete='new-password'
                       />
                       <label>Password</label>
@@ -134,11 +153,11 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
                       ></i>
                     </div>
                     <div className="form-floating mb-3">
-                      <input 
-                      type={showPassword ? 'text' : 'password'}
-                      className="form-control" 
-                      onChange={(e) => setPasswordConfrim(e.target.value)} 
-                      autoComplete='new-password'
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        className="form-control"
+                        onChange={(e) => setPasswordConfrim(e.target.value)}
+                        autoComplete='new-password'
                       />
                       <label>Confirm password</label>
                       {/* <i
@@ -148,37 +167,36 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }){
                       ></i> */}
                     </div>
                     {passwordError && <div className="text-danger mb-3">{passwordError}</div>}
-                    <select 
-                    className="form-select mb-3 p-3" 
-                    onChange={(e) => setStage(e.target.value)}>
+                    <select
+                      className="form-select mb-3 p-3"
+                      onChange={(e) => setStudentClass(e.target.value)}>
                       <option value="" disabled selected>Select class</option>
-                      <option value="Year 7">Year 7</option>
-                      <option value="Year 8">Year 8</option>
-                      <option value="Year 9">Year 9</option>
-                      <option value="Year 10">Year 10</option>
-                      <option value="Year 11">Year 11</option>
+                      {allClasses && allClasses.map((studentClass) => (
+                        <option key={studentClass.id} value={studentClass.class}>{studentClass.class}</option>
+                      ))}
                     </select>
-                    {stageError && <div className="text-danger mb-3">{stageError}</div>}
-                    <select 
-                    className="form-select mb-3 p-3" 
-                    onChange={(e) => setStream(e.target.value)}>
+                    {classError && <div className="text-danger mb-3">{classError}</div>}
+                    <select
+                      className="form-select mb-3 p-3"
+                      onChange={(e) => setStream(e.target.value)}>
                       <option value="" disabled selected>Select stream</option>
-                      <option value="Science">Science</option>
-                      <option value="Business">Business</option>
-                      <option value="None">None</option>
+                      {allStreams && allStreams.map((stream) => (
+                        <option key={stream.id} value={stream.stream}>{stream.stream}</option>
+                      ))}
+                      <option value="none">None</option>
                     </select>
                     {streamError && <div className="text-danger mb-3">{streamError}</div>}
                     {error && <div className="text-danger mb-3">{error}</div>}
                     <div className="d-grid">
-                      <button className="btn" 
-                      style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }} 
-                      onMouseOver={ (e) => e.target.style.backgroundColor = "black" } 
-                      onMouseOut={ (e) => e.target.style.backgroundColor = "#c20008" } 
-                      type="submit">
+                      <button className="btn"
+                        style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = "black"}
+                        onMouseOut={(e) => e.target.style.backgroundColor = "#c20008"}
+                        type="submit">
                         Sign up
                       </button>
                     </div>
-                    <p className="mt-3">Already have an account? { !isLoggedIn && <Link to="/">login</Link> }</p>
+                    <p className="mt-3">Already have an account? {!isLoggedIn && <Link to="/">login</Link>}</p>
                   </form>
                 </div>
               </div>

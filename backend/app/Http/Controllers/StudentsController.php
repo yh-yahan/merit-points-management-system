@@ -7,6 +7,8 @@ use App\Models\Students;
 use App\Models\Transaction;
 use App\Models\AdminSetting;
 use App\Models\StudentSetting;
+use App\Models\StudentClass;
+use App\Models\StudentStream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -421,5 +423,16 @@ class StudentsController extends Controller
     }
 
     return response(['message' => 'Password updated successfully. Please log in again.'], 200);
+  }
+
+  public function AcademicStructure()
+  {
+    $studentClass = StudentClass::all();
+    $studentStream = StudentStream::all();
+
+    return response([
+      'studentClass' => $studentClass,
+      'studentStream' => $studentStream,
+    ], 200);
   }
 }

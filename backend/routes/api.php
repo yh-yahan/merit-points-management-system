@@ -11,19 +11,18 @@ use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\LogoController;
-use App\Models\Students;
 
-Route::prefix('v1')->group(function (){
+Route::prefix('v1')->group(function () {
   Route::post('check-auth', [LoginController::class, 'CheckAuth']);
 
   Route::post('login', [LoginController::class, 'Login']);
   Route::post('logout', [LoginController::class, 'Logout']);
 
-  Route::prefix('admin')->group(function(){
+  Route::prefix('admin')->group(function () {
     Route::post('signup', [AdminController::class, 'SignUp']);
     Route::post('new-admin', [AdminController::class, 'NewAdmin']);
     Route::post('create-inv-code', [AdminController::class, 'CreateInvitationCode']);
-    
+
     Route::get('overview', [AdminController::class, 'Overview']);
     Route::get('transaction-history', [AdminController::class, 'TransactionHistory']);
     Route::get('manage-students', [AdminController::class, 'ManageStudents']);
@@ -39,23 +38,28 @@ Route::prefix('v1')->group(function (){
     Route::post('student-details', [AdminController::class, 'GetStudentDetails']);
     Route::patch('point/{receiver_id}', [AdminController::class, 'UpdatePoint']);
     Route::post('search-student', [AdminController::class, 'SearchStudent']);
+    Route::get('academic-structure', [AdminController::class, 'AcademicStructure']);
+    Route::post('class', [AdminController::class, 'AddStudentClass']);
+    Route::post('stream', [AdminController::class, 'AddStudentStream']);
+    Route::delete('class/{id}', [AdminController::class, 'ClassDeletion']);
+    Route::delete('stream/{id}', [AdminController::class, 'StreamDeletion']);
 
     Route::get('notification', [AdminController::class, 'GetNotification']);
     Route::patch('mark-notification-as-read', [AdminController::class, 'MarkNotificationAsRead']);
-    
+
     Route::get('setting', [AdminController::class, 'GetSetting']);
     Route::post('setting', [AdminController::class, 'Setting']);
     Route::patch('user-info', [AdminController::class, 'ChangeBasicInfo']);
     Route::patch('update-password', [AdminController::class, 'UpdatePassword']);
     Route::post('logo', [AdminController::class, 'UploadLogo']);
-    
+
     Route::get('invitation-code', [AdminController::class, 'GetInvitationCode']);
     Route::delete('invitation-code/{id}', [AdminController::class, 'DeleteInvitationCode']);
 
     Route::get('export/chart', [ExportController::class, 'AdminChartExport']);
   });
 
-  Route::prefix('teacher')->group(function (){
+  Route::prefix('teacher')->group(function () {
     Route::get('recent-transactions', [TeachersController::class, 'RecentTransactions']);
     Route::get('student-by-class', [TeachersController::class, 'GetStudentByClass']);
     Route::post('student-details', [TeachersController::class, 'GetStudentDetails']);
@@ -66,15 +70,16 @@ Route::prefix('v1')->group(function (){
     Route::patch('update-password', [TeachersController::class, 'UpdatePassword']);
   });
 
-  Route::prefix('student')->group(function (){
+  Route::prefix('student')->group(function () {
     Route::get('dashboard', [StudentsController::class, 'Dashboard']);
     Route::get('leaderboard', [StudentsController::class, 'Leaderboard']);
     Route::get('settings', [StudentsController::class, 'GetSettings']);
     Route::post('settings', [StudentsController::class, 'Setting']);
-    Route::patch('user-info',[StudentsController::class, 'ChangeBasicInfo']);
+    Route::patch('user-info', [StudentsController::class, 'ChangeBasicInfo']);
     Route::patch('update-password', [StudentsController::class, 'UpdatePassword']);
+    Route::get('academic-structure', [StudentsController::class, 'AcademicStructure']);
   });
-  
+
   Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
 
   Route::post('validate-inv-code', [InvitationCodeController::class, 'ValidateInvitationCode']);
