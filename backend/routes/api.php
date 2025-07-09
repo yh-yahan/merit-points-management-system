@@ -26,6 +26,7 @@ Route::prefix('v1')->group(function () {
     Route::get('overview', [AdminController::class, 'Overview']);
     Route::get('transaction-history', [AdminController::class, 'TransactionHistory']);
     Route::get('manage-students', [AdminController::class, 'ManageStudents']);
+    Route::put('manage-students/bulk-edit', [AdminController::class, 'ManageStudentsBulkEdit']);
     Route::get('manage-teachers', [AdminController::class, 'ManageTeachers']);
     Route::get('manage-merit-points', [AdminController::class, 'ManageMeritPoints']);
     Route::post('add-rule', [AdminController::class, 'AddMeritPointRule']);

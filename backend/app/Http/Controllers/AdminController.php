@@ -470,6 +470,29 @@ class AdminController extends Controller
       ]);
     }
 
+    public function ManageStudentsBulkEdit(Request $request) {
+      $fields = $request->validate([
+        'student_ids' => 'required|array',
+        'student_ids.*' => 'integer',
+        'class' => 'nullable|string',
+        'stream' => 'nullable|string',
+        'status' => 'nullable|string|in:Active,Inactive,Graduated',
+      ]);
+
+      $updates = [];
+      if ($fields['class']) $updates['class'] = $fields['class'];
+      if ($fields['stream']) $updates['stream'] = $fields['stream'];
+      if ($fields['status']) $updates['status'] = $fields['status'];
+
+      if (count($updates)) {
+        Students::whereIn('id', $fields['student_ids'])->update($updates);
+      }
+
+      return response([
+        'message' => 'Students updated successfully.'
+      ], 200);
+    }
+
     public function ManageTeachers(Request $request){
       $search = $request->input('search', '');
       $query = Teachers::select(

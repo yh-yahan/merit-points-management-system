@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../../api";
 
-// TODO: allow direct change of status in the table
-
-function AdminManageStudents(){
+function AdminManageStudents() {
   const [sort, setSort] = useState("");
   const [filter, setFilter] = useState("none");
   const [search, setSearch] = useState("");
@@ -13,25 +11,34 @@ function AdminManageStudents(){
   const [totalStudents, setTotalStudents] = useState(0);
   const [error, setError] = useState("");
 
+  const [bulkEdit, setBulkEdit] = useState(false);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [changeClass, setChangeClass] = useState("");
+  const [changeStream, setChangeStream] = useState("");
+  const [changeStatus, setChangeStatus] = useState("");
+
+  const [allClasses, setAllClasses] = useState();
+  const [allStreams, setAllStreams] = useState();
+
   useEffect(() => {
-    async function fetchStudentsData(){
-      try{
+    async function fetchStudentsData() {
+      try {
         const response = await api.get(`/admin/manage-students?page=${currentPage}&search=${search}&sort=${sort}&filter=${filter}`);
         const transformedData = response.data.data.map(student => ({
-          id: student.id, 
-          name: student.name, 
-          class: student.class, 
-          dateJoined: student.date_joined, 
-          points: student.points, 
-          email: student.email, 
-          stream: student.stream, 
-          status: student.status, 
+          id: student.id,
+          name: student.name,
+          class: student.class,
+          dateJoined: student.date_joined,
+          points: student.points,
+          email: student.email,
+          stream: student.stream,
+          status: student.status,
         }));
         setStudents(transformedData);
         setTotalStudents(response.data.totalStudents);
         setTotalPages(response.data.last_page);
       }
-      catch(err){
+      catch (err) {
         setError("No data found.");
         console.log(err);
       }
@@ -40,23 +47,90 @@ function AdminManageStudents(){
     fetchStudentsData();
   }, [search, sort, currentPage, filter]);
 
-  function handleSortChange(event){
+  useEffect(() => {
+    async function fetchAcademicStructure() {
+      try {
+        const response = await api.get('/admin/academic-structure');
+        const { studentClass, studentStream } = response.data;
+
+        setAllClasses(studentClass);
+        setAllStreams(studentStream);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    fetchAcademicStructure();
+  }, []);
+
+  useEffect(() => {
+    setBulkEdit(selectedStudents.length > 0);
+  }, [selectedStudents]);
+
+  async function handleStudentEdit() {
+    try {
+      const payload = {
+        student_ids: selectedStudents,
+        class: changeClass || null,
+        stream: changeStream || null,
+        status: changeStatus || null,
+      };
+
+      await api.put('/admin/manage-students/bulk-edit', payload);
+      setChangeClass('');
+      setChangeStream('');
+      setChangeStatus('');
+      setSelectedStudents([]);
+      setBulkEdit(false);
+
+      const response = await api.get(`/admin/manage-students?page=${currentPage}&search=${search}&sort=${sort}&filter=${filter}`);
+      const transformedData = response.data.data.map(student => ({
+        id: student.id,
+        name: student.name,
+        class: student.class,
+        dateJoined: student.date_joined,
+        points: student.points,
+        email: student.email,
+        stream: student.stream,
+        status: student.status,
+      }));
+      setStudents(transformedData);
+      setTotalStudents(response.data.totalStudents);
+      setTotalPages(response.data.last_page);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  function handleSortChange(event) {
     setSort(event.target.value);
     setCurrentPage(1)
   }
 
-  function handleFilterChange(event){
+  function handleFilterChange(event) {
     setFilter(event.target.value);
     setCurrentPage(1)
   }
 
-  function handleSearchChange(event){
+  function handleSearchChange(event) {
     setSearch(event.target.value);
     setCurrentPage(1)
   }
 
-  function handleDetails(id){
+  function handleCheckboxToggle(id) {
+    setSelectedStudents(prev =>
+      prev.includes(id)
+        ? prev.filter(studentId => studentId !== id)
+        : [...prev, id]
+    );
+  }
 
+  function handleSelectAll(e) {
+    if (e.target.checked) {
+      setSelectedStudents(students.map(student => student.id));
+    } else {
+      setSelectedStudents([]);
+    }
   }
 
   return (
@@ -102,39 +176,100 @@ function AdminManageStudents(){
           </div>
         </div>
         <div>
+          {bulkEdit && (
+            <div className="d-flex justify-content-center flex-wrap gap-3">
+              <div className="card shadow-sm p-3 mb-4 bg-light rounded border border-primary">
+                <h5 className="text-primary mb-3">Bulk Edit Selected Students</h5>
+                <div className="d-flex align-items-center flex-wrap gap-3">
+                  <select
+                    className="form-select w-auto"
+                    value={changeClass}
+                    onChange={(e) => setChangeClass(e.target.value)}
+                  >
+                    <option value="" disabled>Class</option>
+                    {allClasses && allClasses.map((studentClass) => (
+                      <option key={studentClass.id} value={studentClass.class}>{studentClass.class}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    className="form-select w-auto"
+                    value={changeStream}
+                    onChange={(e) => setChangeStream(e.target.value)}
+                  >
+                    <option value="" disabled>Stream</option>
+                    {allStreams && allStreams.map((stream) => (
+                      <option key={stream.id} value={stream.stream}>{stream.stream}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    className="form-select w-auto"
+                    value={changeStatus}
+                    onChange={(e) => setChangeStatus(e.target.value)}
+                  >
+                    <option value="" disabled>Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Graduated">Graduated</option>
+                  </select>
+
+                  <button
+                    className="btn btn-success"
+                    onClick={handleStudentEdit}>
+                    Apply Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {
             students.length ?
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Class</th>
-                  <th scope="col">Date joined</th>
-                  <th scope="col">Total points</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Stream</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((student, index) => (
-                  <tr key={index}>
-                    <td>{student.name}</td>
-                    <td>{student.class}</td>
-                    <td>{student.dateJoined}</td>
-                    <td>{student.points}</td>
-                    <td>{student.email}</td>
-                    <td>{student.stream}</td>
-                    <td>{student.status}</td>
-                    <td><a href="#" className="btn btn-primary" onClick={() => handleDetails(id)}>Details</a></td>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">
+                      <input
+                        type="checkbox"
+                        checked={selectedStudents.length === students.length && students.length > 0}
+                        onChange={handleSelectAll}
+                      />
+                    </th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Date joined</th>
+                    <th scope="col">Total points</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Stream</th>
+                    <th scope="col">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            :
-            <div className="d-flex justify-content-center align-items-center text-danger mb-3" style={{height: "700px"}}>No data found</div>
+                </thead>
+                <tbody>
+                  {students.map((student, index) => (
+                    <tr key={index}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedStudents.includes(student.id)}
+                          onChange={() => handleCheckboxToggle(student.id)}
+                        />
+                      </td>
+                      <td>{student.name}</td>
+                      <td>{student.class}</td>
+                      <td>{student.dateJoined}</td>
+                      <td>{student.points}</td>
+                      <td>{student.email}</td>
+                      <td>{student.stream}</td>
+                      <td>{student.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              :
+              <div className="d-flex justify-content-center align-items-center text-danger mb-3" style={{ height: "700px" }}>No data found</div>
           }
+
           {students.length ? <nav>
             <ul className="pagination mt-3 d-flex justify-content-end">
               {currentPage > 1 && (

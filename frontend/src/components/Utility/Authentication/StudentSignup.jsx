@@ -183,7 +183,6 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
                       {allStreams && allStreams.map((stream) => (
                         <option key={stream.id} value={stream.stream}>{stream.stream}</option>
                       ))}
-                      <option value="none">None</option>
                     </select>
                     {streamError && <div className="text-danger mb-3">{streamError}</div>}
                     {error && <div className="text-danger mb-3">{error}</div>}
