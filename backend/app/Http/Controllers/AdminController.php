@@ -530,6 +530,16 @@ class AdminController extends Controller
       ]);
     }
 
+    public function DeleteTeacher($id) {
+      $teacher = Teachers::find($id);
+      if (!$teacher) {
+        return response(['message' => 'Teacher not found'], 404);
+      }
+      $teacher->delete();
+  
+      return response(['message' => 'Deleted successfully'], 200);
+    }
+
     public function ManageMeritPoints(Request $request){
       $search = $request->input('search', '');
 
@@ -629,8 +639,7 @@ class AdminController extends Controller
       ]);
     }
 
-    public function DeleteMeritPointRule($id)
-    {
+    public function DeleteMeritPointRule($id) {
       MeritPointsRules::findOrFail($id)->delete();
 
       return response()->json([

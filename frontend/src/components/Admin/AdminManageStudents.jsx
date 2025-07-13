@@ -179,7 +179,7 @@ function AdminManageStudents() {
           {bulkEdit && (
             <div className="d-flex justify-content-center flex-wrap gap-3">
               <div className="card shadow-sm p-3 mb-4 bg-light rounded border border-primary">
-                <h5 className="text-primary mb-3">Bulk Edit Selected Students</h5>
+                <h5 className="text-primary mb-3">Edit selected students</h5>
                 <div className="d-flex align-items-center flex-wrap gap-3">
                   <select
                     className="form-select w-auto"
