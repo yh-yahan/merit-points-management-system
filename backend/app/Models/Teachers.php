@@ -16,7 +16,8 @@ class Teachers extends Authenticatable
     'name', 
     'email', 
     'password', 
-    'description',
+    'description', 
+    'profile_pic', 
   ];
 
   public function transactions(){

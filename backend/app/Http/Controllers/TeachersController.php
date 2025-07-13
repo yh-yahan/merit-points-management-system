@@ -292,11 +292,11 @@ class TeachersController extends Controller
 
   public function ChangeBasicInfo(Request $request)
   {
-    // doesn't update profile pic
     $fields = $request->validate([
       'name' => 'required|string',
       'email' => 'required|email',
-      'description' => 'nullable|string'
+      'description' => 'nullable|string', 
+      'profile_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
     ]);
 
     $token = $request->cookie('auth_token');
@@ -311,10 +311,18 @@ class TeachersController extends Controller
       return response()->json(['error' => 'Teacher not found'], 404);
     }
 
+    if ($request->hasFile('profile_pic')) {
+      $file = $request->file('profile_pic');
+      $filename = time() . '_' . $file->getClientOriginalName();
+      $path = $file->storeAs('profile_pics', $filename, 'public');
+
+      $teacher->profile_pic = $path;
+    }
+
     // update teacher's information
     $teacher->name = $fields['name'];
     $teacher->email = $fields['email'];
-    $teacher->description = $fields['description'];
+    $teacher->description = $fields['description'] ?? null;
 
     $teacher->save();
 
@@ -324,7 +332,8 @@ class TeachersController extends Controller
         'id' => $teacher->id,
         'name' => $teacher->name,
         'email' => $teacher->email,
-        'description' => $teacher->description,
+        'description' => $teacher->description, 
+        'profilePic' => $teacher->profile_pic, 
       ]
     ], 200);
   }
