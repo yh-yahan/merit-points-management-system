@@ -105,8 +105,8 @@ function AdminManageTeachers() {
           <div className="popup d-flex justify-content-center align-items-center">
             <div className="popup-content p-4 bg-white rounded shadow">
               <h5>Confirm deletion</h5>
-              <p>Are you sure you want to delete the rule '{selectedTeacher?.name}'?</p>
-              <p className="fw-light text-danger">This action will permanently delete the rule and cannot be undone.</p>
+              <p>Are you sure you want to delete the teacher '{selectedTeacher?.name}'?</p>
+              <p className="fw-light text-danger">This action will permanently delete the user and cannot be undone.</p>
               <div className="d-flex justify-content-end">
                 <button className="btn btn-danger me-3" onClick={deleteTeacher}>Delete</button>
                 <button className="btn btn-secondary" onClick={() => setShowDeleteTeacherConfirm(false)}>Cancel</button>

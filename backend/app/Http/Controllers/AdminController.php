@@ -493,6 +493,16 @@ class AdminController extends Controller
       ], 200);
     }
 
+    public function DeleteStudent($id) {
+      $student = Students::find($id);
+      if (!$student) {
+        return response(['message' => 'Student not found'], 404);
+      }
+      $student->delete();
+  
+      return response(['message' => 'Deleted successfully'], 200);
+    }
+
     public function ManageTeachers(Request $request){
       $search = $request->input('search', '');
       $query = Teachers::select(

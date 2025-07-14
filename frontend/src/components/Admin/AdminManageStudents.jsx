@@ -20,30 +20,33 @@ function AdminManageStudents() {
   const [allClasses, setAllClasses] = useState();
   const [allStreams, setAllStreams] = useState();
 
-  useEffect(() => {
-    async function fetchStudentsData() {
-      try {
-        const response = await api.get(`/admin/manage-students?page=${currentPage}&search=${search}&sort=${sort}&filter=${filter}`);
-        const transformedData = response.data.data.map(student => ({
-          id: student.id,
-          name: student.name,
-          class: student.class,
-          dateJoined: student.date_joined,
-          points: student.points,
-          email: student.email,
-          stream: student.stream,
-          status: student.status,
-        }));
-        setStudents(transformedData);
-        setTotalStudents(response.data.totalStudents);
-        setTotalPages(response.data.last_page);
-      }
-      catch (err) {
-        setError("No data found.");
-        console.log(err);
-      }
-    }
+  const [selectedStudent, setSelectedStudent] = useState();
+  const [showDeleteStudentConfirm, setShowDeleteStudentConfirm] = useState(false);
 
+  async function fetchStudentsData() {
+    try {
+      const response = await api.get(`/admin/manage-students?page=${currentPage}&search=${search}&sort=${sort}&filter=${filter}`);
+      const transformedData = response.data.data.map(student => ({
+        id: student.id,
+        name: student.name,
+        class: student.class,
+        dateJoined: student.date_joined,
+        points: student.points,
+        email: student.email,
+        stream: student.stream,
+        status: student.status,
+      }));
+      setStudents(transformedData);
+      setTotalStudents(response.data.totalStudents);
+      setTotalPages(response.data.last_page);
+    }
+    catch (err) {
+      setError("No data found.");
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
     fetchStudentsData();
   }, [search, sort, currentPage, filter]);
 
@@ -66,6 +69,19 @@ function AdminManageStudents() {
   useEffect(() => {
     setBulkEdit(selectedStudents.length > 0);
   }, [selectedStudents]);
+
+  async function deleteStudent() {
+    try {
+      await api.delete(`/admin/manage-students/${selectedStudent.id}`);
+
+      fetchStudentsData();
+
+      setSelectedStudent(null);
+      setShowDeleteStudentConfirm(false);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   async function handleStudentEdit() {
     try {
@@ -243,6 +259,7 @@ function AdminManageStudents() {
                     <th scope="col">Email</th>
                     <th scope="col">Stream</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,6 +279,15 @@ function AdminManageStudents() {
                       <td>{student.email}</td>
                       <td>{student.stream}</td>
                       <td>{student.status}</td>
+                      <td>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => {
+                            setSelectedStudent(student);
+                            setShowDeleteStudentConfirm(true);
+                          }}
+                        >Delete</button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -291,6 +317,22 @@ function AdminManageStudents() {
           </nav> : <div></div>}
         </div>
       </div>
+
+      {
+        showDeleteStudentConfirm && (
+          <div className="popup d-flex justify-content-center align-items-center">
+            <div className="popup-content p-4 bg-white rounded shadow">
+              <h5>Confirm deletion</h5>
+              <p>Are you sure you want to delete the student '{selectedStudent?.name}'?</p>
+              <p className="fw-light text-danger">This action will permanently delete the user and cannot be undone.</p>
+              <div className="d-flex justify-content-end">
+                <button className="btn btn-danger me-3" onClick={deleteStudent}>Delete</button>
+                <button className="btn btn-secondary" onClick={() => setShowDeleteStudentConfirm(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
     </>
   );
 }
