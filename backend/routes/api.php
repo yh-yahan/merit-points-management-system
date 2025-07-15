@@ -30,7 +30,7 @@ Route::prefix('v1')->group(function () {
     Route::put('manage-students/bulk-edit', [AdminController::class, 'ManageStudentsBulkEdit']);
     Route::get('manage-teachers', [AdminController::class, 'ManageTeachers']);
     Route::delete('manage-teachers/{id}', [AdminController::class, 'DeleteTeacher']);
-    Route::get('manage-merit-points', [AdminController::class, 'ManageMeritPoints']);
+    Route::get('manage-merit-points', [AdminController::class, 'ManageMeritPointRule']);
     Route::post('add-rule', [AdminController::class, 'AddMeritPointRule']);
     Route::patch('edit-rule', [AdminController::class, 'EditMeritPointRule']);
     Route::delete('merit-point/{id}', [AdminController::class, 'DeleteMeritPointRule']);
@@ -60,6 +60,8 @@ Route::prefix('v1')->group(function () {
     Route::delete('invitation-code/{id}', [AdminController::class, 'DeleteInvitationCode']);
 
     Route::get('export/chart', [ExportController::class, 'AdminChartExport']);
+    Route::get('export/rules/excel', [ExportController::class, 'exportRulesToExcel']);
+    Route::get('export/rules/csv', [ExportController::class, 'exportRulesToCsv']);
   });
 
   Route::prefix('teacher')->group(function () {

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import jsPDF from 'jspdf'
+import autoTable from "jspdf-autotable"
 import api from '../../api'
 
 function AdminMeritPointRules() {
@@ -179,6 +181,38 @@ function AdminMeritPointRules() {
     }
   }
 
+  function handleExportChange(e) {
+    const format = e.target.value;
+
+    if (format === 'excel') {
+      window.location.href = "https://127.0.0.1/api/v1/admin/export/rules/excel";
+    } else if (format === 'pdf') {
+      const doc = new jsPDF();
+
+      const columns = ["ID", "Name", "Description", "Points"];
+      const rows = rules.map(rule => [
+        rule.id,
+        rule.name,
+        rule.description,
+        rule.operation_type === "deduct"
+          ? -Math.abs(rule.points)
+          : rule.points
+      ]);
+  
+      doc.text("Merit Points Rules", 14, 20);
+  
+      autoTable(doc, {
+        head: [columns],
+        body: rows,
+        startY: 30,
+      });
+  
+      doc.save("merit_rules.pdf");
+    } else if (format === 'csv') {
+      window.location.href = "https://127.0.0.1/api/v1/admin/export/rules/csv";
+    }
+  }
+
   function handleInitialPointsChange(e) {
     const value = e.target.value;
     setInitialPoints(value);
@@ -240,11 +274,11 @@ function AdminMeritPointRules() {
               </select>
             </div>
             <div className="col-lg-3">
-              <select className="form-select mb-3 p-2">
+              <select className="form-select mb-3 p-2" onChange={handleExportChange}>
                 <option value="" selected disabled>Export</option>
-                <option>Excel</option>
-                <option>CSV</option>
-                <option>PDF</option>
+                <option value="excel">Excel</option>
+                <option value="csv">CSV</option>
+                <option value="pdf">PDF</option>
               </select>
             </div>
           </div>

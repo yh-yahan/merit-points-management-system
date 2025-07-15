@@ -550,7 +550,7 @@ class AdminController extends Controller
       return response(['message' => 'Deleted successfully'], 200);
     }
 
-    public function ManageMeritPoints(Request $request){
+    public function ManageMeritPointRule(Request $request){
       $search = $request->input('search', '');
 
       $query = MeritPointsRules::select(
@@ -563,8 +563,8 @@ class AdminController extends Controller
 
       if($search){
         $query->where(function($q) use ($search) {
-            $q->where('name', 'LIKE', "%{$search}%")
-              ->orWhere('description', 'LIKE', "%{$search}%");
+          $q->where('name', 'LIKE', "%{$search}%")
+            ->orWhere('description', 'LIKE', "%{$search}%");
         });
       }
 
