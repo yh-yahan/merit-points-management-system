@@ -10,6 +10,7 @@ use App\Http\Controllers\TeachersController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\LogoController;
 
 Route::prefix('v1')->group(function () {
@@ -58,6 +59,8 @@ Route::prefix('v1')->group(function () {
 
     Route::get('invitation-code', [AdminController::class, 'GetInvitationCode']);
     Route::delete('invitation-code/{id}', [AdminController::class, 'DeleteInvitationCode']);
+
+    Route::post('import/rules', [ImportController::class, 'ImportRules']);
 
     Route::get('export/chart', [ExportController::class, 'AdminChartExport']);
     Route::get('export/rules/excel', [ExportController::class, 'exportRulesToExcel']);

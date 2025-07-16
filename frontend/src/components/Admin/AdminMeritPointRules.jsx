@@ -23,6 +23,7 @@ function AdminMeritPointRules() {
   const [editingRuleId, setEditingRuleId] = useState(null);
   const [editedRule, setEditedRule] = useState({});
   const [editRuleError, setEditRuleError] = useState('');
+  const [importFile, setImportFile] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -181,6 +182,40 @@ function AdminMeritPointRules() {
     }
   }
 
+  async function handleImport() {
+    if (!importFile) {
+      alert("Please select a file to import.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", importFile);
+
+    try {
+      await api.post('/admin/import/rules', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      });
+  
+      const response = await api.get(`/admin/manage-merit-points?search=${search}`);
+      const transformedData = response.data.rules.map(rule => ({
+        id: rule.id,
+        name: rule.name,
+        description: rule.description,
+        points: rule.operation_type == "add" ? "+" + rule.points : "-" + rule.points,
+        operation_type: rule.operation_type,
+      }));
+      setRules(transformedData);
+      setTotalRules(response.data.totalRules);
+  
+      setImportFile(null);
+    } catch (err) {
+      console.log(err);
+      alert("Failed to import file.");
+    }
+  }
+
   function handleExportChange(e) {
     const format = e.target.value;
 
@@ -198,15 +233,15 @@ function AdminMeritPointRules() {
           ? -Math.abs(rule.points)
           : rule.points
       ]);
-  
+
       doc.text("Merit Points Rules", 14, 20);
-  
+
       autoTable(doc, {
         head: [columns],
         body: rows,
         startY: 30,
       });
-  
+
       doc.save("merit_rules.pdf");
     } else if (format === 'csv') {
       window.location.href = "https://127.0.0.1/api/v1/admin/export/rules/csv";
@@ -267,11 +302,14 @@ function AdminMeritPointRules() {
             </div>
           </div>
           <div className="row mb-3">
-            <div className="col-lg-3">
-              <select className="form-select mb-3 p-2">
-                <option value="" selected disabled>Import</option>
-                <option>Excel</option>
-              </select>
+            <div className="col-lg-6 d-flex align-items-center gap-3">
+              <input
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                className="form-control"
+                onChange={(e) => setImportFile(e.target.files[0])}
+              />
+              <button className="btn btn-primary" onClick={handleImport}>Import</button>
             </div>
             <div className="col-lg-3">
               <select className="form-select mb-3 p-2" onChange={handleExportChange}>
