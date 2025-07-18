@@ -225,7 +225,7 @@ function Overview() {
 
   return (
     <>
-      <div className="mt-5 ms-3 container-fluid">
+      <div className="mt-4 container-fluid">
         <h1 className="mb-4">Overview</h1>
 
         {error ? <div className="text-danger mb-3" style={{ height: "700px" }}>{error}</div> :

@@ -78,7 +78,7 @@ function AdminInvitationCode() {
           </button>
         </Link>
       </div>
-      <div className="table-container shadow rounded">
+      <div className="table-container shadow rounded table-responsive">
         <table className="table table-borded table-striped">
           <thead className="bg-primary text-light">
             <tr>

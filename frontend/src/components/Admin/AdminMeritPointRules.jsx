@@ -197,7 +197,7 @@ function AdminMeritPointRules() {
           "Content-Type": "multipart/form-data",
         }
       });
-  
+
       const response = await api.get(`/admin/manage-merit-points?search=${search}`);
       const transformedData = response.data.rules.map(rule => ({
         id: rule.id,
@@ -208,7 +208,7 @@ function AdminMeritPointRules() {
       }));
       setRules(transformedData);
       setTotalRules(response.data.totalRules);
-  
+
       setImportFile(null);
     } catch (err) {
       console.log(err);
@@ -320,7 +320,7 @@ function AdminMeritPointRules() {
               </select>
             </div>
           </div>
-          <div>
+          <div className="table-responsive">
             <table className="table">
               <thead>
                 <tr>
@@ -459,26 +459,28 @@ function AdminMeritPointRules() {
             </div>
             <div className="mx-3 mt-5">
               <h2 className="mb-4">Point Threshold Actions</h2>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Threshold (points)</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pointThreshold.length > 0 ? pointThreshold.map((threshold, index) => (
-                    <tr key={index}>
-                      <td scope="row">{threshold.points}</td>
-                      <td>{threshold.actions}</td>
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Threshold (points)</th>
+                      <th>Actions</th>
                     </tr>
-                  )) :
-                    <div className="mb-5">
-                      <p className="text-danger">Something went wrong.</p>
-                    </div>
-                  }
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {pointThreshold.length > 0 ? pointThreshold.map((threshold, index) => (
+                      <tr key={index}>
+                        <td scope="row">{threshold.points}</td>
+                        <td>{threshold.actions}</td>
+                      </tr>
+                    )) :
+                      <div className="mb-5">
+                        <p className="text-danger">Something went wrong.</p>
+                      </div>
+                    }
+                  </tbody>
+                </table>
+              </div>
               <button className="btn btn-primary">Add new threshold</button>
             </div>
           </div>

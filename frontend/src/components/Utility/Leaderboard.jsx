@@ -38,9 +38,9 @@ function Leaderboard() {
   }, [leaderboardType, classFilter]);
 
   return (
-    <div className="container-fluid ms-5 mt-3">
+    <div className="container-fluid mt-3">
       {error && <div className="alert alert-danger me-5 mb-5">{error}</div>}
-      {!error && <div> <h2 className="ms-5 d-flex justify-content-evenly align-items-center">Leaderboard</h2>
+      {!error && <div> <h2 className="d-flex justify-content-evenly align-items-center">Leaderboard</h2>
         <div className="d-flex justify-content-evenly align-items-center row me-5">
           <button
             className="btn btn-primary col-4 rounded-0 border-end"

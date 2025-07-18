@@ -245,11 +245,11 @@ function AdminSettings({ setIsLoggedIn }) {
   }
 
   return (
-    <div className="container-fluid ms-5 mt-3">
+    <div className="container-fluid mt-4">
       <h1 className="my-3">Settings</h1>
       <div>
         <h3 style={{ color: "#7d7d7d" }}>Leaderboard Settings & Student Preferences</h3>
-        <div className="ms-5 container">
+        <div className="container ms-md-5">
           <div className="row">
             <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
               <p>Disable leaderboard</p>
@@ -309,14 +309,14 @@ function AdminSettings({ setIsLoggedIn }) {
 
       <div>
         <h3 style={{ color: "#7d7d7d" }}>Appearance</h3>
-        <div className="ms-5 container">
+        <div className="ms-md-5 container">
           <div className="row">
             <div>
               <h6>Website</h6>
-              <div className="ms-5 mb-2">
+              <div className="ms-md-5 mb-2">
                 <p className="text-danger">Warning: This will effect the entire site.</p>
               </div>
-              <div className="ms-5 mb-3">
+              <div className="ms-md-5 mb-3">
                 <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
                   <p>Logo</p>
                   <input type="file" accept="image/*" onChange={handleLogoChange} />
@@ -349,9 +349,9 @@ function AdminSettings({ setIsLoggedIn }) {
 
       <div>
         <h3 style={{ color: "#7d7d7d" }}>Account</h3>
-        <div className="ms-5 container">
+        <div className="ms-md-5 container">
           <h6>Basic information</h6>
-          <div className="row ms-3">
+          <div className="row ms-md-3">
             <div className="form-floating mb-3">
               <input 
                 type="text" 
@@ -384,9 +384,9 @@ function AdminSettings({ setIsLoggedIn }) {
           onClick={handleBasicInfoChangeCancel}
           >Cancel</button>
         </div>
-        <div className="ms-5 container mt-5">
+        <div className="ms-md-5 container mt-5">
           <h6>Change Password</h6>
-          <div className="row ms-3">
+          <div className="row ms-md-3">
             <div className="form-floating mb-3">
               <input 
                 type={showAdminCurrentPassword ? "text" : "password"} 
@@ -437,13 +437,13 @@ function AdminSettings({ setIsLoggedIn }) {
           onClick={() => setPasswordUpdateConfirmation(true)}
           >Update</button>
           <button 
-          className={`btn btn-primary me-3 px-5 ${currentPassword && newPassword && newPasswordConfirm ? "" : "disabled"}`}
+          className={`btn btn-primary px-5 ${currentPassword && newPassword && newPasswordConfirm ? "" : "disabled"}`}
           onClick={handlePasswordChangeCancel}
           >Cancel</button>
         </div>
-        <div className="ms-5 container mt-5">
+        <div className="ms-md-5 container mt-5">
           <h6>Add new admin account</h6>
-          <div className="row ms-3">
+          <div className="row row ms-md-3">
             <div className="form-floating mb-3">
               <input 
                 type="text" 

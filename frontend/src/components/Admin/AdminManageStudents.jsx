@@ -242,56 +242,58 @@ function AdminManageStudents() {
 
           {
             students.length ?
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th scope="col">
-                      <input
-                        type="checkbox"
-                        checked={selectedStudents.length === students.length && students.length > 0}
-                        onChange={handleSelectAll}
-                      />
-                    </th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Class</th>
-                    <th scope="col">Date joined</th>
-                    <th scope="col">Total points</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Stream</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {students.map((student, index) => (
-                    <tr key={index}>
-                      <td>
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">
                         <input
                           type="checkbox"
-                          checked={selectedStudents.includes(student.id)}
-                          onChange={() => handleCheckboxToggle(student.id)}
+                          checked={selectedStudents.length === students.length && students.length > 0}
+                          onChange={handleSelectAll}
                         />
-                      </td>
-                      <td>{student.name}</td>
-                      <td>{student.class}</td>
-                      <td>{student.dateJoined}</td>
-                      <td>{student.points}</td>
-                      <td>{student.email}</td>
-                      <td>{student.stream}</td>
-                      <td>{student.status}</td>
-                      <td>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => {
-                            setSelectedStudent(student);
-                            setShowDeleteStudentConfirm(true);
-                          }}
-                        >Delete</button>
-                      </td>
+                      </th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Class</th>
+                      <th scope="col">Date joined</th>
+                      <th scope="col">Total points</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Stream</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {students.map((student, index) => (
+                      <tr key={index}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={selectedStudents.includes(student.id)}
+                            onChange={() => handleCheckboxToggle(student.id)}
+                          />
+                        </td>
+                        <td>{student.name}</td>
+                        <td>{student.class}</td>
+                        <td>{student.dateJoined}</td>
+                        <td>{student.points}</td>
+                        <td>{student.email}</td>
+                        <td>{student.stream}</td>
+                        <td>{student.status}</td>
+                        <td>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => {
+                              setSelectedStudent(student);
+                              setShowDeleteStudentConfirm(true);
+                            }}
+                          >Delete</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               :
               <div className="d-flex justify-content-center align-items-center text-danger mb-3" style={{ height: "700px" }}>No data found</div>
           }
