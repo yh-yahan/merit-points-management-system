@@ -680,11 +680,66 @@ class AdminController extends Controller
     }
 
     public function GetPointThreshold(){
-      $data = PointsThreshold::select('points', 'actions')
+      $data = PointsThreshold::select('id', 'points', 'actions')
       ->orderBy('points', 'desc')
       ->get();
 
       return response()->json($data);
+    }
+
+    public function AddPointThreshold(Request $request) {
+      $fields = $request->validate([
+        'points' => 'required|numeric', 
+        'actions' => 'required|string'
+      ]);
+
+      PointsThreshold::create([
+        'points' => $fields['points'], 
+        'actions' => $fields['actions'], 
+      ]);
+
+      $pointsThreshold = PointsThreshold::select('id', 'points', 'actions')
+        ->orderBy('points', 'desc')
+        ->get();
+      
+      return response()->json($pointsThreshold);
+    }
+
+    public function EditPointThreshold(Request $request) {
+      $fields = $request->validate([
+        'id' => 'required', 
+        'points' => 'sometimes|numeric', 
+        'actions' => 'sometimes|string'
+      ]);
+
+      $updateData = [];
+
+      if (isset($fields['points'])) {
+        $updateData['points'] = $fields['points'];
+      }
+
+      if (isset($fields['actions'])) {
+        $updateData['actions'] = $fields['actions'];
+      }
+
+      PointsThreshold::where('id', $fields['id'])
+        ->update($updateData);
+
+      $pointsThreshold = PointsThreshold::select('id', 'points', 'actions')
+        ->orderBy('points', 'desc')
+        ->get();
+      
+      return response()->json($pointsThreshold);
+    }
+
+    public function DeletePointThreshold($id) {
+      PointsThreshold::where('id', $id)->delete();
+
+      $pointsThreshold = PointsThreshold::select('id', 'points', 'actions')
+        ->orderBy('points', 'desc')
+        ->get();
+
+      return response()->json($pointsThreshold);
     }
 
     public function GetStudentByClass(Request $request){

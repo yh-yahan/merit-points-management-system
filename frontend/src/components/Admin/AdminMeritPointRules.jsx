@@ -11,9 +11,6 @@ function AdminMeritPointRules() {
   const [sortOrder, setSortOrder] = useState('');
   const [rules, setRules] = useState([]);
   const [totalRules, setTotalRules] = useState(0);
-  const [initialPoints, setInitialPoints] = useState('');
-  const [hasUserChanged, setHasUserChanged] = useState(false);
-  const [pointThreshold, setPointThreshold] = useState({});
   const [newRuleName, setNewRuleName] = useState('');
   const [newRuleDescription, setNewRuleDescription] = useState('');
   const [newRulePoints, setNewRulePoints] = useState();
@@ -41,47 +38,6 @@ function AdminMeritPointRules() {
     }
     fetchData();
   }, [search]);
-
-  useEffect(() => {
-    if (hasUserChanged && initialPoints !== '') {
-      async function updateInitial() {
-        try {
-          await api.post('admin/initial', {
-            initial: initialPoints,
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      }
-      updateInitial();
-    }
-  }, [initialPoints, hasUserChanged]);
-
-  useEffect(() => {
-    async function fetchInitial() {
-      try {
-        const response = await api.get('admin/initial');
-        const initial = response.data;
-        setInitialPoints(initial.toString());
-      }
-      catch (err) {
-        console.log(err);
-      }
-    }
-
-    async function fetchPointThreshold() {
-      try {
-        const response = await api.get('admin/point-threshold');
-        setPointThreshold(response.data);
-      }
-      catch (err) {
-        console.log(err);
-      }
-    }
-
-    fetchInitial();
-    fetchPointThreshold();
-  }, []);
 
   async function handleAddRule() {
     if (!newRuleName.trim() || !newRuleDescription.trim() || newRulePoints === '' || isNaN(newRulePoints)) {
@@ -248,12 +204,6 @@ function AdminMeritPointRules() {
     }
   }
 
-  function handleInitialPointsChange(e) {
-    const value = e.target.value;
-    setInitialPoints(value);
-    setHasUserChanged(true);
-  }
-
   function sortRules(order) {
     const sortedRules = [...rules].sort((a, b) => {
       if (order === 'asc') return a.points - b.points;
@@ -277,6 +227,7 @@ function AdminMeritPointRules() {
   }
 
   function handleEditClick(rule) {
+    setEditedRule({});
     setEditingRuleId(rule.id);
   }
 
@@ -369,7 +320,7 @@ function AdminMeritPointRules() {
                       {editingRuleId == rule.id ? (
                         <>
                           <button
-                            className="btn btn-success me-5"
+                            className="btn btn-primary me-5"
                             onClick={() => handleSaveEdit(rule.id)}
                           >Save</button>
                           <button
@@ -444,45 +395,6 @@ function AdminMeritPointRules() {
               </tbody>
             </table>
             <p className="fw-lighter">Total rules: {totalRules}</p>
-          </div>
-
-          <div>
-            <h2 className="mt-5">Advanced</h2>
-            <label className="mx-3">Initial points for newly joined students: </label>
-            <div className="col-3 mx-3 mt-2">
-              <input
-                type="number"
-                className="form-control"
-                onChange={handleInitialPointsChange}
-                value={initialPoints || ''}
-              />
-            </div>
-            <div className="mx-3 mt-5">
-              <h2 className="mb-4">Point Threshold Actions</h2>
-              <div className="table-responsive">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Threshold (points)</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pointThreshold.length > 0 ? pointThreshold.map((threshold, index) => (
-                      <tr key={index}>
-                        <td scope="row">{threshold.points}</td>
-                        <td>{threshold.actions}</td>
-                      </tr>
-                    )) :
-                      <div className="mb-5">
-                        <p className="text-danger">Something went wrong.</p>
-                      </div>
-                    }
-                  </tbody>
-                </table>
-              </div>
-              <button className="btn btn-primary">Add new threshold</button>
-            </div>
           </div>
         </div>
       </div>

@@ -27,16 +27,19 @@ function App() {
         setIsLoggedIn(true);
         setUserRole(response.data.userType);
         setUser(response.data);
+        if (!response.data?.userType && location.pathname !== '/') {
+          navigate('/');
+        }
       }
       catch(err){
-        // console.log(err);
+        console.log(err);
       }
       finally{
         setLoading(false);
       }
     };
     checkAuth();
-    navigate('/');
+    // navigate('/');
   }, []);
 
   useEffect(() => {

@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
           TransactionSeeder::class, 
           PointsSeeder::class, 
           AdminSettingSeeder::class, 
-          StudentSettingSeeder::class,
+          StudentSettingSeeder::class, 
+          PointThresholdSeeder::class, 
           StreamSeeder::class, 
           ClassSeeder::class, 
         ]);

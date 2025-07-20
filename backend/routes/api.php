@@ -35,9 +35,6 @@ Route::prefix('v1')->group(function () {
     Route::post('add-rule', [AdminController::class, 'AddMeritPointRule']);
     Route::patch('edit-rule', [AdminController::class, 'EditMeritPointRule']);
     Route::delete('merit-point/{id}', [AdminController::class, 'DeleteMeritPointRule']);
-    Route::post('initial', [AdminController::class, 'SetInitial']);
-    Route::get('initial', [AdminController::class, 'GetInitial']);
-    Route::get('point-threshold', [AdminController::class, 'GetPointThreshold']);
     Route::get('student-by-class', [AdminController::class, 'GetStudentByClass']);
     Route::post('student-details', [AdminController::class, 'GetStudentDetails']);
     Route::patch('point/{receiver_id}', [AdminController::class, 'UpdatePoint']);
@@ -53,6 +50,12 @@ Route::prefix('v1')->group(function () {
 
     Route::get('setting', [AdminController::class, 'GetSetting']);
     Route::post('setting', [AdminController::class, 'Setting']);
+    Route::post('initial', [AdminController::class, 'SetInitial']);
+    Route::get('initial', [AdminController::class, 'GetInitial']);
+    Route::get('point-threshold', [AdminController::class, 'GetPointThreshold']);
+    Route::patch('point-threshold', [AdminController::class, 'EditPointThreshold']);
+    Route::post('point-threshold', [AdminController::class, 'AddPointThreshold']);
+    Route::delete('point-threshold/{id}', [AdminController::class, 'DeletePointThreshold']);
     Route::patch('user-info', [AdminController::class, 'ChangeBasicInfo']);
     Route::patch('update-password', [AdminController::class, 'UpdatePassword']);
     Route::post('logo', [AdminController::class, 'UploadLogo']);
