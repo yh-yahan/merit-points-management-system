@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
+import "../css/switch.css";
 
 function AdminSettings({ setIsLoggedIn }) {
   const [settings, setSettings] = useState({
@@ -173,8 +174,8 @@ function AdminSettings({ setIsLoggedIn }) {
   async function handlePointThresholdAdd() {
     try {
       const response = await api.post('/admin/point-threshold', {
-        'points': newThresholdPoints, 
-        'actions': newThresholdActions, 
+        'points': newThresholdPoints,
+        'actions': newThresholdActions,
       });
 
       setPointThreshold(response.data);
@@ -358,33 +359,43 @@ function AdminSettings({ setIsLoggedIn }) {
             <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
               <p>Disable leaderboard</p>
               {disableLeaderboardError && <p className="text-danger">{disableLeaderboardError}</p>}
-              <button
-                className="btn btn-primary"
-                onClick={async () => {
-                  const newDisableLeaderboard = !settings.disable_leaderboard;
-                  handleSettingInputChange("disable_leaderboard", newDisableLeaderboard);
-                  try {
-                    await changeSettings("disable_leaderboard", newDisableLeaderboard);
-                  } catch (err) {
-                    console.error("Failed to update leaderboard setting:", err);
-                    handleSettingInputChange("disable_leaderboard", !newDisableLeaderboard);
-                    setDisableLeaderboardError("Failed to update leaderboard setting");
-                  }
-                }}
-              >{
-                  settings.disable_leaderboard ? "Enable" : "Disable"
-                }</button>
+              <div className="w-50 d-flex justify-content-end align-items-center">
+                <label className="switch">
+                  <input
+                    type="checkbox" 
+                    checked={settings.disable_leaderboard}
+                    onChange={async () => {
+                      const newDisableLeaderboard = !settings.disable_leaderboard;
+                      handleSettingInputChange("disable_leaderboard", newDisableLeaderboard);
+                      try {
+                        await changeSettings("disable_leaderboard", newDisableLeaderboard);
+                      } catch (err) {
+                        console.error("Failed to update leaderboard setting:", err);
+                        handleSettingInputChange("disable_leaderboard", !newDisableLeaderboard);
+                        setDisableLeaderboardError("Failed to update leaderboard setting");
+                      }
+                    }}
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
             </div>
 
             <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
               <p>Allow Students to choose whether to be displayed on leaderboard.</p>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  handleSettingInputChange("allow_students_to_opt_in_leaderboard", !settings.allow_students_to_opt_in_leaderboard);
-                  changeSettings("allow_students_to_opt_in_leaderboard", !settings.allow_students_to_opt_in_leaderboard);
-                }}
-              >{settings.allow_students_to_opt_in_leaderboard ? "Disallow" : "Allow"}</button>
+              <div className="w-50 d-flex justify-content-end align-items-center">
+                <label className="switch">
+                  <input
+                    type="checkbox" 
+                    checked={settings.allow_students_to_opt_in_leaderboard}
+                    onChange={() => {
+                      handleSettingInputChange("allow_students_to_opt_in_leaderboard", !settings.allow_students_to_opt_in_leaderboard);
+                      changeSettings("allow_students_to_opt_in_leaderboard", !settings.allow_students_to_opt_in_leaderboard);
+                    }}
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
             </div>
 
             <div className="col-12 mb-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
@@ -461,11 +472,11 @@ function AdminSettings({ setIsLoggedIn }) {
                       {editingPointsThresholdId == threshold.id ? (
                         <>
                           <button
-                            className="btn btn-primary me-3" 
+                            className="btn btn-primary me-3"
                             onClick={() => handlePointThresholdSave()}
                           >Save</button>
                           <button
-                            className="btn btn-secondary" 
+                            className="btn btn-secondary"
                             onClick={() => {
                               setEditingPointsThresholdId(null);
                               setEditedPointThreshold({});
@@ -475,13 +486,13 @@ function AdminSettings({ setIsLoggedIn }) {
                       ) :
                         <>
                           <button
-                            className="btn btn-primary me-3" 
+                            className="btn btn-primary me-3"
                             onClick={() => handlePointThresholdEdit(threshold)}
                           >
                             <i class="bi bi-pencil-square"></i> Edit
                           </button>
                           <button
-                            className="btn btn-danger" 
+                            className="btn btn-danger"
                             onClick={() => {
                               setPointThresholdToDelete(threshold);
                               setPointThresholdDeleteConfirm(true);
@@ -503,8 +514,8 @@ function AdminSettings({ setIsLoggedIn }) {
                     <input
                       type="number"
                       className="form-control"
-                      placeholder="points" 
-                      value={newThresholdPoints} 
+                      placeholder="points"
+                      value={newThresholdPoints}
                       onChange={(e) => setNewThresholdPoints(e.target.value)}
                     />
                   </td>
@@ -512,8 +523,8 @@ function AdminSettings({ setIsLoggedIn }) {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Actions to take" 
-                      value={newThresholdActions} 
+                      placeholder="Actions to take"
+                      value={newThresholdActions}
                       onChange={(e) => setNewThresholdActions(e.target.value)}
                     />
                   </td>

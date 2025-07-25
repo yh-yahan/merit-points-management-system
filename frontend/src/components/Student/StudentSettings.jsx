@@ -1,6 +1,6 @@
 import api from '../../api'
 import { useEffect, useState } from 'react'
-import "../css/StudentSettings.css"
+import "../css/switch.css"
 import { useNavigate } from 'react-router-dom';
 
 function StudentSettings({ setIsLoggedIn }) {
