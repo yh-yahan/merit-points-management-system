@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use App\Models\InvitationCodes;
 use App\Models\MeritPointsRules;
 use App\Models\StudentClass;
+use App\Models\StudentExclusion;
 use App\Models\StudentStream;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -1015,6 +1016,43 @@ class AdminController extends Controller
         ]);
         return response()->json(['setting' => $setting]);
       }
+    }
+
+    public function ExcludedStudent () {
+      $excludedStudents = StudentExclusion::with('student')->get();
+      $students = [];
+      
+      foreach ($excludedStudents as $excludedStudent) {
+        if ($excludedStudent->student) {
+          $students[] = [
+            "id" => $excludedStudent->student->id, 
+            "name" => $excludedStudent->student->name, 
+            "email" => $excludedStudent->student->email, 
+            "class" => $excludedStudent->student->class, 
+            "stream" => $excludedStudent->student->stream
+          ];
+        }
+      }
+
+      return response($students, 200);
+    }
+
+    public function ExcludeStudent (Request $request) {
+      $fields = $request->validate([
+        'email' => 'required|email'
+      ]);
+
+      $studentId = Students::where('email', $fields['email'])->value('id');
+
+      StudentExclusion::insert(['student_id' => $studentId]);
+
+      return response(["message" => "Student included in exclusion list"], 201);
+    }
+
+    public function DeleteExcludedStudent ($id) {
+      StudentExclusion::where('student_id', $id)->delete();
+
+      return response(["message" => "Student deleted from exclusion list"], 200);
     }
 
     public function ChangeBasicInfo(Request $request){

@@ -26,6 +26,8 @@ function AdminSettings({ setIsLoggedIn }) {
     unchangedName: "",
     unchangedEmail: ""
   });
+  const [excludedStudents, setExcludedStudents] = useState([]);
+  const [excludeStudentEmail, setExcludeStudentEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
@@ -95,6 +97,15 @@ function AdminSettings({ setIsLoggedIn }) {
       }
     }
 
+    async function fetchExcludedStudents() {
+      try {
+        const response = await api.get('admin/exclude-student');
+        setExcludedStudents(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
     async function fetchInitial() {
       try {
         const response = await api.get('admin/initial');
@@ -116,10 +127,10 @@ function AdminSettings({ setIsLoggedIn }) {
       }
     }
 
+    fetchSettingData();
+    fetchExcludedStudents();
     fetchInitial();
     fetchPointThreshold();
-
-    fetchSettingData();
   }, []);
 
   useEffect(() => {
@@ -279,6 +290,32 @@ function AdminSettings({ setIsLoggedIn }) {
     }
   }
 
+  async function handleAddExcludedStudent() {
+    try {
+      await api.post("admin/exclude-student", {
+        "email": excludeStudentEmail
+      });
+
+      const response = await api.get('admin/exclude-student');
+      setExcludedStudents(response.data);
+
+      setExcludeStudentEmail("");
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function handleRemoveExcludedStudent($id) {
+    try {
+      const data = await api.delete(`admin/exclude-student/${$id}`);
+
+      const response = await api.get('admin/exclude-student');
+      setExcludedStudents(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   function handleInitialPointsChange(e) {
     const value = e.target.value;
     setInitialPoints(value);
@@ -362,7 +399,7 @@ function AdminSettings({ setIsLoggedIn }) {
               <div className="w-50 d-flex justify-content-end align-items-center">
                 <label className="switch">
                   <input
-                    type="checkbox" 
+                    type="checkbox"
                     checked={settings.disable_leaderboard}
                     onChange={async () => {
                       const newDisableLeaderboard = !settings.disable_leaderboard;
@@ -386,7 +423,7 @@ function AdminSettings({ setIsLoggedIn }) {
               <div className="w-50 d-flex justify-content-end align-items-center">
                 <label className="switch">
                   <input
-                    type="checkbox" 
+                    type="checkbox"
                     checked={settings.allow_students_to_opt_in_leaderboard}
                     onChange={() => {
                       handleSettingInputChange("allow_students_to_opt_in_leaderboard", !settings.allow_students_to_opt_in_leaderboard);
@@ -407,16 +444,61 @@ function AdminSettings({ setIsLoggedIn }) {
               </select>
             </div>
 
-            <div className="col-12 mb-3 border-bottom border-secondary-subtle p-3">
+            <div>
               <div className="d-flex flex-column">
                 <p>Leaderboard Participation control</p>
                 <p className="fw-light fs-6 text-body-secondary">
                   Determines which student won't be displayed on leaderboard
                 </p>
               </div>
-              <button
-                className="btn btn-primary float-end"
-              >Add students to be excluded</button>
+
+              <div className="row">
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter student email" 
+                    value={excludeStudentEmail} 
+                    onChange={(e) => setExcludeStudentEmail(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <button className="btn btn-primary" onClick={() => handleAddExcludedStudent()}>
+                    Excluded student
+                  </button>
+                </div>
+              </div>
+
+              <div className="col-12 mb-3 border-bottom border-secondary-subtle p-3">
+                <div className="table-responsive">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Class</th>
+                        <th>Stream</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {excludedStudents && excludedStudents.map((excludedStudent, index) => (
+                        <tr key={index}>
+                          <td>{excludedStudent.name}</td>
+                          <td>{excludedStudent.email}</td>
+                          <td>{excludedStudent.class}</td>
+                          <td>{excludedStudent.stream}</td>
+                          <td>
+                            <button 
+                              className="btn btn-danger" 
+                              onClick={() => handleRemoveExcludedStudent(excludedStudent.id)}
+                            >Remove</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>

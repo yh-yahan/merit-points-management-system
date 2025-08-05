@@ -38,4 +38,9 @@ class Students extends Authenticatable
   {
     return $this->hasOne(StudentSetting::class);
   }
+
+  public function studentExclusion()
+{
+    return $this->hasOne(StudentExclusion::class, 'student_id');
+}
 }

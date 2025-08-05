@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
           PointThresholdSeeder::class, 
           StreamSeeder::class, 
           ClassSeeder::class, 
+          StudentExclusionSeeder::class, 
         ]);
     }
 }

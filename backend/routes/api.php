@@ -38,7 +38,6 @@ Route::prefix('v1')->group(function () {
     Route::get('student-by-class', [AdminController::class, 'GetStudentByClass']);
     Route::post('student-details', [AdminController::class, 'GetStudentDetails']);
     Route::patch('point/{receiver_id}', [AdminController::class, 'UpdatePoint']);
-    Route::post('search-student', [AdminController::class, 'SearchStudent']);
     Route::get('academic-structure', [AdminController::class, 'AcademicStructure']);
     Route::post('class', [AdminController::class, 'AddStudentClass']);
     Route::post('stream', [AdminController::class, 'AddStudentStream']);
@@ -50,6 +49,9 @@ Route::prefix('v1')->group(function () {
 
     Route::get('setting', [AdminController::class, 'GetSetting']);
     Route::post('setting', [AdminController::class, 'Setting']);
+    Route::get('exclude-student', [AdminController::class, 'ExcludedStudent']);
+    Route::post('exclude-student', [AdminController::class, 'ExcludeStudent']);
+    Route::delete('exclude-student/{id}', [AdminController::class, 'DeleteExcludedStudent']);
     Route::post('initial', [AdminController::class, 'SetInitial']);
     Route::get('initial', [AdminController::class, 'GetInitial']);
     Route::get('point-threshold', [AdminController::class, 'GetPointThreshold']);
@@ -68,6 +70,8 @@ Route::prefix('v1')->group(function () {
     Route::get('export/chart', [ExportController::class, 'AdminChartExport']);
     Route::get('export/rules/excel', [ExportController::class, 'exportRulesToExcel']);
     Route::get('export/rules/csv', [ExportController::class, 'exportRulesToCsv']);
+
+    Route::post('search-student', [AdminController::class, 'SearchStudent']);
   });
 
   Route::prefix('teacher')->group(function () {

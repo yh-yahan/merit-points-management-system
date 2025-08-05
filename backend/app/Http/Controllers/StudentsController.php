@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\AdminSetting;
 use App\Models\StudentSetting;
 use App\Models\StudentClass;
+use App\Models\StudentExclusion;
 use App\Models\StudentStream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -168,6 +169,7 @@ class StudentsController extends Controller
         'message' => 'Leaderboard is disabled'
       ]);
     } else {
+      $excludedStudentIds = StudentExclusion::pluck('student_id')->toArray();
       $leaderboardType = $request->input('leaderboard', 'alltime');
       $classFilter = $request->input('classfilter', 'all');
 
@@ -177,6 +179,7 @@ class StudentsController extends Controller
       if ($leaderboardType == 'alltime') {
         $allTimeLeaderboard = Students::with('points')
           ->withSum('points as total_points', 'total_points')
+          ->whereNotIn('id', $excludedStudentIds)
           ->when($classFilter !== 'all', function ($query) use ($classFilter) {
             $query->where('class', $classFilter);
           })
@@ -205,6 +208,7 @@ class StudentsController extends Controller
         $endOfWeek = Carbon::now()->endOfWeek();
 
         $weeklyLeaderboard = Transaction::whereBetween('date', [$startOfWeek, $endOfWeek])
+          ->whereNotIn('id', $excludedStudentIds)
           ->groupBy('receiver_id')
           ->select('receiver_id', DB::raw("
           SUM(CASE 
@@ -244,6 +248,7 @@ class StudentsController extends Controller
         $endOfMonth = Carbon::now()->endOfMonth();
 
         $monthlyLeaderboard = Transaction::whereBetween('date', [$startOfMonth, $endOfMonth])
+          ->whereNotIn('id', $excludedStudentIds)
           ->groupBy('receiver_id')
           ->select('receiver_id', DB::raw("
                         SUM(CASE 
