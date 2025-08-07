@@ -271,6 +271,14 @@ class TeachersController extends Controller
     ]);
   }
 
+  public function MeritPointRule(Request $request) {
+    return $this->GetMeritPointRule($request);
+  }
+
+  public function MeritPointThreshold(Request $request) {
+    return $this->GetPointThreshold();
+  }
+
   public function GetSetting(Request $request)
   {
     $token = $request->cookie('auth_token');

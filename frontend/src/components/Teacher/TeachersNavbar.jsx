@@ -2,19 +2,19 @@ import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import api from '../../api';
 
-function TeachersNavbar({ setIsLoggedIn }){
+function TeachersNavbar({ setIsLoggedIn }) {
   const [logoUrl, setLogoUrl] = useState(null);
   const [popup, setPopup] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function getLogo(){
-      try{
+    async function getLogo() {
+      try {
         const response = await api.get('/logo');
         setLogoUrl(response.data.path);
       }
-      catch(err){
+      catch (err) {
         console.log(err);
       }
     }
@@ -26,22 +26,22 @@ function TeachersNavbar({ setIsLoggedIn }){
     return location.pathname === path;
   };
 
-  async function handleLogout(e){
+  async function handleLogout(e) {
     e.preventDefault();
     setPopup(false);
 
-    try{
+    try {
       const response = await api.post('/logout');
 
       setIsLoggedIn(false);
       navigate('/');
     }
-    catch(err){
+    catch (err) {
       console.log(err);
     }
   }
 
-  return(
+  return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light">
         <div className="container-fluid">
@@ -62,6 +62,23 @@ function TeachersNavbar({ setIsLoggedIn }){
               <li className="nav-item">
                 <NavLink className={`nav-link navLink ${isActive('/leaderboard') ? 'active' : ''}`} to="/leaderboard">Leaderboard</NavLink>
               </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Merit points
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <NavLink
+                      className={`nav-link navLink ${isActive('/merit-point/rules') ? 'active' : ''}`}
+                      to="/merit-point/rules">Rules</NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      className={`nav-link navLink ${isActive('/merit-point/threshold') ? 'active' : ''}`}
+                      to="/merit-point/threshold">Thresold</NavLink>
+                  </li>
+                </ul>
+              </li>
             </ul>
             <ul className="navbar-nav ml-auto mb-2 mb-lg-0 me-5">
               {/* <li>
@@ -71,9 +88,9 @@ function TeachersNavbar({ setIsLoggedIn }){
                 <NavLink className={`nav-link navLink ${isActive('/settings') ? 'active' : ''}`} to="/settings">Settings</NavLink>
               </li>
               <li>
-                <a 
-                className={`nav-link navLink cursor-progress cursor-pointer`} 
-                onClick={() => setPopup(true)}>
+                <a
+                  className={`nav-link navLink cursor-progress cursor-pointer`}
+                  onClick={() => setPopup(true)}>
                   <i className="bi bi-box-arrow-right"></i> Logout
                 </a>
               </li>
@@ -90,9 +107,9 @@ function TeachersNavbar({ setIsLoggedIn }){
               <div className="d-flex justify-content-end">
                 <button className="btn btn-danger me-3" onClick={handleLogout}>Yes, Logout</button>
                 <button className="btn btn-secondary" onClick={() => setPopup(false)}>Cancel</button>
+              </div>
             </div>
           </div>
-        </div>
         )
       }
     </>

@@ -80,6 +80,8 @@ Route::prefix('v1')->group(function () {
     Route::post('student-details', [TeachersController::class, 'GetStudentDetails']);
     Route::patch('point/{receiver_id}', [TeachersController::class, 'UpdatePoint']);
     Route::post('search-student', [TeachersController::class, 'SearchStudent']);
+    Route::get('merit-point/rules', [TeachersController::class, 'MeritPointRule']);
+    Route::get('merit-point/threshold', [TeachersController::class, 'MeritPointThreshold']);
     Route::get('setting', [TeachersController::class, 'GetSetting']);
     Route::post('setting', [TeachersController::class, 'ChangeBasicInfo']);
     Route::patch('update-password', [TeachersController::class, 'UpdatePassword']);
@@ -88,6 +90,8 @@ Route::prefix('v1')->group(function () {
   Route::prefix('student')->group(function () {
     Route::get('dashboard', [StudentsController::class, 'Dashboard']);
     Route::get('leaderboard', [StudentsController::class, 'Leaderboard']);
+    Route::get('merit-point/rules', [StudentsController::class, 'MeritPointRule']);
+    Route::get('merit-point/threshold', [StudentsController::class, 'MeritPointThreshold']);
     Route::get('settings', [StudentsController::class, 'GetSettings']);
     Route::post('settings', [StudentsController::class, 'Setting']);
     Route::patch('user-info', [StudentsController::class, 'ChangeBasicInfo']);

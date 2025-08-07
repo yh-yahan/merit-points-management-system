@@ -294,6 +294,14 @@ class StudentsController extends Controller
     }
   }
 
+  public function MeritPointRule(Request $request) {
+    return $this->GetMeritPointRule($request);
+  }
+
+  public function MeritPointThreshold(Request $request) {
+    return $this->GetPointThreshold();
+  }
+
   public function GetSettings(Request $request)
   {
     $token = $request->cookie('auth_token');
