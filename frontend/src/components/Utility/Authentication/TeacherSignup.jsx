@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import api from '../../../api';
 
-function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }){
+function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,15 +15,15 @@ function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }){
 
   const navigate = useNavigate();
 
-  async function handleTeacherSignup(e){
+  async function handleTeacherSignup(e) {
     e.preventDefault();
-    try{
+    try {
       const response = await api.post('teacher/signup', {
-        'name': name, 
-        'email': email, 
-        'password': password, 
-        'password_confirmation': passwordConfirm, 
-        'description': '', 
+        'name': name,
+        'email': email,
+        'password': password,
+        'password_confirmation': passwordConfirm,
+        'description': '',
         'invitation_code': invitationCode
       });
 
@@ -36,27 +36,27 @@ function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }){
       setError("");
 
       navigate('/');
-    }
-    catch(err){
+    } catch (err) {
       setNameError("");
       setEmailError("");
       setPasswordError("");
       setError("");
-      
-      if(err.response){
-        const errors = err.response.data.errors;
-  
-        if(err.response && err.response.status === 422){
-          if(errors.email || errors.password || errors.name){
-            setNameError(errors.name);
-            setEmailError(errors.email);
-            setPasswordError(errors.password);
+
+      if (err.response) {
+        const errors = err.response.data?.errors || {};
+
+        if (err.response.status === 401) {
+          setError("Invalid invitation code");
+        } else if (err.response.status === 422) {
+          if (errors.email || errors.password || errors.name) {
+            setNameError(errors.name || "");
+            setEmailError(errors.email || "");
+            setPasswordError(errors.password || "");
           }
+        } else {
+          setError("Something went wrong. Please try again later.");
+        }
       }
-      else{
-        setError("Something went wrong. Please try again later.");
-      }
-    }
     }
   }
 
@@ -76,27 +76,27 @@ function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }){
                   <h2 className="text-center mb-4">Sign up</h2>
                   <form onSubmit={handleTeacherSignup}>
                     <div className="form-floating mb-3">
-                      <input 
-                      type="text" 
-                      className="form-control" 
-                      onChange={(e) => setName(e.target.value)}/>
+                      <input
+                        type="text"
+                        className="form-control"
+                        onChange={(e) => setName(e.target.value)} />
                       <label>Name</label>
                     </div>
                     {nameError && <div className="text-danger mb-3">{nameError}</div>}
                     <div className="form-floating mb-3">
-                      <input 
-                      type="text" 
-                      className="form-control" 
-                      onChange={(e) => setEmail(e.target.value)}/>
+                      <input
+                        type="text"
+                        className="form-control"
+                        onChange={(e) => setEmail(e.target.value)} />
                       <label>Email</label>
                     </div>
                     {emailError && <div className="text-danger mb-3">{emailError}</div>}
                     <div className="form-floating mb-3">
-                      <input 
-                      type={showPassword ? 'text' : 'password'} 
-                      className="form-control" 
-                      onChange={(e) => setPassword(e.target.value)}
-                      autoComplete='new-password'/>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        className="form-control"
+                        onChange={(e) => setPassword(e.target.value)}
+                        autoComplete='new-password' />
                       <label>Password</label>
                       <i
                         onClick={togglePasswordVisibility}
@@ -105,21 +105,21 @@ function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }){
                       ></i>
                     </div>
                     <div className="form-floating mb-3">
-                      <input 
-                      type={showPassword ? 'text' : 'password'} 
-                      className="form-control" 
-                      onChange={(e) => setPasswordConfirm(e.target.value)}
-                      autoComplete='new-password'/>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        className="form-control"
+                        onChange={(e) => setPasswordConfirm(e.target.value)}
+                        autoComplete='new-password' />
                       <label>Confirm password</label>
                     </div>
                     {passwordError && <div className="text-danger mb-3">{passwordError}</div>}
                     {error && <div className="text-danger mb-3">{error}</div>}
                     <div className="d-grid">
-                      <button className="btn" style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }} onMouseOver={ (e) => e.target.style.backgroundColor = "black" } onMouseOut={ (e) => e.target.style.backgroundColor = "#c20008" } type="submit">
+                      <button className="btn" style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }} onMouseOver={(e) => e.target.style.backgroundColor = "black"} onMouseOut={(e) => e.target.style.backgroundColor = "#c20008"} type="submit">
                         Sign up
                       </button>
                     </div>
-                    <p className="mt-3">Already have an account? { !isLoggedIn && <Link to="/">login</Link> }</p>
+                    <p className="mt-3">Already have an account? {!isLoggedIn && <Link to="/">login</Link>}</p>
                   </form>
                 </div>
               </div>

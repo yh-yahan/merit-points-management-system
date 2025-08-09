@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\InvitationCodes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -25,8 +26,12 @@ class InvitationCodeController extends Controller
           ], 429);
         }
         RateLimiter::hit($key, $decayMinutes * 60);
+
+        $current_date = Carbon::now()->toDatestring();
   
-        $result = InvitationCodes::where('code', $fields['invitationCode'])->first();
+        $result = InvitationCodes::where('code', $fields['invitationCode'])
+          ->whereDate('valid_until', '>=', $current_date)
+          ->first();
   
         if(!$result){
           return response([
@@ -35,7 +40,7 @@ class InvitationCodeController extends Controller
         }
         
         return response([
-          'result' => $result
+          'result' => $result, 
         ], 200);
       }
 }

@@ -51,8 +51,7 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
       setError("");
 
       navigate('/');
-    }
-    catch (err) {
+    } catch (err) {
       setEmailError("");
       setPasswordError("");
       setClassError("");
@@ -61,18 +60,19 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
       setError("");
 
       if (err.response) {
-        const errors = err.response.data.errors;
+        const errors = err.response.data?.errors || {};
 
-        if (err.response && err.response.status === 422) {
+        if (err.response.status === 401) {
+          setError("Invalid invitation code");
+        } else if (err.response.status === 422) {
           if (errors.email || errors.password || errors.stream || errors.studentClass || errors.name) {
-            setEmailError(errors.email);
-            setPasswordError(errors.password);
-            setStreamError(errors.stream);
-            setClassError(errors.studentClass);
-            setFullnameError(errors.name);
+            setEmailError(errors.email || "");
+            setPasswordError(errors.password || "");
+            setStreamError(errors.stream || "");
+            setClassError(errors.studentClass || "");
+            setFullnameError(errors.name || "");
           }
-        }
-        else {
+        } else {
           setError("Something went wrong. Please try again later.");
         }
       }

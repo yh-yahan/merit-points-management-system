@@ -109,9 +109,11 @@ class AdminController extends Controller
 
       function generateUniquePart($characters, $length){
         $randomString = '';
-        for($i = 0; $i < $length; $i++){
-          $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        $maxIndex = strlen($characters) - 1;
+        for ($i = 0; $i < $length; $i++) {
+          $randomString .= $characters[random_int(0, $maxIndex)];
         }
+
         return $randomString;
       }
 

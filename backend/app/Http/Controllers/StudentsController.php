@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Students;
 use App\Models\Transaction;
 use App\Models\AdminSetting;
+use App\Models\InvitationCodes;
 use App\Models\StudentSetting;
 use App\Models\StudentClass;
 use App\Models\StudentExclusion;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Cookie;
+use Illuminate\Support\Facades\RateLimiter;
 
 class StudentsController extends Controller
 {
@@ -30,40 +32,66 @@ class StudentsController extends Controller
       'invitation_code' => 'required|string'
     ]);
 
-    $students = Students::create([
-      'name' => $fields['name'],
-      'username' => $fields['username'],
-      'email' => $fields['email'],
-      'password' => Hash::make($fields['password']),
-      'class' => $fields['class'],
-      'stream' => $fields['stream'],
-      'status' => 'active',
-      'date_joined' => now(),
-    ]);
+    $maxAttempts = 5;
+    $decayMinutes = 1;
+    $key = 'student signup: ' . $request->ip();
+    if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+      $seconds = RateLimiter::availableIn($key);
+      return response([
+        // 'message' => 'Too many attempts. Please try again in ' . $seconds . ' seconds.'
+        'message' => 'Too many attempts. Please try again later.'
+      ], 429)->header('Retry-After', $seconds);;
+    }
+    RateLimiter::hit($key, $decayMinutes * 60);
 
-    // $token = $students->createToken('studentsToken')->plainTextToken;
-    $token = $students->createToken(
-      'studentsToken',
-      ['*'],
-      now()->addDays(7)
-    )->plainTextToken;
+    $current_date = Carbon::now()->toDatestring();
 
-    $cookie = new Cookie('auth_token', $token, now()->addDays(7)->timestamp, '/', null, true, true, false, 'None', true);
+    $result = InvitationCodes::where('code', $fields['invitation_code'])
+      ->whereDate('valid_until', '>=', $current_date)
+      ->first();
 
-    $notification = [
-      'title' => "New sign up",
-      'message' => "Student " . $students->name . " has signed up " . "via invitation code of " . "'" . $fields['invitation_code'] . "'",
-      'is_read' => false,
-    ];
+    if ($result) {
+      if ($result->for_user_type == 'student') {
+        $students = Students::create([
+          'name' => $fields['name'],
+          'username' => $fields['username'],
+          'email' => $fields['email'],
+          'password' => Hash::make($fields['password']),
+          'class' => $fields['class'],
+          'stream' => $fields['stream'],
+          'status' => 'active',
+          'date_joined' => now(),
+        ]);
 
-    app('App\Http\Controllers\AdminController')->Notifications($notification);
+        // $token = $students->createToken('studentsToken')->plainTextToken;
+        $token = $students->createToken(
+          'studentsToken',
+          ['*'],
+          now()->addDays(7)
+        )->plainTextToken;
 
-    $response = [
-      'students' => $students,
-      // 'token' => $token, 
-    ];
+        $cookie = new Cookie('auth_token', $token, now()->addDays(7)->timestamp, '/', null, true, true, false, 'None', true);
 
-    return response($response, 201)->withCookie($cookie);
+        $notification = [
+          'title' => "New sign up",
+          'message' => "Student " . $students->name . " has signed up " . "via invitation code of " . "'" . $fields['invitation_code'] . "'",
+          'is_read' => false,
+        ];
+
+        app('App\Http\Controllers\AdminController')->Notifications($notification);
+
+        $response = [
+          'students' => $students,
+          // 'token' => $token, 
+        ];
+
+        return response($response, 201)->withCookie($cookie);
+      } else {
+        return response(["message" => "Invalid invitation code"], 401);
+      }
+    } else {
+      return response(["message" => "Invalid invitation code"], 401);
+    }
   }
 
   public function Dashboard(Request $request)
@@ -294,11 +322,13 @@ class StudentsController extends Controller
     }
   }
 
-  public function MeritPointRule(Request $request) {
+  public function MeritPointRule(Request $request)
+  {
     return $this->GetMeritPointRule($request);
   }
 
-  public function MeritPointThreshold(Request $request) {
+  public function MeritPointThreshold(Request $request)
+  {
     return $this->GetPointThreshold();
   }
 
