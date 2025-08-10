@@ -33,7 +33,6 @@ function AdminSettings({ setIsLoggedIn }) {
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const [changedName, setChangedName] = useState("");
   const [changedEmail, setChangedEmail] = useState("");
-  const [adminId, setAdminId] = useState();
 
   const [newAdminName, setNewAdminName] = useState("");
   const [newAdminEmail, setNewAdminEmail] = useState("");
@@ -90,7 +89,6 @@ function AdminSettings({ setIsLoggedIn }) {
         setChangedName(accountSettings[0].name);
         setChangedEmail(accountSettings[0].email);
         setSettings(updatedSettings);
-        setAdminId(accountSettings[0].id);
       }
       catch (err) {
         console.error(err);
@@ -212,14 +210,12 @@ function AdminSettings({ setIsLoggedIn }) {
   async function updateAdminBasicInfo() {
     try {
       const adminUserInfo = await api.patch('/admin/user-info', {
-        'id': adminId,
         'name': changedName,
         'email': changedEmail
       });
       const adminUserInfoData = adminUserInfo.data[0][0];
       setChangedName(adminUserInfoData.name);
       setChangedEmail(adminUserInfoData.email);
-      setAdminId(adminUserInfoData.id);
       setAdmin(prevState => ({
         ...prevState,
         unchangedName: adminUserInfoData.name,
@@ -237,7 +233,6 @@ function AdminSettings({ setIsLoggedIn }) {
     setPasswordUpdateConfirmation(false);
     try {
       const response = await api.patch('/admin/update-password', {
-        'id': adminId,
         'current_password': currentPassword,
         'password': newPassword,
         'password_confirmation': newPasswordConfirm,

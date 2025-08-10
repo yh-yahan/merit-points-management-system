@@ -1059,15 +1059,18 @@ class AdminController extends Controller
 
     public function ChangeBasicInfo(Request $request){
       $fields = $request->validate([
-        'id' => 'required', 
         'name' => 'required|string', 
         'email' => 'required|string|email'
       ]);
 
-      Admin::where('id', $fields['id'])
+      $token = $request->cookie('auth_token');
+      $accessToken = PersonalAccessToken::findToken($token);
+      $adminId = $accessToken->tokenable_id;
+
+      Admin::where('id', $adminId)
       ->update(['name' => $fields['name'], 'email' => $fields['email']]);
 
-      $admin = Admin::select('id', 'name', 'email')->where('id', $fields['id'])->get();
+      $admin = Admin::select('id', 'name', 'email')->where('id', $adminId)->get();
 
       return response()->json([
         $admin
@@ -1076,12 +1079,15 @@ class AdminController extends Controller
 
     public function UpdatePassword(Request $request){
       $fields = $request->validate([
-        'id' => 'required', 
         'current_password' => 'required|string', 
         'password' => 'required|confirmed|string|min:6'
       ]);
 
-      $adminPassword = Admin::select('password')->where('id', $fields['id'])->pluck('password')->first();
+      $token = $request->cookie('auth_token');
+      $accessToken = PersonalAccessToken::findToken($token);
+      $adminId = $accessToken->tokenable_id;
+
+      $adminPassword = Admin::select('password')->where('id', $adminId)->pluck('password')->first();
 
       if(!Hash::check($fields['current_password'], $adminPassword)){
         return response(['message' => 'Incorrect password'], 401);
@@ -1090,7 +1096,7 @@ class AdminController extends Controller
         return response(['message' => 'New password cannot be the same as the current password'], 400);
       }
 
-      Admin::where('id', $fields['id'])
+      Admin::where('id', $adminId)
       ->update(['password' => Hash::make($fields['password'])]);
 
       $token = $request->cookie('auth_token');
