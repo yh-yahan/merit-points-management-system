@@ -5,7 +5,6 @@ import InvitationCode from "./components/Utility/Authentication/InvitationCode.j
 import Admin from "./components/Admin/Admin.jsx"
 import Teacher from "./components/Teacher/Teacher.jsx"
 import Student from "./components/Student/Student.jsx"
-import Footer from "./components/Utility/Footer.jsx"
 import NotFound from "./components/Utility/NotFound.jsx"
 import UserRoutes from "./components/Utility/UserRoutes.jsx"
 import { Routes, Route, useNavigate } from "react-router-dom"
@@ -117,7 +116,6 @@ function App() {
         ) }
         <Route path="*" element={<NotFound />} />
       </Routes>
-      { isLoggedIn && <Footer /> }
     </>
   )
 }
