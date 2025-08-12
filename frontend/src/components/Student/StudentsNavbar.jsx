@@ -110,7 +110,7 @@ function StudentsNavbar({ setIsLoggedIn }) {
               <h5>Confirm Logout</h5>
               <p>Are you sure you want to logout?</p>
               <div className="d-flex justify-content-end">
-                <button className="btn btn-danger me-3" onClick={handleLogout}>Yes, Logout</button>
+                <button className="btn btn-primary me-3" onClick={handleLogout}>Yes, Logout</button>
                 <button className="btn btn-secondary" onClick={() => setPopup(false)}>Cancel</button>
               </div>
             </div>
