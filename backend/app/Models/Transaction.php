@@ -23,7 +23,7 @@ class Transaction extends Model
     ];
 
     public function creator(){
-      return $this->morphTo();
+      return $this->morphTo(__FUNCTION__, 'created_by_type', 'created_by_id');
     }
 
     public function student(){

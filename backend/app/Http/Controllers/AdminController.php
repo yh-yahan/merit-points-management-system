@@ -342,9 +342,11 @@ class AdminController extends Controller
       $sortDirection = $request->input('sort', 'desc'); // sorting by date
       $search = $request->input('search', '');
 
-      $query = Transaction::with(['student', 'meritPointRule']) 
+      $query = Transaction::with(['student', 'meritPointRule', 'creator']) 
       ->select(
         'id', 
+        'created_by_type',
+        'created_by_id',
         'date', 
         'points', 
         'operation_type', 
