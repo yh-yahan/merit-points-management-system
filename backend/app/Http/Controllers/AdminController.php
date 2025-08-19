@@ -37,7 +37,7 @@ class AdminController extends Controller
       AdminSetting::insert([
         ['setting_name' => 'initial_point', 'setting_value' => 60], 
         ['setting_name' => 'disable_leaderboard','setting_value' => false], 
-        ['setting_name' => 'student_opt_out_leaderboard', 'setting_value' => false], 
+        ['setting_name' => 'allow_students_to_opt_out_leaderboard', 'setting_value' => false], 
         ['setting_name' => 'leaderboard_visibility', 'setting_value' => 'username'],
         ['setting_name' => 'primary_color', 'setting_value' => '#0275d8'], 
       ]);

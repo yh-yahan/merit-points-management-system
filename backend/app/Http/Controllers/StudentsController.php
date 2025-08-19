@@ -339,12 +339,12 @@ class StudentsController extends Controller
     $studentId = $accessToken->tokenable_id;
 
     $leaderboard_settings = [];
-    $allow_student_opt_out_leaderboard = AdminSetting::where('setting_name', 'student_opt_out_leaderboard')
+    $allow_student_opt_out_leaderboard = AdminSetting::where('setting_name', 'allow_students_to_opt_out_leaderboard')
       ->first();
     $leaderboard_visibility = AdminSetting::where('setting_name', 'leaderboard_visibility')
       ->first();
 
-    $optOutEnabled = $allow_student_opt_out_leaderboard->setting_value === "1";
+    $optOutEnabled = $allow_student_opt_out_leaderboard->setting_value === "true";
     $visibilityEnabled = $leaderboard_visibility->setting_value === "choose";
     $student_setting = StudentSetting::where('student_id', $studentId)->first();
 
@@ -384,8 +384,8 @@ class StudentsController extends Controller
   public function Setting(Request $request)
   {
     $fields = $request->validate([
-      'opt_out_lb' => 'required|boolean',
-      'name_preference_lb' => 'required|in:name,username'
+      'opt_out_lb' => 'sometimes|boolean',
+      'name_preference_lb' => 'sometimes|in:name,username'
     ]);
 
     $token = $request->cookie('auth_token');
@@ -395,11 +395,9 @@ class StudentsController extends Controller
     $setting = StudentSetting::where('student_id', $studentId)->first();
 
     if ($setting) {
-      $setting->update([
-        'opt_out_lb' => $fields['opt_out_lb'],
-        'name_preference_lb' => $fields['name_preference_lb']
-      ]);
+      $setting->update($fields);
     } else {
+      $fields['student_id'] = $studentId;
       $setting = StudentSetting::create($fields);
     }
 

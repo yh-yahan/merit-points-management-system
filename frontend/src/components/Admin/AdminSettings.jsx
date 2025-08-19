@@ -6,7 +6,7 @@ import "../css/switch.css";
 function AdminSettings({ setIsLoggedIn }) {
   const [settings, setSettings] = useState({
     disable_leaderboard: false,
-    allow_students_to_opt_in_leaderboard: false,
+    allow_students_to_opt_out_leaderboard: false,
     leaderboard_visibility: "username",
     logo: "",
     primary_color: "",
@@ -66,13 +66,18 @@ function AdminSettings({ setIsLoggedIn }) {
         const updatedSettings = settings.reduce((acc, { setting_name, setting_value }) => {
           switch (setting_name) {
             case "disable_leaderboard":
-              acc.disable_leaderboard = setting_value === "1";
+              acc.disable_leaderboard = setting_value === 'true';
               break;
+            case "allow_students_to_opt_out_leaderboard":
+              acc.allow_students_to_opt_out_leaderboard = setting_value === 'true'
             case "logo":
               acc.logo = setting_value;
               break;
             case "primary_color":
               acc.primary_color = setting_value;
+              break;
+            case "leaderboard_visibility":
+              acc.leaderboard_visibility = setting_value;
               break;
             default:
               break;
@@ -89,6 +94,7 @@ function AdminSettings({ setIsLoggedIn }) {
         setChangedName(accountSettings[0].name);
         setChangedEmail(accountSettings[0].email);
         setSettings(updatedSettings);
+        console.log(settings);
       }
       catch (err) {
         console.error(err);
@@ -419,10 +425,10 @@ function AdminSettings({ setIsLoggedIn }) {
                 <label className="switch">
                   <input
                     type="checkbox"
-                    checked={settings.allow_students_to_opt_in_leaderboard}
+                    checked={settings.allow_students_to_opt_out_leaderboard}
                     onChange={() => {
-                      handleSettingInputChange("allow_students_to_opt_in_leaderboard", !settings.allow_students_to_opt_in_leaderboard);
-                      changeSettings("allow_students_to_opt_in_leaderboard", !settings.allow_students_to_opt_in_leaderboard);
+                      handleSettingInputChange("allow_students_to_opt_out_leaderboard", !settings.allow_students_to_opt_out_leaderboard);
+                      changeSettings("allow_students_to_opt_out_leaderboard", !settings.allow_students_to_opt_out_leaderboard);
                     }}
                   />
                   <span className="slider round"></span>
@@ -432,7 +438,11 @@ function AdminSettings({ setIsLoggedIn }) {
 
             <div className="col-12 mb-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
               <p>How name is displayed on leaderboard</p>
-              <select className="form-select mt-3" onChange={(e) => changeSettings("leaderboard_visibility", e.target.value)}>
+              <select 
+                className="form-select mt-3" 
+                value={settings.leaderboard_visibility}
+                onChange={(e) => changeSettings("leaderboard_visibility", e.target.value)}
+              >
                 <option value="username">Display username</option>
                 <option value="name">Display actual name</option>
                 <option value="choose">Allow students to choose (username/actual name)</option>
@@ -452,8 +462,8 @@ function AdminSettings({ setIsLoggedIn }) {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Enter student email" 
-                    value={excludeStudentEmail} 
+                    placeholder="Enter student email"
+                    value={excludeStudentEmail}
                     onChange={(e) => setExcludeStudentEmail(e.target.value)}
                   />
                 </div>
@@ -478,13 +488,13 @@ function AdminSettings({ setIsLoggedIn }) {
                     <tbody>
                       {excludedStudents && excludedStudents.map((excludedStudent, index) => (
                         <tr key={index}>
-                          <td>{excludedStudent.name}</td>
+                          <td>{excludedStudent.name}</td>username
                           <td>{excludedStudent.email}</td>
                           <td>{excludedStudent.class}</td>
                           <td>{excludedStudent.stream}</td>
                           <td>
-                            <button 
-                              className="btn btn-danger" 
+                            <button
+                              className="btn btn-danger"
                               onClick={() => handleRemoveExcludedStudent(excludedStudent.id)}
                             >Remove</button>
                           </td>
