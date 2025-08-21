@@ -81,7 +81,7 @@ function AdminManageTeachers() {
                     />
                   </div>
                   <p className="fw-bold">{profile.name}</p>
-                  <p>{profile.description.length < 100 ? profile.description : `${profile.description.substring(0, 67)}...`}</p>
+                  <p>{profile.description ? profile.description.length < 100 ? profile.description : `${profile.description.substring(0, 67)}...` : ''}</p>
                   <a href="#" className="fw-lighter">{profile.email}</a>
                   <button
                     className="btn btn-danger mt-5"

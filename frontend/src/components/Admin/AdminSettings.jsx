@@ -94,7 +94,6 @@ function AdminSettings({ setIsLoggedIn }) {
         setChangedName(accountSettings[0].name);
         setChangedEmail(accountSettings[0].email);
         setSettings(updatedSettings);
-        console.log(settings);
       }
       catch (err) {
         console.error(err);
@@ -159,11 +158,13 @@ function AdminSettings({ setIsLoggedIn }) {
         setting_name: field,
         setting_value: value
       }
-      // console.log(settings);
-      const response = await api.post('/admin/setting',
+      await api.post('/admin/setting',
         settings
       );
-      // console.log(response);
+      setSettings(prev => ({
+        ...prev,
+        [field]: value
+      }));
     }
     catch (err) {
       console.log(err);
