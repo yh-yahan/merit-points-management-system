@@ -7,6 +7,7 @@ use App\Models\Students;
 use App\Models\Transaction;
 use App\Models\AdminSetting;
 use App\Models\InvitationCodes;
+use App\Models\Points;
 use App\Models\StudentSetting;
 use App\Models\StudentClass;
 use App\Models\StudentExclusion;
@@ -61,6 +62,18 @@ class StudentsController extends Controller
           'stream' => $fields['stream'],
           'status' => 'active',
           'date_joined' => now(),
+        ]);
+
+        StudentSetting::insert([
+          'student_id' => $students->id, 
+          'opt_out_lb' => 0, 
+          'name_preference_lb' => "name"
+        ]);
+        
+        $initial_points = AdminSetting::where('setting_name', 'initial_point')->first();
+
+        $students->points()->create([
+          'total_points' => $initial_points->setting_value,
         ]);
 
         // $token = $students->createToken('studentsToken')->plainTextToken;
