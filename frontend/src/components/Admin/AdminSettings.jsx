@@ -52,6 +52,7 @@ function AdminSettings({ setIsLoggedIn }) {
   const [disableLeaderboardError, setDisableLeaderboardError] = useState("");
 
   const [logoFile, setLogoFile] = useState(null);
+  const [primaryColor, setPrimaryColor] = useState();
 
   const navigate = useNavigate();
 
@@ -269,11 +270,11 @@ function AdminSettings({ setIsLoggedIn }) {
     }
   }
 
-  async function uploadLogo() {
-    if (!logoFile) return;
+  async function uploadLogo(file) {
+    if (!file) return;
 
     const formData = new FormData();
-    formData.append('logo', logoFile);
+    formData.append('logo', file);
 
     try {
       const response = await api.post('/admin/logo', formData, {
@@ -286,6 +287,8 @@ function AdminSettings({ setIsLoggedIn }) {
         ...prevState,
         logo: response.data.path,
       }));
+
+      window.location.reload();
     }
     catch (error) {
       console.error(error);
@@ -389,7 +392,7 @@ function AdminSettings({ setIsLoggedIn }) {
   }
 
   return (
-    <div className="container-fluid mt-4">
+    <div className="container-fluid mt-4 mb-5">
       <h1 className="my-3">Settings</h1>
       <div>
         <h3 style={{ color: "#7d7d7d" }}>Leaderboard Settings & Student Preferences</h3>
@@ -651,15 +654,16 @@ function AdminSettings({ setIsLoggedIn }) {
                     <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
                       <div className="d-flex flex-column">
                         <p>Primary color</p>
-                        <p className="fw-light fs-6 text-body-secondary">The main color of the website (button and link colors)</p>
-                        <p className="fw-light fs-6 text-body-secondary fst-italic">Refresh required to see the changes</p>
                       </div>
                       <input
                         type="color"
                         value={settings.primary_color}
                         onChange={(e) => {
-                          handleSettingInputChange("primary_color", e.target.value);
-                          changeSettings("primary_color", e.target.value);
+                          const newColor = e.target.value;
+                          handleSettingInputChange("primary_color", newColor);
+                          changeSettings("primary_color", newColor);
+                          setSettings(prev => ({ ...prev, primary_color: newColor }));
+                          document.documentElement.style.setProperty('--primary-color', newColor);
                         }}
                       />
                     </div>

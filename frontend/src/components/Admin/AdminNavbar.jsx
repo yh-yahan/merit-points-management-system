@@ -49,7 +49,7 @@ function AdminNavbar({ setIsLoggedIn }){
         <div className="container-fluid">
           <Link className="navbar-brand ms-4" to="/">
             <div style={{ maxWidth: "73px" }}>
-              <img src={logoUrl} className="img-fluid" alt="Logo" />
+              <img src={logoUrl?.replace(/^http:\/\//, 'https://')} className="img-fluid" alt="Logo" />
             </div>
           </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-label="Toggle navigation">
