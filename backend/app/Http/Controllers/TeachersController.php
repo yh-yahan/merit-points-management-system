@@ -65,7 +65,7 @@ class TeachersController extends Controller
     
         $notification = [
           'title' => "New sign up",
-          'message' => "Teacher " . $teacher->name . " has signed up " . "via invitation code of " . "'" . $teacher->invitation_code . "'",
+          'message' => "Teacher " . $teacher->name . " has signed up " . "via invitation code of " . "'" . $fields['invitation_code'] . "'",
           'is_read' => false,
         ];
     

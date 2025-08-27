@@ -27,7 +27,7 @@ function AdminNotifications() {
     <div className="container-fluid px-4 mt-3">
       <h2 className="text-center mb-4">Notifications</h2>
 
-      <div className="container">
+      <div>
         <div className="row">
           <div className="col-12 mb-3 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center border-bottom border-secondary-subtle p-3">
             <p className="mb-2 mb-md-0">New notifications: {newMessageCount}</p>
