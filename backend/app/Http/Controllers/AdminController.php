@@ -83,18 +83,8 @@ class AdminController extends Controller
       // check who created the invitation code
       // $token = $request->bearerToken();
       $token = $request->cookie('auth_token');
-      if(!$token){
-        return response()->json(['error' => 'Token not provided'], 401);
-      }
       // find token from PersonalAccessToken
       $accessToken = PersonalAccessToken::findToken($token);
-      if(!$accessToken){
-        return response()->json(['error' => 'Invalid token'], 401);
-      }
-      // Check if the accessToken matches 'adminToken'
-      if($accessToken->name !== 'adminToken'){
-        return response()->json(['error' => 'Invalid token'], 401);
-      }
 
       if($accessToken){
         $created_by = $accessToken->tokenable_id;
@@ -854,9 +844,6 @@ class AdminController extends Controller
 
       $token = $request->cookie('auth_token');
       $accessToken = PersonalAccessToken::findToken($token);
-      if(!$accessToken){
-        return response()->json(['error' => 'Unauthorized'], 401);
-      }
       // insert a new record, transactions table
       $created_by = $accessToken->tokenable_id;
       $created_by_type = get_class($accessToken->tokenable);

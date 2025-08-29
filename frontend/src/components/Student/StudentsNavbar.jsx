@@ -46,7 +46,7 @@ function StudentsNavbar({ setIsLoggedIn }) {
       <nav className="navbar navbar-expand-lg navbar-light">
         <div className="container-fluid">
           <Link className="navbar-brand ms-4" to="/">
-            <div style={{ maxWidth: "73px" }}>
+            <div style={{ maxWidth: "50px" }}>
               <img src={logoUrl?.replace(/^http:\/\//, 'https://')} className="img-fluid" alt="Logo" />
             </div>
           </Link>

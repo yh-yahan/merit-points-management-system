@@ -260,9 +260,6 @@ class TeachersController extends Controller
 
     $token = $request->cookie('auth_token');
     $accessToken = PersonalAccessToken::findToken($token);
-    if (!$accessToken) {
-      return response()->json(['error' => 'Unauthorized'], 401);
-    }
     // insert a new record, transactions table
     $created_by = $accessToken->tokenable_id;
     $created_by_type = get_class($accessToken->tokenable);
@@ -383,9 +380,6 @@ class TeachersController extends Controller
 
     $token = $request->cookie('auth_token');
     $accessToken = PersonalAccessToken::findToken($token);
-    if (!$accessToken) {
-      return response()->json(['error' => 'Unauthorized'], 401);
-    }
     $tokenableId = $accessToken->tokenable_id;
 
     $teacher = Teachers::find($tokenableId);
