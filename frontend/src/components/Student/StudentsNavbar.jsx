@@ -2,7 +2,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import api from '../../api';
 
-function StudentsNavbar({ setIsLoggedIn }) {
+function StudentsNavbar({ setIsLoggedIn, setUser, setUserRole }) {
   const [popup, setPopup] = useState(false);
   const [logoUrl, setLogoUrl] = useState(null);
   const location = useLocation();
@@ -34,6 +34,8 @@ function StudentsNavbar({ setIsLoggedIn }) {
       const response = await api.post('/logout');
 
       setIsLoggedIn(false);
+      setUserRole("");
+      setUser(null);
       navigate('/');
     }
     catch (err) {

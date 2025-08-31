@@ -20,7 +20,7 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function checkAuth(){
+    async function checkAuth() {
       try {
         const response = await api.post('/check-auth', { withCredentials: true });
         setIsLoggedIn(true);
@@ -30,10 +30,10 @@ function App() {
           navigate('/');
         }
       }
-      catch(err){
+      catch (err) {
         console.log(err);
       }
-      finally{
+      finally {
         setLoading(false);
       }
     };
@@ -42,14 +42,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-    async function getPrimaryColor(){
+    async function getPrimaryColor() {
       try {
         const response = await api.get('/primary-color');
         const primaryColor = response.data.primary_color;
         setPrimaryColor(primaryColor);
         document.documentElement.style.setProperty('--primary-color', primaryColor);
       }
-      catch(err){
+      catch (err) {
         console.log(err);
       }
     }
@@ -57,12 +57,12 @@ function App() {
     getPrimaryColor();
   }, []);
 
-  if(loading){
+  if (loading) {
     return (
-      <div 
-        className="d-flex flex-column justify-content-center align-items-center" 
+      <div
+        className="d-flex flex-column justify-content-center align-items-center"
         style={{ minHeight: '100vh' }}>
-        <div 
+        <div
           className="spinner-border mb-3" role="status"
           style={{ width: '6rem', height: '6rem', color: primaryColor }}>
           <span className="visually-hidden">Loading...</span>
@@ -74,46 +74,39 @@ function App() {
 
   return (
     <>
-      <Navbar 
-      isLoggedIn={isLoggedIn} 
-      userRole={userRole} 
-      setIsLoggedIn={setIsLoggedIn} 
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        userRole={userRole}
+        setIsLoggedIn={setIsLoggedIn} 
+        setUser={setUser} 
+        setUserRole={setUserRole} 
       />
       <Routes>
-        { isLoggedIn ? (
-          // <Route
-          //   path="/*"
-          //   element={
-          //     userRole === "admin" ? (
-          //       <Admin />
-          //     ) : userRole === "teacher" ? (
-          //       <Teacher />
-          //     ) : (
-          //       <Student />
-          //     )
-          //   }
-          // />
-          <Route path="/*" element={<UserRoutes userRole={userRole} setIsLoggedIn={setIsLoggedIn} />} />
+        {isLoggedIn ? (
+          <Route path="/*" element={<UserRoutes
+            userRole={userRole}
+            setIsLoggedIn={setIsLoggedIn} />}
+          />
         ) : (
           <>
-            <Route 
-              path="/" 
-              element={<Login setIsLoggedIn={setIsLoggedIn} 
-              setUserRole={setUserRole}
-              userRole={userRole} 
-              setUser={setUser} />}
+            <Route
+              path="/"
+              element={<Login setIsLoggedIn={setIsLoggedIn}
+                setUserRole={setUserRole}
+                userRole={userRole}
+                setUser={setUser} />}
             />
-            <Route 
-            path="/signup" 
-            element={<InvitationCode isLoggedIn={isLoggedIn} 
-            setUserRole={setUserRole}
-            setUser={setUser} 
-            userRole={userRole} 
-            setIsLoggedIn={setIsLoggedIn}
-            />} 
+            <Route
+              path="/signup"
+              element={<InvitationCode isLoggedIn={isLoggedIn}
+                setUserRole={setUserRole}
+                setUser={setUser}
+                userRole={userRole}
+                setIsLoggedIn={setIsLoggedIn}
+              />}
             />
           </>
-        ) }
+        )}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

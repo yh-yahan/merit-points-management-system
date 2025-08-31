@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import api from '../../api.js'
 import '../css/navbar.css'
 
-function AdminNavbar({ setIsLoggedIn }){
+function AdminNavbar({ setIsLoggedIn, setUser, setUserRole }){
   const [popup, setPopup] = useState(false);
   const [logoUrl, setLogoUrl] = useState(null);
   const navigate = useNavigate();
@@ -36,6 +36,8 @@ function AdminNavbar({ setIsLoggedIn }){
       const response = await api.post('/logout');
 
       setIsLoggedIn(false);
+      setUserRole("");
+      setUser(null);
       navigate('/');
     }
     catch(err){
