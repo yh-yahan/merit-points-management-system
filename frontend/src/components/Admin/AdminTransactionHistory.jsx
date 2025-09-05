@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import api from '../../api'
 
 function AdminTransactionHistory() {
-  const [historys, setHistorys] = useState([]);
+  const [histories, setHistories] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDirection, setSortDirection] = useState('desc');
+
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchHistoryData() {
@@ -22,11 +24,13 @@ function AdminTransactionHistory() {
           from: transaction.from,
           to: transaction.to,
         }));
-        setHistorys(transformedData);
+        setHistories(transformedData);
         setTotalPages(response.data.last_page);
+
+        setError("");
       }
       catch (err) {
-        console.log(err);
+        setError("Unable to fetch merit point transaction history.");
       }
     }
     fetchHistoryData();
@@ -59,7 +63,8 @@ function AdminTransactionHistory() {
             </div>
           </div>
           <div>
-            {historys.length ? (
+            {error && <div className="alert alert-danger">{error}</div>}
+            {histories.length && (
               <div className="table-responsive">
                 <table className="table table-bordered">
                   <thead className="">
@@ -73,7 +78,7 @@ function AdminTransactionHistory() {
                     </tr>
                   </thead>
                   <tbody>
-                    {historys.map((history, index) => (
+                    {histories.map((history, index) => (
                       <tr key={index}>
                         <td>{history.id}</td>
                         <td>{history.date}</td>
@@ -90,16 +95,9 @@ function AdminTransactionHistory() {
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <div
-                className="d-flex justify-content-center align-items-center text-danger mb-3"
-                style={{ height: "700px" }}
-              >
-                No data found
-              </div>
             )}
           </div>
-          {historys.length ? <nav>
+          {histories.length ? <nav>
             <ul className="pagination mt-3 d-flex justify-content-end">
               {currentPage > 1 && (
                 <li className="page-item">

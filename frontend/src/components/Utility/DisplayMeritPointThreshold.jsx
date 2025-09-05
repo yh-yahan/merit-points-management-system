@@ -4,13 +4,17 @@ import api from "../../api";
 function MeritPointThresold({ user }) {
   const [pointThreshold, setPointThreshold] = useState([]);
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
     async function fetchMeritPointThreshold() {
       try {
         const response = await api.get(`${user}/merit-point/threshold`);
         setPointThreshold(response.data);
+
+        setError("");
       } catch (err) {
-        console.log(err);
+        setError("Unable to fetch merit point threshold rules.");
       }
     }
 
@@ -19,7 +23,8 @@ function MeritPointThresold({ user }) {
 
   return (
     <div className="container-fluid min-vh-100">
-      <div className="table-responsive">
+      {error && <div className="alert alert-danger">{error}</div>}
+      {!error && <div className="table-responsive">
         <table className="table">
           <thead>
             <tr>
@@ -28,7 +33,7 @@ function MeritPointThresold({ user }) {
             </tr>
           </thead>
           <tbody>
-            { pointThreshold.map((threshold, index) => (
+            {pointThreshold.map((threshold, index) => (
               <tr key={index}>
                 <td>{threshold.points}</td>
                 <td>{threshold.actions}</td>
@@ -36,7 +41,7 @@ function MeritPointThresold({ user }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </div>}
     </div>
   );
 }

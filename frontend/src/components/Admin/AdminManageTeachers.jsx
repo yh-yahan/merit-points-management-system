@@ -9,6 +9,9 @@ function AdminManageTeachers() {
 
   const [showDeleteTeacherConfirm, setShowDeleteTeacherConfirm] = useState(false);
 
+  const [error, setError] = useState("");
+  const [deletionError, setDeletionError] = useState("");
+
   async function fetchTeachersData() {
     try {
       const response = await api.get(`/admin/manage-teachers?search=${search}`);
@@ -24,9 +27,10 @@ function AdminManageTeachers() {
 
       setTotalTeachers(response.data.totalTeachers);
       setProfilesReview(transformedData);
+      setError("");
     }
     catch (err) {
-      console.log(err);
+      setError("Unable to fetch teacher data");
     }
   }
 
@@ -42,8 +46,9 @@ function AdminManageTeachers() {
   
       setSelectedTeacher(null);
       setShowDeleteTeacherConfirm(false);
+      setDeletionError("");
     } catch (err) {
-      console.log(err);
+      setDeletionError("Unable to delete teacher.");
     }
   }
 
@@ -53,10 +58,11 @@ function AdminManageTeachers() {
         <h1 className="mb-4">Manage teachers</h1>
         <div className="row gx-4">
           <div className="col-sm-6">
-            <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+            { error && <div className="alert alert-danger">{error}</div>}
+            { !error && <div className="card shadow-sm p-3 mb-5 bg-white rounded">
               <p className="fw-lighter fs-6">Total teachers</p>
               <p>{totalTeachers}</p>
-            </div>
+            </div> }
             <div>
               <input
                 type="text"
@@ -114,6 +120,21 @@ function AdminManageTeachers() {
             </div>
           </div>
         )
+      }
+      {
+        deletionError && 
+        <div className="popup d-flex justify-content-center align-items-center">
+          <div className="popup-content p-4 bg-white rounded shadow">
+            <h5>Error</h5>
+            <p className="text-danger">{deletionError}</p>
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-primary" onClick={() => {
+                setDeletionError("");
+                setShowDeleteTeacherConfirm(false);
+              }}>Ok</button>
+            </div>
+          </div>
+        </div>
       }
     </>
   )

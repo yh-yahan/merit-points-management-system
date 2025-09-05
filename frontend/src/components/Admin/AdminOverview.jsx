@@ -103,10 +103,11 @@ function Overview() {
           cardSignatures: recentActivityData.cardSignatures,
           formattedCreatedAt: recentActivityData.formattedCreatedAt,
         });
+
+        setError("");
       }
       catch (err) {
-        // console.log(err);
-        setError("An error occurred while fetching the data. Please try again later.");
+        setError("An error occurred while fetching the data.");
       }
     }
     fetchOverviewData();
@@ -228,7 +229,7 @@ function Overview() {
       <div className="mt-4 container-fluid">
         <h1 className="mb-4">Overview</h1>
 
-        {error ? <div className="text-danger mb-3" style={{ height: "700px" }}>{error}</div> :
+        {error ? <div className="alert alert-danger">{error}</div> :
           <>
             <div className="row gx-4">
               <div className="col-sm-3">

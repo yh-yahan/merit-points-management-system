@@ -1,6 +1,3 @@
-// import Student from '../../Student/Student.jsx'
-// import Admin from '../../Admin/Admin.jsx'
-// import Teacher from '../../Teacher/Teacher.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import api from '../../../api.js'
@@ -43,7 +40,6 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
       else{
         setError("An error occurred. Please try again later.");
       }
-      // console.log(err);
     }
   }
 
@@ -51,16 +47,6 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  // if(userRole == "student"){
-  //   return <Student />
-  // }
-  // else if(userRole == "teacher"){
-  //   return <Teacher />
-  // }
-  // else if(userRole == "admin"){
-  //   return <Admin />
-  // }
 
   return(
     <>

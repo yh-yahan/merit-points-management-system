@@ -10,6 +10,10 @@ function AdminAcademicStructure() {
   const [streamToDelete, setStreamToDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [deletionType, setDeletionType] = useState('');
+  const [error, setError] = useState("");
+  const [addClassError, setAddClassError] = useState("");
+  const [addStreamError, setAddStreamError] = useState("");
+  const [deletionError, setDeletionError] = useState("");
 
   useEffect(() => {
     async function fetchAcademicStructure() {
@@ -18,8 +22,9 @@ function AdminAcademicStructure() {
 
         setClasses(response.data.studentClass || []);
         setStreams(response.data.studentStream || []);
+        setError("");
       } catch (err) {
-        console.log(err);
+        setError("An error occured.");
       }
     }
 
@@ -32,8 +37,9 @@ function AdminAcademicStructure() {
       const response = await api.post('/admin/class', { class: newClassName });
       setClasses(response.data[0]);
       setNewClassName('');
+      setAddClassError("");
     } catch (err) {
-      console.error(err);
+      setAddClassError("Unable to add class.");
     }
   }
 
@@ -43,8 +49,9 @@ function AdminAcademicStructure() {
       const response = await api.post('/admin/stream', { stream: newStreamName });
       setStreams(response.data[0]);
       setNewStreamName('');
+      setAddStreamError("");
     } catch (err) {
-      console.error(err);
+      setAddStreamError("Unable to add stream.");
     }
   }
 
@@ -53,7 +60,7 @@ function AdminAcademicStructure() {
       const response = await api.delete(`/admin/class/${id}`);
       setClasses(response.data.studentClass || []);
     } catch (err) {
-      console.error('Failed to delete class:', err);
+      setDeletionError("Unable to delete.");
     }
   }
 
@@ -62,7 +69,7 @@ function AdminAcademicStructure() {
       const response = await api.delete(`/admin/stream/${id}`);
       setStreams(response.data.studentStream || []);
     } catch (err) {
-      console.error('Failed to delete stream:', err);
+      setDeletionError("Unable to delete.");
     }
   }
 
@@ -88,7 +95,8 @@ function AdminAcademicStructure() {
 
   return (
     <>
-      <div className="container-fluid ms-3">
+      {error && <div className="alert alert-danger m-5 container h-100">{error}</div>}
+      {!error && <><div className="container-fluid ms-3">
         <h2 className="mb-4">Academic Structure Management</h2>
 
         <div className="card mb-4">
@@ -138,6 +146,7 @@ function AdminAcademicStructure() {
                 </tr>
               </tbody>
             </table>
+            {addClassError && <div className="alert alert-danger h-100">{addClassError}</div>}
           </div>
         </div>
 
@@ -188,27 +197,41 @@ function AdminAcademicStructure() {
                 </tr>
               </tbody>
             </table>
+            {addStreamError && <div className="alert alert-danger h-100">{addStreamError}</div>}
           </div>
         </div>
       </div>
-      <ConfirmationPopup
-        visible={!!itemToDelete}
-        itemName={itemToDelete?.class || itemToDelete?.stream}
-        entityLabel={deletionType}
-        onConfirm={async () => {
-          if (deletionType === 'class') {
-            await handleDeleteClass(itemToDelete.id);
-          } else if (deletionType === 'stream') {
-            await handleDeleteStream(itemToDelete.id);
-          }
-          setItemToDelete(null);
-          setDeletionType('');
-        }}
-        onCancel={() => {
-          setItemToDelete(null);
-          setDeletionType('');
-        }}
-      />
+        <ConfirmationPopup
+          visible={!!itemToDelete}
+          itemName={itemToDelete?.class || itemToDelete?.stream}
+          entityLabel={deletionType}
+          onConfirm={async () => {
+            if (deletionType === 'class') {
+              await handleDeleteClass(itemToDelete.id);
+            } else if (deletionType === 'stream') {
+              await handleDeleteStream(itemToDelete.id);
+            }
+            setItemToDelete(null);
+            setDeletionType('');
+          }}
+          onCancel={() => {
+            setItemToDelete(null);
+            setDeletionType('');
+          }}
+        />
+      </>}
+      {
+        deletionError &&
+        <div className="popup d-flex justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50">
+          <div className="popup-content p-4 bg-white rounded shadow">
+            <h5>Error</h5>
+            <p className="text-danger">{deletionError}</p>
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-primary" onClick={() => setDeletionError("")}>Ok</button>
+            </div>
+          </div>
+        </div>
+      }
     </>
   );
 }

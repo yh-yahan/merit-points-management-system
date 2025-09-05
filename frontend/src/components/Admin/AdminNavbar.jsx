@@ -6,8 +6,9 @@ import '../css/navbar.css'
 function AdminNavbar({ setIsLoggedIn, setUser, setUserRole }){
   const [popup, setPopup] = useState(false);
   const [logoUrl, setLogoUrl] = useState(null);
-  const navigate = useNavigate();
+  const [logoutError, setLogoutError] = useState("");
 
+  const navigate = useNavigate();
   const location = useLocation();
 
   function isActive(path){
@@ -21,7 +22,7 @@ function AdminNavbar({ setIsLoggedIn, setUser, setUserRole }){
         setLogoUrl(response.data.path);
       }
       catch(err){
-        console.log(err);
+        setLogoUrl("");
       }
     }
 
@@ -33,15 +34,15 @@ function AdminNavbar({ setIsLoggedIn, setUser, setUserRole }){
     setPopup(false);
 
     try{
-      const response = await api.post('/logout');
+      await api.post('/logout');
 
       setIsLoggedIn(false);
       setUserRole("");
       setUser(null);
+      setLogoutError("");
       navigate('/');
-    }
-    catch(err){
-      console.log(err);
+    } catch(err){
+      setLogoutError("Unable to logout.");
     }
   }
 
@@ -105,6 +106,18 @@ function AdminNavbar({ setIsLoggedIn, setUser, setUserRole }){
           </div>
         </div>
         )
+      }
+      {
+        logoutError && 
+        <div className="popup d-flex justify-content-center align-items-center">
+          <div className="popup-content p-4 bg-white rounded shadow">
+            <h5>Error</h5>
+            <p className="text-danger">{logoutError}</p>
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-primary" onClick={() => setLogoutError("")}>Ok</button>
+            </div>
+          </div>
+        </div>
       }
     </>
   );

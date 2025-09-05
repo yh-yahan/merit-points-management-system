@@ -86,8 +86,10 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
 
       setAllClasses(studentClass);
       setAllStreams(studentStream);
+
+      setError("");
     } catch (err) {
-      console.log(err);
+      setError("Something went wrong. Please try again later.");
     }
   }
 
@@ -160,11 +162,6 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
                         autoComplete='new-password'
                       />
                       <label>Confirm password</label>
-                      {/* <i
-                        onClick={togglePasswordVisibility}
-                        className={`bi ${showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
-                        style={{ top: '50%', right: '10px', transform: 'translateY(-50%)', cursor: 'pointer' }}
-                      ></i> */}
                     </div>
                     {passwordError && <div className="text-danger mb-3">{passwordError}</div>}
                     <select
@@ -190,7 +187,8 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
                       <button className="btn"
                         style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }}
                         onMouseOver={(e) => e.target.style.backgroundColor = "black"}
-                        onMouseOut={(e) => e.target.style.backgroundColor = "#c20008"}
+                        onMouseOut={(e) => e.target.style.backgroundColor = "#c20008"} 
+                        disabled={!!error}
                         type="submit">
                         Sign up
                       </button>

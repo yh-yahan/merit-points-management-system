@@ -38,6 +38,8 @@ function AdminEditMeritPoints() {
   const [description, setDescription] = useState('');
   const [updateSuccess, setUpdateSuccess] = useState('');
   const [updateFail, setUpdateFail] = useState('');
+  const [error, setError] = useState("");
+  const [searchError, setSearchError] = useState("");
   const listRef = useRef(null);
 
   useEffect(() => {
@@ -46,9 +48,10 @@ function AdminEditMeritPoints() {
         const response = await api.get("/admin/student-by-class");
         const data = response.data;
         setGroupedStudent(data);
-      }
-      catch (err) {
-        console.log(err);
+
+        setError("");
+      } catch (err) {
+        setError("Unable to fetch student");
       }
     }
     fetchGroupedStudent();
@@ -57,11 +60,10 @@ function AdminEditMeritPoints() {
   useEffect(() => {
     if (selectedRule && rules.length > 0) {
       const selectedRuleDetials = rules.find(rule => rule.name === selectedRule);
-  
+
       if (selectedRuleDetials) {
         setPoints(selectedRuleDetials.operation_type == 'add' ? selectedRuleDetials.points : '-' + selectedRuleDetials.points);
       } else {
-        console.error("Selected rule not found");
         setPoints("");
       }
     }
@@ -101,8 +103,8 @@ function AdminEditMeritPoints() {
   }, [filteredStudents, selectedIndex]);
 
   useEffect(() => {
-    async function searchStudent(){
-      try{
+    async function searchStudent() {
+      try {
         const response = await api.post("/admin/search-student", {
           'search': search
         });
@@ -111,9 +113,10 @@ function AdminEditMeritPoints() {
           student.name + " - " + student.class;
         });
         setFilteredStudents(data);
-      }
-      catch(err){
-        console.log(err);
+
+        setSearchError("");
+      } catch (err) {
+        setSearchError("Unable to search student.");
       }
     }
 
@@ -154,29 +157,30 @@ function AdminEditMeritPoints() {
 
       setStudentTransaction(transaction);
       setStudent(studentInformation);
-    }
-    catch (err) {
-      console.log(err);
+
+      setError("");
+    } catch (err) {
+      setError("Unable to get student details.");
     }
   }
 
-  async function updatePoint(e){
+  async function updatePoint(e) {
     e.preventDefault();
     const selectedRuleDetails = rules.find(rule => rule.name === selectedRule);
     const pointUpdateInfo = {
-      operation: mode, 
-      points: Math.abs(points), 
-      description: description || '',  
-      receiver_id: student.student.id, 
-      rule_id: selectedRuleDetails.id, 
+      operation: mode,
+      points: Math.abs(points),
+      description: description || '',
+      receiver_id: student.student.id,
+      rule_id: selectedRuleDetails.id,
     }
-    try{
+    try {
       const response = await api.patch(`/admin/point/${student.student.id}`, pointUpdateInfo);
       const data = response.data;
       setUpdateSuccess(`Updated successfully. Student's current point: ${data.currentPoint}`);
+      setUpdateFail("");
     }
-    catch(err){
-      console.log(err);
+    catch (err) {
       setUpdateFail("Update failed.")
     }
   }
@@ -210,107 +214,110 @@ function AdminEditMeritPoints() {
             onFocus={() => setSelectedIndex(-1)} // Reset selection when focusing
           />
           {search && filteredStudents.length > 0 && (
-            <ul
-              className="list-group mt-1 bg-white rounded-top shadow"
-              ref={listRef}
-            >
-              {filteredStudents.map((student, index) => (
-                <li
-                  key={student.id}
-                  className={`list-group-item list-group-item-action ${selectedIndex === index ? 'selected' : ''}`}
-                  onClick={() => handleStudentClick(student.id)}
-                >
-                  {student.name} - {student.class}
-                </li>
-              ))}
-            </ul>
+            <>
+              {searchError && <p className="text-danger mt-1 bg-white rounded-top shadow py-3 px-2">{searchError}</p>}
+              {!searchError && (<ul
+                className="list-group mt-1 bg-white rounded-top shadow"
+                ref={listRef}
+              >
+                {filteredStudents.map((student, index) => (
+                  <li
+                    key={student.id}
+                    className={`list-group-item list-group-item-action ${selectedIndex === index ? 'selected' : ''}`}
+                    onClick={() => handleStudentClick(student.id)}
+                  >
+                    {student.name} - {student.class}
+                  </li>
+                ))}
+              </ul>)}
+            </>
           )}
         </div>
-        {
-          displayStudent && student != null && <div className="mt-4 ms-3 col-8">
-            <h3>Student information</h3>
-            <p>
-              Student name: {student.student.name}
-            </p>
-            <p>
-              Student class: {student.student.class}
-            </p>
-            <p>
-              Stream: {student.student.stream}
-            </p>
-            <p>
-              Total points: {student.totalPoints}
-            </p>
-            <div className="accordion mb-5" id="accordionExample">
-              <div className="accordion-item">
-                <h2 className="accordion-header" id="headingOne">
-                  <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
-                    Last three updates of student points
-                  </button>
-                </h2>
-                <div id="collapseZero" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
-                  <div className="card shadow-sm p-3 mb-2 bg-white rounded">
-                    {studentTransaction.titles.map((title, index) => (
-                      <div key={index}>
-                        <p className="fw-bold">{title}</p>
-                        <p className="fw-lighter fs-6">{studentTransaction.diffInWordsList[index]}</p>
-                        <p>Reason: {studentTransaction.ruleNames[index]}</p>
-                        <div>
-                          <p>{studentTransaction.descriptions[index]}</p>
-                          <p className="fw-lighter fs-6">{studentTransaction.cardSignatures[index]}</p>
-                          <p className="fw-lighter fs-6">{studentTransaction.formattedCreatedAt[index]}</p>
-                        </div>
+        {error && <div className="alert alert-danger mt-5">{error}</div>}
+        {!error && displayStudent && student != null && <div className="mt-4 ms-3 col-8">
+          <h3>Student information</h3>
+          <p>
+            Student name: {student.student.name}
+          </p>
+          <p>
+            Student class: {student.student.class}
+          </p>
+          <p>
+            Stream: {student.student.stream}
+          </p>
+          <p>
+            Total points: {student.totalPoints}
+          </p>
+          <div className="accordion mb-5">
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingOne">
+                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+                  Last three updates of student points
+                </button>
+              </h2>
+              <div id="collapseZero" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
+                <div className="card shadow-sm p-3 mb-2 bg-white rounded">
+                  {studentTransaction.titles.map((title, index) => (
+                    <div key={index}>
+                      <p className="fw-bold">{title}</p>
+                      <p className="fw-lighter fs-6">{studentTransaction.diffInWordsList[index]}</p>
+                      <p>Reason: {studentTransaction.ruleNames[index]}</p>
+                      <div>
+                        <p>{studentTransaction.descriptions[index]}</p>
+                        <p className="fw-lighter fs-6">{studentTransaction.cardSignatures[index]}</p>
+                        <p className="fw-lighter fs-6">{studentTransaction.formattedCreatedAt[index]}</p>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-            <h3>Edit merit point</h3>
-            <div>
-              <div className="row">
-                <div className="col-lg-3">
-                  <select className="form-select" onChange={(e) => setMode(e.target.value)}>
-                    <option value="" selected disabled>Add/deduct point</option>
-                    <option value="add">Add</option>
-                    <option value="deduct">Deduct</option>
-                  </select>
-                </div>
-                <div className="col-lg-3">
-                  <select className="form-select" onChange={(e) => setSelectedRule(e.target.value)}>
-                    <option value="" selected disabled>Reason</option>
-                    {displayedRules.map((rule, index) =>
-                      <option value={rule.name} key={index}>{rule.name}</option>
-                    )}
-                  </select>
-                </div>
-              </div>
-              <div className="mt-3">
-                <label>Points to add/deduct</label><br />
-                <input
-                  type="number"
-                  // max="50" 
-                  value={points}
-                  onChange={(e) => setPoints(e.target.value)}
-                />
-              </div>
-              <textarea
-                className="mt-3 border"
-                placeholder="Description... (optional)"
-                style={{ maxHeight: "400px" }}
-                onChange={(e) => setDescription(e.target.value)}></textarea>
-            </div>
-            <button
-              type="button"
-              className="btn mt-3"
-              onClick={(e) => updatePoint(e)}>Update</button>
-              {updateSuccess && <p className="text-primary mt-3">{updateSuccess}</p>}
-              {updateFail && <p className="text-danger mt-3">{updateFail}</p>}
           </div>
+          <h3>Edit merit point</h3>
+          <div>
+            <div className="row">
+              <div className="col-lg-3">
+                <select className="form-select" onChange={(e) => setMode(e.target.value)}>
+                  <option value="" selected disabled>Add/deduct point</option>
+                  <option value="add">Add</option>
+                  <option value="deduct">Deduct</option>
+                </select>
+              </div>
+              <div className="col-lg-3">
+                <select className="form-select" onChange={(e) => setSelectedRule(e.target.value)}>
+                  <option value="" selected disabled>Reason</option>
+                  {displayedRules.map((rule, index) =>
+                    <option value={rule.name} key={index}>{rule.name}</option>
+                  )}
+                </select>
+              </div>
+            </div>
+            <div className="mt-3">
+              <label>Points to add/deduct</label><br />
+              <input
+                type="number" 
+                value={points}
+                onChange={(e) => setPoints(e.target.value)}
+              />
+            </div>
+            <textarea
+              className="mt-3 border"
+              placeholder="Description... (optional)"
+              style={{ maxHeight: "400px" }}
+              onChange={(e) => setDescription(e.target.value)}></textarea>
+          </div>
+          {updateSuccess && <div className="alert alert-success mt-3 mb-2">{updateSuccess}</div>}
+          {updateFail && <div className="alert alert-danger mt-3 mb-2">{updateFail}</div>}
+          <button
+            type="button"
+            className="btn mt-3"
+            onClick={(e) => updatePoint(e)}
+          >Update</button>
+        </div>
         }
-        <div className={`${isSidebarVisible ? "col-lg-3 shadow-lg" : null} accordion-container ms-auto`} style={{ right: 0, top: 0, height: '100vh', overflowY: 'auto' }}>
+        {!error && <div className={`${isSidebarVisible ? "col-lg-3 shadow-lg" : null} accordion-container ms-auto`} style={{ right: 0, top: 0, height: '100vh', overflowY: 'auto' }}>
           <h2 className="mt-5 mb-3">Students by class</h2>
-          <div className="accordion" id="accordionExample">
+          <div className="accordion">
             {Object.keys(groupedStudent).map((className) => (
               <div key={groupedStudent[className].classId} className="accordion-item">
                 <h2 className="accordion-header" id={`heading-${groupedStudent[className].classId}`}>
@@ -344,7 +351,7 @@ function AdminEditMeritPoints() {
               </div>
             ))}
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );

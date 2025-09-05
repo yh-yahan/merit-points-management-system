@@ -1035,9 +1035,21 @@ class AdminController extends Controller
 
       $studentId = Students::where('email', $fields['email'])->value('id');
 
-      StudentExclusion::insert(['student_id' => $studentId]);
+      if (!$studentId) {
+        return response(["message" => "Student not found."], 404);
+      }
 
-      return response(["message" => "Student included in exclusion list"], 201);
+      $alreadyExcluded = StudentExclusion::where('student_id', $studentId)->exists();
+
+      if ($alreadyExcluded) {
+        return response(["message" => "Student is already in the exclusion list."], 409);
+      }
+
+      StudentExclusion::create([
+        'student_id' => $studentId
+      ]);
+
+      return response(["message" => "Student excluded from leaderboard successfully"], 201);
     }
 
     public function DeleteExcludedStudent ($id) {

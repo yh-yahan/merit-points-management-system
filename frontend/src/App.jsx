@@ -17,6 +17,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [primaryColor, setPrimaryColor] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,14 +27,17 @@ function App() {
         setIsLoggedIn(true);
         setUserRole(response.data.userType);
         setUser(response.data);
+        setError("");
         if (!response.data?.userType && location.pathname !== '/') {
           navigate('/');
         }
-      }
-      catch (err) {
-        console.log(err);
-      }
-      finally {
+      } catch (err) {
+        if (err.response.status) {
+          navigate('/');
+        } else {
+          setError("An error occured.");
+        }
+      } finally {
         setLoading(false);
       }
     };
@@ -48,9 +52,9 @@ function App() {
         const primaryColor = response.data.primary_color;
         setPrimaryColor(primaryColor);
         document.documentElement.style.setProperty('--primary-color', primaryColor);
-      }
-      catch (err) {
-        console.log(err);
+      } catch (err) {
+        setPrimaryColor('#0d6efd');
+        document.documentElement.style.setProperty('--primary-color', '#0d6efd');
       }
     }
 
@@ -74,41 +78,47 @@ function App() {
 
   return (
     <>
-      <Navbar
-        isLoggedIn={isLoggedIn}
-        userRole={userRole}
-        setIsLoggedIn={setIsLoggedIn} 
-        setUser={setUser} 
-        setUserRole={setUserRole} 
-      />
-      <Routes>
-        {isLoggedIn ? (
-          <Route path="/*" element={<UserRoutes
+      {error && (<div className="alert alert-danger m-5">{error}</div>)}
+      {!error && (
+        <>
+          <Navbar
+            isLoggedIn={isLoggedIn}
             userRole={userRole}
-            setIsLoggedIn={setIsLoggedIn} />}
+            setIsLoggedIn={setIsLoggedIn}
+            setUser={setUser}
+            setUserRole={setUserRole}
           />
-        ) : (
-          <>
-            <Route
-              path="/"
-              element={<Login setIsLoggedIn={setIsLoggedIn}
-                setUserRole={setUserRole}
+          <Routes>
+            {isLoggedIn ? (
+              <Route path="/*" element={<UserRoutes
                 userRole={userRole}
-                setUser={setUser} />}
-            />
-            <Route
-              path="/signup"
-              element={<InvitationCode isLoggedIn={isLoggedIn}
-                setUserRole={setUserRole}
-                setUser={setUser}
-                userRole={userRole}
-                setIsLoggedIn={setIsLoggedIn}
-              />}
-            />
-          </>
-        )}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+                setIsLoggedIn={setIsLoggedIn} />}
+              />
+            ) : (
+              <>
+                <Route
+                  path="/"
+                  element={<Login setIsLoggedIn={setIsLoggedIn}
+                    setUserRole={setUserRole}
+                    userRole={userRole}
+                    setUser={setUser} />}
+                />
+                <Route
+                  path="/signup"
+                  element={<InvitationCode isLoggedIn={isLoggedIn}
+                    setUserRole={setUserRole}
+                    setUser={setUser}
+                    userRole={userRole}
+                    setIsLoggedIn={setIsLoggedIn}
+                  />}
+                />
+              </>
+            )}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </>
+      )
+      }
     </>
   )
 }

@@ -8,7 +8,6 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
   const [invitationCode, setInvitationCode] = useState("");
   const [invitationCodePart1, setInvitationCodePart1] = useState("");
   const [invitationCodePart2, setInvitationCodePart2] = useState("");
-  // const [forUserType, setForUserType] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -28,7 +27,6 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
       setError('');
     }
     catch(err){
-      // console.log(err);
       if (err.response.status === 429) {
         setError("Too many attempts. Please try again later.");
       } else if (err.response.status === 401) {
@@ -43,8 +41,7 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
     return <StudentSignup 
     isLoggedIn={isLoggedIn} 
     setIsLoggedIn={setIsLoggedIn} 
-    setUser={setUser}
-    // userRole='student'
+    setUser={setUser} 
     invitationCode={invitationCode}
     />;
   }

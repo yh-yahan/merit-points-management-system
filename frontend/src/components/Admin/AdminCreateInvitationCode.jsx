@@ -6,6 +6,7 @@ function AdminCreateInvitationCode() {
   const [validatyPeriod, setValidatyPeriod] = useState('twoDays');
   const [code, setCode] = useState('');
   const [isHovered, setIsHovered] = useState(false);
+  const [error, setError] = useState("");
 
   const [check, setCheck] = useState(false);
 
@@ -24,7 +25,7 @@ function AdminCreateInvitationCode() {
       setCode(code);
     }
     catch (err) {
-      console.log(err);
+      setError("Unable to generate new invitation code.");
     }
   }
 
@@ -55,7 +56,6 @@ function AdminCreateInvitationCode() {
       }
     }
     catch (err) {
-      console.log(err);
       const copyIcon = document.getElementById('copyIcon');
       if (copyIcon) {
         const popover = new window.bootstrap.Popover(copyIcon, {
@@ -124,6 +124,7 @@ function AdminCreateInvitationCode() {
                       onMouseLeave={() => setIsHovered(false)}>
                     </i>
                   </div>
+                  { error && <div className="alert alert-danger h-100">{error}</div> }
                   <div className="d-grid">
                     <button
                       className="btn"

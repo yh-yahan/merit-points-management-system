@@ -54,6 +54,18 @@ function AdminSettings({ setIsLoggedIn }) {
   const [logoFile, setLogoFile] = useState(null);
   const [primaryColor, setPrimaryColor] = useState();
 
+  const [excludeStudentError, setExcludeStudentError] = useState("");
+  const [addExcludeStudentError, setAddExcludeStudentError] = useState("");
+  const [fetchInitialError, setFetchInitialError] = useState("");
+  const [updateInitialPointError, setUpdateInitialPointError] = useState("");
+  const [pointThresholdError, setPointThresholdError] = useState("");
+  const [fetchSettingsError, setFetchSettingsError] = useState("");
+  const [changeSettingsError, setChangeSettingsError] = useState("");
+  const [pointThresholdSaveError, setPointThresholdSaveError] = useState("");
+  const [pointThresholdAddError, setPointThresholdAddError] = useState("");
+  const [pointThresholdDeleteError, setPointThresholdDeleteError] = useState("");
+  const [removeExcludedStudentError, setRemoveExcludedStudentError] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,9 +107,10 @@ function AdminSettings({ setIsLoggedIn }) {
         setChangedName(accountSettings[0].name);
         setChangedEmail(accountSettings[0].email);
         setSettings(updatedSettings);
+        setFetchSettingsError("");
       }
       catch (err) {
-        console.error(err);
+        setFetchSettingsError("Unable to fetch settings.");
       }
     }
 
@@ -105,8 +118,10 @@ function AdminSettings({ setIsLoggedIn }) {
       try {
         const response = await api.get('admin/exclude-student');
         setExcludedStudents(response.data);
+
+        setExcludeStudentError("");
       } catch (err) {
-        console.log(err);
+        setExcludeStudentError("Unable to fetch excluded students.");
       }
     }
 
@@ -115,9 +130,11 @@ function AdminSettings({ setIsLoggedIn }) {
         const response = await api.get('admin/initial');
         const initial = response.data;
         setInitialPoints(initial.toString());
+
+        setFetchInitialError("");
       }
       catch (err) {
-        console.log(err);
+        setFetchInitialError("Unable to fetch initial points.");
       }
     }
 
@@ -125,9 +142,11 @@ function AdminSettings({ setIsLoggedIn }) {
       try {
         const response = await api.get('admin/point-threshold');
         setPointThreshold(response.data);
+
+        setPointThresholdError("");
       }
       catch (err) {
-        console.log(err);
+        setPointThresholdError("Unable to fetch point threshold.");
       }
     }
 
@@ -144,8 +163,10 @@ function AdminSettings({ setIsLoggedIn }) {
           await api.post('admin/initial', {
             initial: initialPoints,
           });
+
+          setUpdateInitialPointError("");
         } catch (err) {
-          console.log(err);
+          setUpdateInitialPointError("Unable to update initial points.");
         }
       }
       updateInitial();
@@ -166,9 +187,9 @@ function AdminSettings({ setIsLoggedIn }) {
         ...prev,
         [field]: value
       }));
-    }
-    catch (err) {
-      console.log(err);
+      setChangeSettingsError("");
+    } catch (err) {
+      setChangeSettingsError("Unable to change settings.");
     }
   }
 
@@ -183,8 +204,10 @@ function AdminSettings({ setIsLoggedIn }) {
       setPointThreshold(response.data);
       setEditedPointThreshold({});
       setEditingPointsThresholdId(null);
+
+      setPointThresholdSaveError("");
     } catch (err) {
-      console.log(err);
+      setPointThresholdSaveError("Unable to edit point threshold.");
     }
   }
 
@@ -199,8 +222,10 @@ function AdminSettings({ setIsLoggedIn }) {
 
       setNewThresholdPoints('');
       setNewThresholdActions('');
+
+      setPointThresholdAddError("");
     } catch (err) {
-      console.log(err);
+      setPointThresholdAddError("Unable to add new point threshold.");
     }
   }
 
@@ -210,8 +235,9 @@ function AdminSettings({ setIsLoggedIn }) {
 
       setPointThreshold(response.data);
       setPointThresholdDeleteConfirm(false);
+      setPointThresholdDeleteError("");
     } catch (err) {
-      console.log(err);
+      setPointThresholdDeleteError("Unable to delete threshold.");
     }
   }
 
@@ -231,9 +257,10 @@ function AdminSettings({ setIsLoggedIn }) {
       })
       );
       setIsBasicInfoChanged(false);
+      setUpdateAdminBasicInfoError("");
     }
     catch (err) {
-      console.log(err);
+      setUpdateAdminBasicInfoError("Unable to update admin basic information.");
     }
   }
 
@@ -248,6 +275,7 @@ function AdminSettings({ setIsLoggedIn }) {
 
       setIsLoggedIn(false);
       navigate('/');
+      setPasswordChangeError("");
     }
     catch (err) {
       setPasswordChangeError(err.response.data.message);
@@ -287,11 +315,12 @@ function AdminSettings({ setIsLoggedIn }) {
         ...prevState,
         logo: response.data.path,
       }));
+      setUploadLogoError("");
 
       window.location.reload();
     }
-    catch (error) {
-      console.error(error);
+    catch (err) {
+      setUploadLogoError("Unable to upload logo.");
     }
   }
 
@@ -303,21 +332,31 @@ function AdminSettings({ setIsLoggedIn }) {
 
       const response = await api.get('admin/exclude-student');
       setExcludedStudents(response.data);
-
       setExcludeStudentEmail("");
+
+      setAddExcludeStudentError("");
     } catch (err) {
-      console.log(err);
+      if (err.response.status == 422) {
+        setAddExcludeStudentError("Please enter a valid email address.");
+      } else if (err.response.status == 404) {
+        setAddExcludeStudentError("Could not find student.");
+      } else if (err.response.status == 409) {
+        setAddExcludeStudentError("Student is already in the exclusion list.");
+      } else {
+        setAddExcludeStudentError("Unable to add new student to exclusion list.");
+      }
     }
   }
 
   async function handleRemoveExcludedStudent($id) {
     try {
-      const data = await api.delete(`admin/exclude-student/${$id}`);
+      await api.delete(`admin/exclude-student/${$id}`);
 
       const response = await api.get('admin/exclude-student');
       setExcludedStudents(response.data);
+      setRemoveExcludedStudentError("");
     } catch (err) {
-      console.log(err);
+      setRemoveExcludedStudentError("Unable to remove student from exclusion list.");
     }
   }
 
@@ -393,464 +432,476 @@ function AdminSettings({ setIsLoggedIn }) {
 
   return (
     <div className="container-fluid mt-4 mb-5">
-      <h1 className="my-3">Settings</h1>
-      <div>
-        <h3 style={{ color: "#7d7d7d" }}>Leaderboard Settings & Student Preferences</h3>
-        <div className="ms-md-5">
-          <div className="row">
-            <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
-              <p>Disable leaderboard</p>
-              {disableLeaderboardError && <p className="text-danger">{disableLeaderboardError}</p>}
-              <div className="w-50 d-flex justify-content-end align-items-center">
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    checked={settings.disable_leaderboard}
-                    onChange={async () => {
-                      const newDisableLeaderboard = !settings.disable_leaderboard;
-                      handleSettingInputChange("disable_leaderboard", newDisableLeaderboard);
-                      try {
-                        await changeSettings("disable_leaderboard", newDisableLeaderboard);
-                      } catch (err) {
-                        console.error("Failed to update leaderboard setting:", err);
-                        handleSettingInputChange("disable_leaderboard", !newDisableLeaderboard);
-                        setDisableLeaderboardError("Failed to update leaderboard setting");
-                      }
-                    }}
-                  />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-            </div>
-
-            <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
-              <p>Allow Students to choose whether to be displayed on leaderboard.</p>
-              <div className="w-50 d-flex justify-content-end align-items-center">
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    checked={settings.allow_students_to_opt_out_leaderboard}
-                    onChange={() => {
-                      handleSettingInputChange("allow_students_to_opt_out_leaderboard", !settings.allow_students_to_opt_out_leaderboard);
-                      changeSettings("allow_students_to_opt_out_leaderboard", !settings.allow_students_to_opt_out_leaderboard);
-                    }}
-                  />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-            </div>
-
-            <div className="col-12 mb-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
-              <p>How name is displayed on leaderboard</p>
-              <select 
-                className="form-select mt-3" 
-                value={settings.leaderboard_visibility}
-                onChange={(e) => changeSettings("leaderboard_visibility", e.target.value)}
-              >
-                <option value="username">Display username</option>
-                <option value="name">Display actual name</option>
-                <option value="choose">Allow students to choose (username/actual name)</option>
-              </select>
-            </div>
-
-            <div>
-              <div className="d-flex flex-column">
-                <p>Leaderboard Participation control</p>
-                <p className="fw-light fs-6 text-body-secondary">
-                  Determines which student won't be displayed on leaderboard
-                </p>
-              </div>
-
+      {fetchSettingsError && <div className="alert alert-danger">{fetchSettingsError}</div>}
+      {!fetchSettingsError &&
+        <>
+          <h1 className="my-3">Settings</h1>
+          <div>
+            <h3 style={{ color: "#7d7d7d" }}>Leaderboard Settings & Student Preferences</h3>
+            <div className="ms-md-5">
               <div className="row">
-                <div className="col-md-6">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter student email"
-                    value={excludeStudentEmail}
-                    onChange={(e) => setExcludeStudentEmail(e.target.value)}
-                  />
+                <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
+                  <p>Disable leaderboard</p>
+                  {disableLeaderboardError && <p className="text-danger">{disableLeaderboardError}</p>}
+                  <div className="w-50 d-flex justify-content-end align-items-center">
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={settings.disable_leaderboard}
+                        onChange={async () => {
+                          const newDisableLeaderboard = !settings.disable_leaderboard;
+                          handleSettingInputChange("disable_leaderboard", newDisableLeaderboard);
+                          try {
+                            await changeSettings("disable_leaderboard", newDisableLeaderboard);
+                          } catch (err) {
+                            setChangeSettingsError("Unable to change settings.");
+                            handleSettingInputChange("disable_leaderboard", !newDisableLeaderboard);
+                            setDisableLeaderboardError("Failed to update leaderboard setting");
+                          }
+                        }}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
                 </div>
-                <div className="col-md-6">
-                  <button className="btn btn-primary" onClick={() => handleAddExcludedStudent()}>
-                    Excluded student
-                  </button>
-                </div>
-              </div>
 
-              <div className="col-12 mb-3 border-bottom border-secondary-subtle p-3">
-                <div className="table-responsive">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Class</th>
-                        <th>Stream</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {excludedStudents && excludedStudents.map((excludedStudent, index) => (
-                        <tr key={index}>
-                          <td>{excludedStudent.name}</td>username
-                          <td>{excludedStudent.email}</td>
-                          <td>{excludedStudent.class}</td>
-                          <td>{excludedStudent.stream}</td>
-                          <td>
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => handleRemoveExcludedStudent(excludedStudent.id)}
-                            >Remove</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
+                  <p>Allow Students to choose whether to be displayed on leaderboard.</p>
+                  <div className="w-50 d-flex justify-content-end align-items-center">
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={settings.allow_students_to_opt_out_leaderboard}
+                        onChange={() => {
+                          handleSettingInputChange("allow_students_to_opt_out_leaderboard", !settings.allow_students_to_opt_out_leaderboard);
+                          changeSettings("allow_students_to_opt_out_leaderboard", !settings.allow_students_to_opt_out_leaderboard);
+                        }}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="col-12 mb-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
+                  <p>How name is displayed on leaderboard</p>
+                  <select
+                    className="form-select mt-3"
+                    value={settings.leaderboard_visibility}
+                    onChange={(e) => changeSettings("leaderboard_visibility", e.target.value)}
+                  >
+                    <option value="username">Display username</option>
+                    <option value="name">Display actual name</option>
+                    <option value="choose">Allow students to choose (username/actual name)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div className="d-flex flex-column">
+                    <p>Leaderboard Participation control</p>
+                    <p className="fw-light fs-6 text-body-secondary">
+                      Determines which student won't be displayed on leaderboard
+                    </p>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-6">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter student email"
+                        value={excludeStudentEmail}
+                        onChange={(e) => setExcludeStudentEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <button className="btn btn-primary" onClick={() => handleAddExcludedStudent()}>
+                        Excluded student
+                      </button>
+                    </div>
+                  </div>
+                  {addExcludeStudentError && <div className="alert alert-danger mt-3">{addExcludeStudentError}</div>}
+
+                  <div className="col-12 mb-3 border-bottom border-secondary-subtle p-3">
+                    {excludeStudentError && <div className="alert alert-danger">{excludeStudentError}</div>}
+                    {!excludeStudentError && <div className="table-responsive">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Class</th>
+                            <th>Stream</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {excludedStudents && excludedStudents.map((excludedStudent, index) => (
+                            <tr key={index}>
+                              <td>{excludedStudent.name}</td>
+                              <td>{excludedStudent.email}</td>
+                              <td>{excludedStudent.class}</td>
+                              <td>{excludedStudent.stream}</td>
+                              <td>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => handleRemoveExcludedStudent(excludedStudent.id)}
+                                >Remove</button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="mb-3">
-        <h3 style={{ color: "#7d7d7d" }}>Merit points</h3>
-        <div className="ms-md-5">
-          <label className="mx-3">Initial points for newly joined students: </label>
-          <div className="col-4 mx-3 mt-2">
-            <input
-              type="number"
-              className="form-control"
-              onChange={handleInitialPointsChange}
-              value={initialPoints || ''}
-            />
-          </div>
-        </div>
-        <div className="mx-3 mt-5 ms-md-5">
-          <h3 style={{ color: "#7d7d7d" }}>Point Threshold Actions</h3>
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Threshold (points)</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pointThreshold.length > 0 ? pointThreshold.map((threshold, index) => (
-                  <tr key={index} className={editingPointsThresholdId == threshold.id ? 'table-primary' : ''}>
-                    <td scope="row">
-                      {editingPointsThresholdId == threshold.id ? (
+          <div className="mb-3">
+            <h3 style={{ color: "#7d7d7d" }}>Merit points</h3>
+            <div className="ms-md-5">
+              <label className="mx-3">Initial points for newly joined students</label>
+              {fetchInitialError && <div className="alert alert-danger mx-3 mt-2">{fetchInitialError}</div>}
+              {!fetchInitialError && <div className="col-4 mx-3 mt-2">
+                <input
+                  type="number"
+                  className="form-control"
+                  onChange={handleInitialPointsChange}
+                  max={100000}
+                  value={initialPoints || ''}
+                />
+              </div>}
+              {updateInitialPointError && <div className="alert alert-danger mx-3 mt-2">{updateInitialPointError}</div>}
+            </div>
+            <div className="mx-3 mt-5 ms-md-5">
+              <h3 style={{ color: "#7d7d7d" }}>Point Threshold Actions</h3>
+              {pointThresholdError && <div className="alert alert-danger">{pointThresholdError}</div>}
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Threshold (points)</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pointThreshold.length > 0 ? pointThreshold.map((threshold, index) => (
+                      <tr key={index} className={editingPointsThresholdId == threshold.id ? 'table-primary' : ''}>
+                        <td scope="row">
+                          {editingPointsThresholdId == threshold.id ? (
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={editedPointThreshold.points ?? threshold.points}
+                              onChange={(e) => setEditedPointThreshold(prev => ({ ...prev, points: e.target.value }))}
+                            />
+                          ) : (threshold.points)}
+                        </td>
+                        <td>
+                          {editingPointsThresholdId == threshold.id ? (
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={editedPointThreshold.actions ?? threshold.actions}
+                              onChange={(e) => setEditedPointThreshold(prev => ({ ...prev, actions: e.target.value }))}
+                            />
+                          ) : (threshold.actions)}
+                        </td>
+                        <td>
+                          {editingPointsThresholdId == threshold.id ? (
+                            <>
+                              <button
+                                className="btn btn-primary me-3"
+                                onClick={() => handlePointThresholdSave()}
+                              >Save</button>
+                              <button
+                                className="btn btn-secondary"
+                                onClick={() => {
+                                  setEditingPointsThresholdId(null);
+                                  setEditedPointThreshold({});
+                                }}
+                              >Cancel</button>
+                            </>
+                          ) :
+                            <>
+                              <button
+                                className="btn btn-primary me-3"
+                                onClick={() => handlePointThresholdEdit(threshold)}
+                              >
+                                <i class="bi bi-pencil-square"></i> Edit
+                              </button>
+                              <button
+                                className="btn btn-danger"
+                                onClick={() => {
+                                  setPointThresholdToDelete(threshold);
+                                  setPointThresholdDeleteConfirm(true);
+                                }}
+                              >
+                                <i class="bi bi-trash3"></i> Delete
+                              </button>
+                            </>
+                          }
+                        </td>
+                      </tr>
+                    )) :
+                      <div className="mb-5">
+                        <p className="text-danger">Something went wrong.</p>
+                      </div>
+                    }
+                    <tr className="table-secondary">
+                      <td>
                         <input
                           type="number"
                           className="form-control"
-                          value={editedPointThreshold.points ?? threshold.points}
-                          onChange={(e) => setEditedPointThreshold(prev => ({ ...prev, points: e.target.value }))}
+                          placeholder="points"
+                          value={newThresholdPoints}
+                          onChange={(e) => setNewThresholdPoints(e.target.value)}
                         />
-                      ) : (threshold.points)}
-                    </td>
-                    <td>
-                      {editingPointsThresholdId == threshold.id ? (
+                      </td>
+                      <td>
                         <input
                           type="text"
                           className="form-control"
-                          value={editedPointThreshold.actions ?? threshold.actions}
-                          onChange={(e) => setEditedPointThreshold(prev => ({ ...prev, actions: e.target.value }))}
+                          placeholder="Actions to take"
+                          value={newThresholdActions}
+                          onChange={(e) => setNewThresholdActions(e.target.value)}
                         />
-                      ) : (threshold.actions)}
-                    </td>
-                    <td>
-                      {editingPointsThresholdId == threshold.id ? (
-                        <>
-                          <button
-                            className="btn btn-primary me-3"
-                            onClick={() => handlePointThresholdSave()}
-                          >Save</button>
-                          <button
-                            className="btn btn-secondary"
-                            onClick={() => {
-                              setEditingPointsThresholdId(null);
-                              setEditedPointThreshold({});
-                            }}
-                          >Cancel</button>
-                        </>
-                      ) :
-                        <>
-                          <button
-                            className="btn btn-primary me-3"
-                            onClick={() => handlePointThresholdEdit(threshold)}
-                          >
-                            <i class="bi bi-pencil-square"></i> Edit
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => {
-                              setPointThresholdToDelete(threshold);
-                              setPointThresholdDeleteConfirm(true);
-                            }}
-                          >
-                            <i class="bi bi-trash3"></i> Delete
-                          </button>
-                        </>
-                      }
-                    </td>
-                  </tr>
-                )) :
-                  <div className="mb-5">
-                    <p className="text-danger">Something went wrong.</p>
-                  </div>
-                }
-                <tr className="table-secondary">
-                  <td>
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="points"
-                      value={newThresholdPoints}
-                      onChange={(e) => setNewThresholdPoints(e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Actions to take"
-                      value={newThresholdActions}
-                      onChange={(e) => setNewThresholdActions(e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-primary me-3"
-                      onClick={handlePointThresholdAdd}
-                    >
-                      <i class="bi bi-plus-circle"></i> Add
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 style={{ color: "#7d7d7d" }}>Appearance</h3>
-        <div className="ms-md-5">
-          <div className="row">
-            <div>
-              <h6>Website</h6>
-              <div className="ms-md-5 mb-2">
-                <p className="text-danger">Warning: This will effect the entire site.</p>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-primary me-3"
+                          onClick={handlePointThresholdAdd}
+                        >
+                          <i class="bi bi-plus-circle"></i> Add
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {pointThresholdAddError && <div className="alert alert-danger">{pointThresholdAddError}</div>}
               </div>
-              <div className="ms-md-5 mb-3">
-                <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
-                  <p>Logo</p>
-                  <input type="file" accept="image/*" onChange={handleLogoChange} />
-                </div>
-                <div className="mt-3">
-                  <h6>Color</h6>
-                  <div>
+            </div>
+          </div>
+
+          <div>
+            <h3 style={{ color: "#7d7d7d" }}>Appearance</h3>
+            <div className="ms-md-5">
+              <div className="row">
+                <div>
+                  <h6>Website</h6>
+                  <div className="ms-md-5 mb-2">
+                    <p className="text-danger">Warning: This will effect the entire site.</p>
+                  </div>
+                  <div className="ms-md-5 mb-3">
                     <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
-                      <div className="d-flex flex-column">
-                        <p>Primary color</p>
+                      <p>Logo</p>
+                      <input type="file" accept="image/*" onChange={handleLogoChange} />
+                    </div>
+                    <div className="mt-3">
+                      <h6>Color</h6>
+                      <div>
+                        <div className="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle p-3">
+                          <div className="d-flex flex-column">
+                            <p>Primary color</p>
+                          </div>
+                          <input
+                            type="color"
+                            value={settings.primary_color}
+                            onChange={(e) => {
+                              const newColor = e.target.value;
+                              handleSettingInputChange("primary_color", newColor);
+                              changeSettings("primary_color", newColor);
+                              setSettings(prev => ({ ...prev, primary_color: newColor }));
+                              document.documentElement.style.setProperty('--primary-color', newColor);
+                            }}
+                          />
+                        </div>
                       </div>
-                      <input
-                        type="color"
-                        value={settings.primary_color}
-                        onChange={(e) => {
-                          const newColor = e.target.value;
-                          handleSettingInputChange("primary_color", newColor);
-                          changeSettings("primary_color", newColor);
-                          setSettings(prev => ({ ...prev, primary_color: newColor }));
-                          document.documentElement.style.setProperty('--primary-color', newColor);
-                        }}
-                      />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div>
-        <h3 style={{ color: "#7d7d7d" }}>Account</h3>
-        <div className="ms-md-5 container">
-          <h6>Basic information</h6>
-          <div className="row ms-md-3">
-            <div className="form-floating mb-3">
-              <input
-                type="text"
-                class="form-control"
-                id="floatingInput"
-                placeholder="Name"
-                value={changedName}
-                onChange={handleNameChange}
-              />
-              <label for="floatingInput">Name</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input
-                type="email"
-                class="form-control"
-                id="floatingInput"
-                placeholder="Email"
-                value={changedEmail}
-                onChange={handleEmailChange}
-              />
-              <label for="floatingInput">Email</label>
-            </div>
-          </div>
-          <button
-            className={`btn btn-primary me-3 px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
-            onClick={updateAdminBasicInfo}
-          >Update</button>
-          <button
-            className={`btn btn-primary px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
-            onClick={handleBasicInfoChangeCancel}
-          >Cancel</button>
-        </div>
-        <div className="ms-md-5 container mt-5">
-          <h6>Change Password</h6>
-          <div className="row ms-md-3">
-            <div className="form-floating mb-3">
-              <input
-                type={showAdminCurrentPassword ? "text" : "password"}
-                class="form-control"
-                id="floatingInput"
-                placeholder="Current password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-              <label for="floatingInput">Current Password</label>
-              <i
-                onClick={toggleAdminCurrentPasswordVisibility}
-                className={`bi ${showAdminCurrentPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
-                style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
-              ></i>
-            </div>
-            <div className="form-floating mb-3">
-              <input
-                type={showAdminNewPassword ? "text" : "password"}
-                class="form-control"
-                id="floatingInput"
-                placeholder="New password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              <label for="floatingInput">New Password</label>
-              <i
-                onClick={toggleAdminNewPasswordVisibility}
-                className={`bi ${showAdminNewPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
-                style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
-              ></i>
-            </div>
-            <div class="form-floating mb-3">
-              <input
-                type={showAdminNewPassword ? "text" : "password"}
-                class="form-control"
-                id="floatingInput"
-                placeholder="Confirm new password"
-                value={newPasswordConfirm}
-                onChange={(e) => setNewPasswordConfirm(e.target.value)}
-              />
-              <label for="floatingInput">Confirm new password</label>
-            </div>
-            {passwordChangeError && <p className="text-danger">{passwordChangeError}</p>}
-          </div>
-          <button
-            className={`btn btn-primary me-3 px-5 ${currentPassword && newPassword && newPasswordConfirm ? "" : "disabled"}`}
-            onClick={() => setPasswordUpdateConfirmation(true)}
-          >Update</button>
-          <button
-            className={`btn btn-primary px-5 ${currentPassword && newPassword && newPasswordConfirm ? "" : "disabled"}`}
-            onClick={handlePasswordChangeCancel}
-          >Cancel</button>
-        </div>
-        <div className="ms-md-5 container mt-5">
-          <h6>Add new admin account</h6>
-          <div className="row row ms-md-3">
-            <div className="form-floating mb-3">
-              <input
-                type="text"
-                class="form-control"
-                id="floatingInput"
-                placeholder="Name"
-                value={newAdminName}
-                onChange={(e) => setNewAdminName(e.target.value)}
-              />
-              <label for="floatingInput">Name</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input
-                type="email"
-                class="form-control"
-                id="floatingInput"
-                placeholder="Email"
-                value={newAdminEmail}
-                onChange={(e) => setNewAdminEmail(e.target.value)}
-              />
-              <label for="floatingInput">Email address</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input
-                type={showNewAdminPassword ? "text" : "password"}
-                class="form-control"
-                id="floatingInput"
-                placeholder="Password"
-                value={newAdminPassword}
-                onChange={(e) => setNewAdminPassword(e.target.value)}
-              />
-              <label for="floatingInput">Password</label>
-              <i
-                onClick={toggleNewAdminPasswordVisibility}
-                className={`bi ${showNewAdminPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
-                style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
-              ></i>
-            </div>
-            <div class="form-floating mb-3">
-              <input
-                type={showNewAdminPassword ? "text" : "password"}
-                class="form-control"
-                id="floatingInput"
-                placeholder="Confirm Password"
-                value={newAdminPasswordConfirm}
-                onChange={(e) => setNewAdminPasswordConfirm(e.target.value)}
-              />
-              <label for="floatingInput">Confirm Password</label>
-            </div>
-          </div>
-          {newAdminInfo && <p className="text-primary">{newAdminInfo}</p>}
-          {newAdminError && <p className="text-danger">{newAdminError}</p>}
-          <button
-            className={`btn btn-primary me-3 px-5 ${newAdminName && newAdminEmail && newAdminPassword && newAdminPasswordConfirm ? "" : "disabled"}`}
-            onClick={addNewAdmin}>
-            Add</button>
-          <button
-            className={`btn btn-primary me-3 px-5 ${newAdminName || newAdminEmail || newAdminPassword || newAdminPasswordConfirm ? "" : "disabled"}`}
-            onClick={handleNewAdminCancel}>Cancel</button>
-        </div>
-      </div>
-      {
-        passwordUpdateConfirmation && (
-          <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
-              <h5>Confirm password update</h5>
-              <p>Are you sure you want to update your password?</p>
-              <p className="fw-light fst-italic text-danger">You will be automatically logged out once you updated your password.</p>
-              <div className="d-flex justify-content-end">
-                <button
-                  className="btn btn-primary me-3"
-                  onClick={updatePassword}>Yes, update</button>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setPasswordUpdateConfirmation(false)}>Cancel</button>
+          <div>
+            <h3 style={{ color: "#7d7d7d" }}>Account</h3>
+            <div className="ms-md-5 container">
+              <h6>Basic information</h6>
+              <div className="row ms-md-3">
+                <div className="form-floating mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="Name"
+                    value={changedName}
+                    onChange={handleNameChange}
+                  />
+                  <label for="floatingInput">Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="Email"
+                    value={changedEmail}
+                    onChange={handleEmailChange}
+                  />
+                  <label for="floatingInput">Email</label>
+                </div>
               </div>
+              <button
+                className={`btn btn-primary me-3 px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
+                onClick={updateAdminBasicInfo}
+              >Update</button>
+              <button
+                className={`btn btn-primary px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
+                onClick={handleBasicInfoChangeCancel}
+              >Cancel</button>
+            </div>
+            <div className="ms-md-5 container mt-5">
+              <h6>Change Password</h6>
+              <div className="row ms-md-3">
+                <div className="form-floating mb-3">
+                  <input
+                    type={showAdminCurrentPassword ? "text" : "password"}
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="Current password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
+                  <label for="floatingInput">Current Password</label>
+                  <i
+                    onClick={toggleAdminCurrentPasswordVisibility}
+                    className={`bi ${showAdminCurrentPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
+                    style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+                  ></i>
+                </div>
+                <div className="form-floating mb-3">
+                  <input
+                    type={showAdminNewPassword ? "text" : "password"}
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="New password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <label for="floatingInput">New Password</label>
+                  <i
+                    onClick={toggleAdminNewPasswordVisibility}
+                    className={`bi ${showAdminNewPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
+                    style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+                  ></i>
+                </div>
+                <div class="form-floating mb-3">
+                  <input
+                    type={showAdminNewPassword ? "text" : "password"}
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="Confirm new password"
+                    value={newPasswordConfirm}
+                    onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                  />
+                  <label for="floatingInput">Confirm new password</label>
+                </div>
+                {passwordChangeError && <p className="text-danger">{passwordChangeError}</p>}
+              </div>
+              <button
+                className={`btn btn-primary me-3 px-5 ${currentPassword && newPassword && newPasswordConfirm ? "" : "disabled"}`}
+                onClick={() => setPasswordUpdateConfirmation(true)}
+              >Update</button>
+              <button
+                className={`btn btn-primary px-5 ${currentPassword && newPassword && newPasswordConfirm ? "" : "disabled"}`}
+                onClick={handlePasswordChangeCancel}
+              >Cancel</button>
+            </div>
+            <div className="ms-md-5 container mt-5">
+              <h6>Add new admin account</h6>
+              <div className="row row ms-md-3">
+                <div className="form-floating mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="Name"
+                    value={newAdminName}
+                    onChange={(e) => setNewAdminName(e.target.value)}
+                  />
+                  <label for="floatingInput">Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="Email"
+                    value={newAdminEmail}
+                    onChange={(e) => setNewAdminEmail(e.target.value)}
+                  />
+                  <label for="floatingInput">Email address</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input
+                    type={showNewAdminPassword ? "text" : "password"}
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="Password"
+                    value={newAdminPassword}
+                    onChange={(e) => setNewAdminPassword(e.target.value)}
+                  />
+                  <label for="floatingInput">Password</label>
+                  <i
+                    onClick={toggleNewAdminPasswordVisibility}
+                    className={`bi ${showNewAdminPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
+                    style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+                  ></i>
+                </div>
+                <div class="form-floating mb-3">
+                  <input
+                    type={showNewAdminPassword ? "text" : "password"}
+                    class="form-control"
+                    id="floatingInput"
+                    placeholder="Confirm Password"
+                    value={newAdminPasswordConfirm}
+                    onChange={(e) => setNewAdminPasswordConfirm(e.target.value)}
+                  />
+                  <label for="floatingInput">Confirm Password</label>
+                </div>
+              </div>
+              {newAdminInfo && <p className="text-primary">{newAdminInfo}</p>}
+              {newAdminError && <p className="text-danger">{newAdminError}</p>}
+              <button
+                className={`btn btn-primary me-3 px-5 ${newAdminName && newAdminEmail && newAdminPassword && newAdminPasswordConfirm ? "" : "disabled"}`}
+                onClick={addNewAdmin}>
+                Add</button>
+              <button
+                className={`btn btn-primary me-3 px-5 ${newAdminName || newAdminEmail || newAdminPassword || newAdminPasswordConfirm ? "" : "disabled"}`}
+                onClick={handleNewAdminCancel}>Cancel</button>
             </div>
           </div>
-        )
+          {
+            passwordUpdateConfirmation && (
+              <div className="popup d-flex justify-content-center align-items-center">
+                <div className="popup-content p-4 bg-white rounded shadow">
+                  <h5>Confirm password update</h5>
+                  <p>Are you sure you want to update your password?</p>
+                  <p className="fw-light fst-italic text-danger">You will be automatically logged out once you updated your password.</p>
+                  <div className="d-flex justify-content-end">
+                    <button
+                      className="btn btn-primary me-3"
+                      onClick={updatePassword}>Yes, update</button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setPasswordUpdateConfirmation(false)}>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+        </>
       }
       {
         pointThresholdDeleteConfirm && (
@@ -866,6 +917,61 @@ function AdminSettings({ setIsLoggedIn }) {
             </div>
           </div>
         )
+      }
+      {
+        changeSettingsError && <div className="popup d-flex justify-content-center align-items-center">
+          <div className="popup-content p-4 bg-white rounded shadow">
+            <h5>Error</h5>
+            <p className="text-danger">{changeSettingsError}</p>
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-primary" onClick={() => {
+                setChangeSettingsError("");
+              }}>Ok</button>
+            </div>
+          </div>
+        </div>
+      }
+      {
+        pointThresholdSaveError && <div className="popup d-flex justify-content-center align-items-center">
+        <div className="popup-content p-4 bg-white rounded shadow">
+          <h5>Error</h5>
+          <p className="text-danger">{pointThresholdSaveError}</p>
+          <div className="d-flex justify-content-end">
+            <button className="btn btn-primary" onClick={() => {
+              setPointThresholdSaveError("");
+              setEditingPointsThresholdId(null);
+              setEditedPointThreshold({});
+            }}>Ok</button>
+          </div>
+        </div>
+      </div>
+      }
+      {
+        pointThresholdDeleteError && <div className="popup d-flex justify-content-center align-items-center">
+        <div className="popup-content p-4 bg-white rounded shadow">
+          <h5>Error</h5>
+          <p className="text-danger">{pointThresholdDeleteError}</p>
+          <div className="d-flex justify-content-end">
+            <button className="btn btn-primary" onClick={() => {
+              setPointThresholdDeleteError("");
+              setPointThresholdDeleteConfirm(false);
+            }}>Ok</button>
+          </div>
+        </div>
+      </div>
+      }
+      {
+        removeExcludedStudentError && <div className="popup d-flex justify-content-center align-items-center">
+        <div className="popup-content p-4 bg-white rounded shadow">
+          <h5>Error</h5>
+          <p className="text-danger">{removeExcludedStudentError}</p>
+          <div className="d-flex justify-content-end">
+            <button className="btn btn-primary" onClick={() => {
+              setRemoveExcludedStudentError("");
+            }}>Ok</button>
+          </div>
+        </div>
+      </div>
       }
     </div>
   );

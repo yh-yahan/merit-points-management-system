@@ -5,6 +5,8 @@ import api from '../../api';
 function StudentsNavbar({ setIsLoggedIn, setUser, setUserRole }) {
   const [popup, setPopup] = useState(false);
   const [logoUrl, setLogoUrl] = useState(null);
+  const [logoutError, setLogoutError] = useState("");
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -19,7 +21,7 @@ function StudentsNavbar({ setIsLoggedIn, setUser, setUserRole }) {
         setLogoUrl(response.data.path);
       }
       catch (err) {
-        console.log(err);
+        setLogoUrl("");
       }
     }
 
@@ -31,15 +33,16 @@ function StudentsNavbar({ setIsLoggedIn, setUser, setUserRole }) {
     setPopup(false);
 
     try {
-      const response = await api.post('/logout');
+      await api.post('/logout');
 
       setIsLoggedIn(false);
       setUserRole("");
       setUser(null);
+      setLogoutError("");
       navigate('/');
     }
     catch (err) {
-      console.log(err);
+      setLogoutError("Unable to logout.");
     }
   }
 
@@ -118,6 +121,18 @@ function StudentsNavbar({ setIsLoggedIn, setUser, setUserRole }) {
             </div>
           </div>
         )
+      }
+      {
+        logoutError &&
+        <div className="popup d-flex justify-content-center align-items-center">
+          <div className="popup-content p-4 bg-white rounded shadow">
+            <h5>Error</h5>
+            <p className="text-danger">{logoutError}</p>
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-primary" onClick={() => setLogoutError("")}>Ok</button>
+            </div>
+          </div>
+        </div>
       }
     </>
   )

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import api from '../../api';
 
-function TeacherEditMeritPoints () {
+function TeacherEditMeritPoints() {
   const [search, setSearch] = useState("");
   const [displayStudent, setDisplayStudent] = useState(false);
   const [student, setStudent] = useState(null);
@@ -29,6 +29,10 @@ function TeacherEditMeritPoints () {
   const [description, setDescription] = useState('');
   const [updateSuccess, setUpdateSuccess] = useState('');
   const [updateFail, setUpdateFail] = useState('');
+
+  const [error, setError] = useState("");
+  const [searchError, setSearchError] = useState("");
+
   const listRef = useRef(null);
 
   useEffect(() => {
@@ -37,9 +41,10 @@ function TeacherEditMeritPoints () {
         const response = await api.get("/teacher/student-by-class");
         const data = response.data;
         setGroupedStudent(data);
-      }
-      catch (err) {
-        console.log(err);
+
+        setError("");
+      } catch (err) {
+        setError("Unable to fetch student");
       }
     }
     fetchGroupedStudent();
@@ -48,11 +53,10 @@ function TeacherEditMeritPoints () {
   useEffect(() => {
     if (selectedRule && rules.length > 0) {
       const selectedRuleDetials = rules.find(rule => rule.name === selectedRule);
-  
+
       if (selectedRuleDetials) {
         setPoints(selectedRuleDetials.operation_type == 'add' ? selectedRuleDetials.points : '-' + selectedRuleDetials.points);
       } else {
-        console.error("Selected rule not found");
         setPoints("");
       }
     }
@@ -92,8 +96,8 @@ function TeacherEditMeritPoints () {
   }, [filteredStudents, selectedIndex]);
 
   useEffect(() => {
-    async function searchStudent(){
-      try{
+    async function searchStudent() {
+      try {
         const response = await api.post("/teacher/search-student", {
           'search': search
         });
@@ -102,9 +106,10 @@ function TeacherEditMeritPoints () {
           student.name + " - " + student.class;
         });
         setFilteredStudents(data);
-      }
-      catch(err){
-        console.log(err);
+
+        setSearchError("");
+      } catch (err) {
+        setSearchError("Unable to search student.");
       }
     }
 
@@ -145,29 +150,30 @@ function TeacherEditMeritPoints () {
 
       setStudentTransaction(transaction);
       setStudent(studentInformation);
-    }
-    catch (err) {
-      console.log(err);
+
+      setError("");
+    } catch (err) {
+      setError("Unable to get student details.");
     }
   }
 
-  async function updatePoint(e){
+  async function updatePoint(e) {
     e.preventDefault();
     const selectedRuleDetails = rules.find(rule => rule.name === selectedRule);
     const pointUpdateInfo = {
-      operation: mode, 
-      points: Math.abs(points), 
-      description: description || '',  
-      receiver_id: student.student.id, 
-      rule_id: selectedRuleDetails.id, 
+      operation: mode,
+      points: Math.abs(points),
+      description: description || '',
+      receiver_id: student.student.id,
+      rule_id: selectedRuleDetails.id,
     }
-    try{
+    try {
       const response = await api.patch(`/teacher/point/${student.student.id}`, pointUpdateInfo);
       const data = response.data;
       setUpdateSuccess(`Updated successfully. Student's current point: ${data.currentPoint}`);
+      setUpdateFail("");
     }
-    catch(err){
-      console.log(err);
+    catch (err) {
       setUpdateFail("Update failed.")
     }
   }
@@ -201,24 +207,27 @@ function TeacherEditMeritPoints () {
             onFocus={() => setSelectedIndex(-1)} // Reset selection when focusing
           />
           {search && filteredStudents.length > 0 && (
-            <ul
-              className="list-group mt-1 bg-white rounded-top shadow"
-              ref={listRef}
-            >
-              {filteredStudents.map((student, index) => (
-                <li
-                  key={student.id}
-                  className={`list-group-item list-group-item-action ${selectedIndex === index ? 'selected' : ''}`}
-                  onClick={() => handleStudentClick(student.id)}
-                >
-                  {student.name} - {student.class}
-                </li>
-              ))}
-            </ul>
+            <>
+              {searchError && <p className="text-danger mt-1 bg-white rounded-top shadow py-3 px-2">{searchError}</p>}
+              {!searchError && (<ul
+                className="list-group mt-1 bg-white rounded-top shadow"
+                ref={listRef}
+              >
+                {filteredStudents.map((student, index) => (
+                  <li
+                    key={student.id}
+                    className={`list-group-item list-group-item-action ${selectedIndex === index ? 'selected' : ''}`}
+                    onClick={() => handleStudentClick(student.id)}
+                  >
+                    {student.name} - {student.class}
+                  </li>
+                ))}
+              </ul>)}
+            </>
           )}
         </div>
-        {
-          displayStudent && student != null && <div className="mt-4 ms-3 col-8">
+        {error && <div className="alert alert-danger mt-5">{error}</div>}
+        {!error && displayStudent && student != null && <div className="mt-4 ms-3 col-8">
             <h3>Student information</h3>
             <p>
               Student name: {student.student.name}
@@ -291,15 +300,15 @@ function TeacherEditMeritPoints () {
                 style={{ maxHeight: "400px" }}
                 onChange={(e) => setDescription(e.target.value)}></textarea>
             </div>
+            {updateSuccess && <div className="alert alert-success mt-3 mb-2">{updateSuccess}</div>}
+            {updateFail && <div className="alert alert-danger mt-3 mb-2">{updateFail}</div>}
             <button
               type="button"
               className="btn mt-3"
               onClick={(e) => updatePoint(e)}>Update</button>
-              {updateSuccess && <p className="text-primary mt-3">{updateSuccess}</p>}
-              {updateFail && <p className="text-danger mt-3">{updateFail}</p>}
           </div>
         }
-        <div className={`${isSidebarVisible ? "col-lg-3 shadow-lg" : null} accordion-container ms-auto`} style={{ right: 0, top: 0, height: '100vh', overflowY: 'auto' }}>
+        {!error && <div className={`${isSidebarVisible ? "col-lg-3 shadow-lg" : null} accordion-container ms-auto`} style={{ right: 0, top: 0, height: '100vh', overflowY: 'auto' }}>
           <h2 className="mt-5 mb-3">Students by class</h2>
           <div className="accordion" id="accordionExample">
             {Object.keys(groupedStudent).map((className) => (
@@ -335,7 +344,7 @@ function TeacherEditMeritPoints () {
               </div>
             ))}
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );

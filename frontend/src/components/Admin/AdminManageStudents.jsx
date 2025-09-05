@@ -9,7 +9,6 @@ function AdminManageStudents() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalStudents, setTotalStudents] = useState(0);
-  const [error, setError] = useState("");
 
   const [bulkEdit, setBulkEdit] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -22,6 +21,10 @@ function AdminManageStudents() {
 
   const [selectedStudent, setSelectedStudent] = useState();
   const [showDeleteStudentConfirm, setShowDeleteStudentConfirm] = useState(false);
+
+  const [error, setError] = useState("");
+  const [deletionError, setDeletionError] = useState("");
+  const [academicStructureFetchError, setAcademicStructureFetchError] = useState("");
 
   async function fetchStudentsData() {
     try {
@@ -39,10 +42,10 @@ function AdminManageStudents() {
       setStudents(transformedData);
       setTotalStudents(response.data.totalStudents);
       setTotalPages(response.data.last_page);
+      setError("");
     }
     catch (err) {
-      setError("No data found.");
-      console.log(err);
+      setError("Unable to fetch student data.");
     }
   }
 
@@ -58,8 +61,9 @@ function AdminManageStudents() {
 
         setAllClasses(studentClass);
         setAllStreams(studentStream);
+        setAcademicStructureFetchError("");
       } catch (err) {
-        console.log(err);
+        setAcademicStructureFetchError("Unable to fetch classes and streams.");
       }
     }
 
@@ -78,8 +82,9 @@ function AdminManageStudents() {
 
       setSelectedStudent(null);
       setShowDeleteStudentConfirm(false);
+      setDeletionError("");
     } catch (err) {
-      console.log(err);
+      setDeletionError("Unable to delete student.");
     }
   }
 
@@ -113,24 +118,25 @@ function AdminManageStudents() {
       setStudents(transformedData);
       setTotalStudents(response.data.totalStudents);
       setTotalPages(response.data.last_page);
+      setError("");
     } catch (err) {
-      console.log(err);
+      setError("Could not edit selected students.");
     }
   }
 
   function handleSortChange(event) {
     setSort(event.target.value);
-    setCurrentPage(1)
+    setCurrentPage(1);
   }
 
   function handleFilterChange(event) {
     setFilter(event.target.value);
-    setCurrentPage(1)
+    setCurrentPage(1);
   }
 
   function handleSearchChange(event) {
     setSearch(event.target.value);
-    setCurrentPage(1)
+    setCurrentPage(1);
   }
 
   function handleCheckboxToggle(id) {
@@ -153,14 +159,15 @@ function AdminManageStudents() {
     <>
       <div className="me-4 container-fluid mt-5 ms-3">
         <h1 className="mb-4">Manage students</h1>
-        <div className="row gx-4">
+        {error && <div className="alert alert-danger">{error}</div>}
+        {!error && <div className="row gx-4">
           <div className="col-sm-3">
             <div className="card shadow-sm p-3 mb-5 bg-white rounded">
               <p className="fw-lighter fs-6">Total students</p>
               <p>{totalStudents}</p>
             </div>
           </div>
-        </div>
+        </div>}
         <div className="row">
           <div className="col-4">
             <input
@@ -197,7 +204,8 @@ function AdminManageStudents() {
               <div className="card shadow-sm p-3 mb-4 bg-light rounded border border-primary">
                 <h5 className="text-primary mb-3">Edit selected students</h5>
                 <div className="d-flex align-items-center flex-wrap gap-3">
-                  <select
+                  {academicStructureFetchError && <div className="alert alert-danger">{academicStructureFetchError}</div>}
+                  {!academicStructureFetchError && <><select
                     className="form-select w-auto"
                     value={changeClass}
                     onChange={(e) => setChangeClass(e.target.value)}
@@ -208,30 +216,31 @@ function AdminManageStudents() {
                     ))}
                   </select>
 
-                  <select
-                    className="form-select w-auto"
-                    value={changeStream}
-                    onChange={(e) => setChangeStream(e.target.value)}
-                  >
-                    <option value="" disabled>Stream</option>
-                    {allStreams && allStreams.map((stream) => (
-                      <option key={stream.id} value={stream.stream}>{stream.stream}</option>
-                    ))}
-                  </select>
+                    <select
+                      className="form-select w-auto"
+                      value={changeStream}
+                      onChange={(e) => setChangeStream(e.target.value)}
+                    >
+                      <option value="" disabled>Stream</option>
+                      {allStreams && allStreams.map((stream) => (
+                        <option key={stream.id} value={stream.stream}>{stream.stream}</option>
+                      ))}
+                    </select>
 
-                  <select
-                    className="form-select w-auto"
-                    value={changeStatus}
-                    onChange={(e) => setChangeStatus(e.target.value)}
-                  >
-                    <option value="" disabled>Status</option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="Graduated">Graduated</option>
-                  </select>
+                    <select
+                      className="form-select w-auto"
+                      value={changeStatus}
+                      onChange={(e) => setChangeStatus(e.target.value)}
+                    >
+                      <option value="" disabled>Status</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Graduated">Graduated</option>
+                    </select></>}
 
                   <button
                     className="btn btn-success"
+                    disabled={!!academicStructureFetchError}
                     onClick={handleStudentEdit}>
                     Apply Changes
                   </button>
@@ -334,6 +343,20 @@ function AdminManageStudents() {
             </div>
           </div>
         )
+      }
+      {deletionError &&
+        <div className="popup d-flex justify-content-center align-items-center">
+          <div className="popup-content p-4 bg-white rounded shadow">
+            <h5>Error</h5>
+            <p className="text-danger">{deletionError}</p>
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-primary" onClick={() => {
+                setDeletionError("");
+                setShowDeleteStudentConfirm(false);
+              }}>Ok</button>
+            </div>
+          </div>
+        </div>
       }
     </>
   );

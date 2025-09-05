@@ -20,15 +20,17 @@ use App\Http\Middleware\EnsureTokenIsValid;
 Route::prefix('v1')->group(function () {
   Route::post('check-auth', [LoginController::class, 'CheckAuth']);
   Route::post('login', [LoginController::class, 'Login']);
-  Route::post('logout', [LoginController::class, 'Logout']);
-  Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
   Route::post('validate-inv-code', [InvitationCodeController::class, 'ValidateInvitationCode']);
   Route::post('teacher/signup', [TeachersController::class, 'SignUp']);
   Route::post('student/signup', [StudentsController::class, 'SignUp']);
+
   Route::get('logo', [LogoController::class, 'GetLogo']);
   Route::get('primary-color', [ColorSchemeController::class, 'PrimaryColor']);
 
   Route::middleware([EnsureTokenIsValid::class])->group(function () {
+    Route::post('logout', [LoginController::class, 'Logout']);
+    Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
+
     Route::middleware([EnsureIsAdmin::class])->prefix('admin')->group(function () {
       Route::post('signup', [AdminController::class, 'SignUp']);
       Route::post('new-admin', [AdminController::class, 'NewAdmin']);
@@ -62,8 +64,8 @@ Route::prefix('v1')->group(function () {
       Route::get('exclude-student', [AdminController::class, 'ExcludedStudent']);
       Route::post('exclude-student', [AdminController::class, 'ExcludeStudent']);
       Route::delete('exclude-student/{id}', [AdminController::class, 'DeleteExcludedStudent']);
-      Route::post('initial', [AdminController::class, 'SetInitial']);
       Route::get('initial', [AdminController::class, 'GetInitial']);
+      Route::post('initial', [AdminController::class, 'SetInitial']);
       Route::get('point-threshold', [AdminController::class, 'GetPointThreshold']);
       Route::patch('point-threshold', [AdminController::class, 'EditPointThreshold']);
       Route::post('point-threshold', [AdminController::class, 'AddPointThreshold']);

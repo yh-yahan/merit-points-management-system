@@ -7,6 +7,8 @@ function DisplayMeritPointRule({ user }) {
   const [totalRules, setTotalRules] = useState();
   const [sortOrder, setSortOrder] = useState('');
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
     async function fetchMeritPointRule() {
       try {
@@ -21,8 +23,10 @@ function DisplayMeritPointRule({ user }) {
         }));
         setTotalRules(data.totalRules);
         setRules(transformedData);
+
+        setError("");
       } catch (err) {
-        console.log(err);
+        setError("Unable to fetch merit point rules.");
       }
     }
 
@@ -46,45 +50,48 @@ function DisplayMeritPointRule({ user }) {
 
   return (
     <div className="container-fluid min-vh-100">
-      <div className="row mb-3">
-        <div className="col-lg-6">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search..."
-            onChange={(e) => setSearch(e.target.value)} />
+      {error && <div className="alert alert-danger">{error}</div>}
+      {!error && <>
+        <div className="row mb-3">
+          <div className="col-lg-6">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search..."
+              onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <div className="col-lg-6">
+            <select className="form-select mb-3 p-2" onChange={handleSortChange} value={sortOrder}>
+              <option value="" disabled>Display order</option>
+              <option value="asc">Points ascending</option>
+              <option value="desc">Points descending</option>
+            </select>
+          </div>
         </div>
-        <div className="col-lg-6">
-          <select className="form-select mb-3 p-2" onChange={handleSortChange} value={sortOrder}>
-            <option value="" disabled>Display order</option>
-            <option value="asc">Points ascending</option>
-            <option value="desc">Points descending</option>
-          </select>
-        </div>
-      </div>
-      <div className="table-responsive">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Rule name</th>
-              <th scope="col">Description</th>
-              <th scope="col">Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            { rules.map(rule => (
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
               <tr>
-                <td>{rule.id}</td>
-                <td>{rule.name}</td>
-                <td>{rule.description}</td>
-                <td>{rule.points}</td>
+                <th scope="col">#</th>
+                <th scope="col">Rule name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Points</th>
               </tr>
-            )) }
-          </tbody>
-        </table>
-      </div>
-      <p className="fw-lighter">Total rules: {totalRules}</p>
+            </thead>
+            <tbody>
+              {rules.map(rule => (
+                <tr>
+                  <td>{rule.id}</td>
+                  <td>{rule.name}</td>
+                  <td>{rule.description}</td>
+                  <td>{rule.points}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="fw-lighter">Total rules: {totalRules}</p>
+      </>}
     </div>
   );
 }

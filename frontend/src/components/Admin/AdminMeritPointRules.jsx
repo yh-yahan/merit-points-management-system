@@ -22,6 +22,11 @@ function AdminMeritPointRules() {
   const [editRuleError, setEditRuleError] = useState('');
   const [importFile, setImportFile] = useState(null);
 
+  const [error, setError] = useState("");
+  const [importFileError, setImportFileError] = useState("");
+  const [deletionError, setDeletionError] = useState("");
+
+
   useEffect(() => {
     async function fetchData() {
       const response = await api.get(`/admin/manage-merit-points?search=${search}`);
@@ -38,6 +43,13 @@ function AdminMeritPointRules() {
     }
     fetchData();
   }, [search]);
+
+  useEffect(() => {
+    if (addDuplicateRule) {
+      handleAddRule();
+    }
+  }, [addDuplicateRule]);
+  
 
   async function handleAddRule() {
     if (!newRuleName.trim() || !newRuleDescription.trim() || newRulePoints === '' || isNaN(newRulePoints)) {
@@ -67,12 +79,15 @@ function AdminMeritPointRules() {
       setNewRuleName('');
       setNewRuleDescription('');
       setNewRulePoints(0);
+      setAddDuplicateRule(false);
+      setError("");
+      setAddRuleDupErr(false);
     }
     catch (err) {
-      console.log(err);
       if (err.response.status == 409) {
         setAddRuleDupErr(err.response.data.message);
       }
+      setError("Unable to add rule");
     }
   }
 
@@ -103,13 +118,13 @@ function AdminMeritPointRules() {
 
       setEditingRuleId(null);
       setEditedRule({});
+      setEditRuleError("");
     }
     catch (err) {
-      console.log(err);
       if (err.response && err.response.data && err.response.data.message) {
         setEditRuleError(err.response.data.message);
       } else {
-        setEditRuleError('An unexpected error occurred.');
+        setEditRuleError('Unable to save edit.');
       }
     }
   }
@@ -132,9 +147,10 @@ function AdminMeritPointRules() {
       setPopup(false);
       setRuleToDelete(null);
       setRuleIdToDelete(null);
+      setDeletionError("");
     }
     catch (err) {
-      console.log(err);
+      setDeletionError("Unable to delete.");
     }
   }
 
@@ -166,9 +182,9 @@ function AdminMeritPointRules() {
       setTotalRules(response.data.totalRules);
 
       setImportFile(null);
+      setImportFileError("");
     } catch (err) {
-      console.log(err);
-      alert("Failed to import file.");
+      setImportFileError("Failed to import file.");
     }
   }
 
@@ -185,9 +201,7 @@ function AdminMeritPointRules() {
         rule.id,
         rule.name,
         rule.description,
-        rule.operation_type === "deduct"
-          ? -Math.abs(rule.points)
-          : rule.points
+        parseInt(rule.points.replace('+', ''))
       ]);
 
       doc.text("Merit Points Rules", 14, 20);
@@ -283,8 +297,8 @@ function AdminMeritPointRules() {
                 </tr>
               </thead>
               <tbody>
-                {rules.length > 0 ? rules.map((rule, index) => (
-                  <tr key={index} className={editingRuleId == rule.id ? 'table-primary' : ''}>
+                {rules.length > 0 ? rules.map((rule) => (
+                  <tr key={rule.id} className={editingRuleId == rule.id ? 'table-primary' : ''}>
                     <td scope="row">{rule.id}</td>
                     <td>
                       {editingRuleId == rule.id ? (
@@ -394,6 +408,7 @@ function AdminMeritPointRules() {
                 </tr>
               </tbody>
             </table>
+            { error && <div className="alert alert-danger">{error}</div> }
             <p className="fw-lighter">Total rules: {totalRules}</p>
           </div>
         </div>
@@ -419,13 +434,13 @@ function AdminMeritPointRules() {
           <div className="popup d-flex justify-content-center align-items-center">
             <div className="popup-content p-4 bg-white rounded shadow">
               <h5>Duplicate rules</h5>
-              <p>{addRuleDupErr}</p>
+              <p className="text-danger">{addRuleDupErr}</p>
               <div className="d-flex justify-content-end">
                 <button
                   className="btn btn-primary me-3"
                   onClick={() => {
-                    handleAddRule();
                     setAddDuplicateRule(true);
+                    setAddRuleDupErr(false);
                   }}
                 >Add anyway</button>
                 <button
@@ -443,7 +458,7 @@ function AdminMeritPointRules() {
           <div className="popup d-flex justify-content-center align-items-center">
             <div className="popup-content p-4 bg-white rounded shadow">
               <h5>Error</h5>
-              <p>{addRuleErr}</p>
+              <p className="text-danger">{addRuleErr}</p>
               <div className="d-flex justify-content-end">
                 <button
                   className="btn btn-primary"
@@ -460,12 +475,41 @@ function AdminMeritPointRules() {
           <div className="popup d-flex justify-content-center align-items-center">
             <div className="popup-content p-4 bg-white rounded shadow">
               <h5>Error</h5>
-              <p>{editRuleError}</p>
+              <p className="text-danger">{editRuleError}</p>
               <div className="d-flex justify-content-end">
                 <button
                   className="btn btn-primary"
                   onClick={() => setEditRuleError('')}
                 >Ok</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      {
+        importFileError && (
+          <div className="popup d-flex justify-content-center align-items-center">
+            <div className="popup-content p-4 bg-white rounded shadow">
+              <h5>Error</h5>
+              <p className="text-danger">{importFileError}</p>
+              <div className="d-flex justify-content-end">
+                <button className="btn btn-primary" onClick={() => setImportFileError("")}>Ok</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      {
+        deletionError && (
+          <div className="popup d-flex justify-content-center align-items-center">
+            <div className="popup-content p-4 bg-white rounded shadow">
+              <h5>Error</h5>
+              <p className="text-danger">{deletionError}</p>
+              <div className="d-flex justify-content-end">
+                <button className="btn btn-primary" onClick={() => {
+                  setPopup(false);
+                  setDeletionError("");
+                }}>Ok</button>
               </div>
             </div>
           </div>

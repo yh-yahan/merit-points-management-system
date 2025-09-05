@@ -38,6 +38,9 @@ function StudentSettings({ setIsLoggedIn }) {
   const [allClasses, setAllClasses] = useState([]);
   const [allStreams, setAllStreams] = useState([]);
 
+  const [error, setError] = useState("");
+  const [leaderboardSettingsUpdateError, setLeaderboardSettingsUpdateError] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -91,8 +94,10 @@ function StudentSettings({ setIsLoggedIn }) {
           setChangedClass(data.student.class);
           setChangedStream(data.student.stream);
         }
+
+        setError("");
       } catch (err) {
-        console.log(err);
+        setError("Unable to fetch settings.");
       }
     }
 
@@ -109,9 +114,11 @@ function StudentSettings({ setIsLoggedIn }) {
 
       setOriginalLeaderboardNamePreference(data.setting.name_preference_lb);
       setOriginalOptOutLeaderboard(data.setting.opt_out_lb);
+
+      setLeaderboardSettingsUpdateError("");
     }
     catch (err) {
-      console.log(err);
+      setLeaderboardSettingsUpdateError("Unable to update settings.");
     }
   }
 
@@ -146,7 +153,6 @@ function StudentSettings({ setIsLoggedIn }) {
       }, 5000);
     }
     catch (err) {
-      console.log(err);
       setBasicInfoUpdateFailMsg("Failed to update");
       setTimeout(() => {
         setBasicInfoUpdateFailMsg("");
@@ -166,7 +172,6 @@ function StudentSettings({ setIsLoggedIn }) {
       navigate('/');
     }
     catch (err) {
-      console.log(err);
       setPasswordUpdateConfirmation(false);
       if (err) {
         const response = err.response;
@@ -196,195 +201,199 @@ function StudentSettings({ setIsLoggedIn }) {
 
   return (
     <div className="container-fluid px-3 px-md-5 mt-3">
-      <div>
-        {(optOutLeaderboard !== undefined || leaderboardNamePreference) && (
-          <div className="mb-5">
-            <h3 style={{ color: "#7d7d7d" }}>Leaderboard Settings</h3>
-            <div className="ms-2">
-              <div className="row">
-                {optOutLeaderboard !== undefined && (
-                  <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
-                    <p>Appear on leaderboard</p>
-                    <div className="w-50 d-flex justify-content-end align-items-center">
-                      <label className="switch">
-                        <input
-                          type="checkbox"
-                          checked={!optOutLeaderboard}
-                          onChange={(e) => setOptOutLeaderboard(!e.target.checked)}
-                        />
-                        <span className="slider round"></span>
-                      </label>
-                    </div>
-                  </div>
-                )}
-
-                {leaderboardNamePreference && (
-                  <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
-                    <p>Leaderboard name preference</p>
-                    <select
-                      className="form-select"
-                      value={leaderboardNamePreference}
-                      onChange={(e) => setLeaderboardNamePreference(e.target.value)}
-                    >
-                      <option value="name">Display name</option>
-                      <option value="username">Display username</option>
-                    </select>
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              className={`btn btn-primary me-3 px-5 mt-5 ${isLeaderboardChanged ? "" : "disabled"}`}
-              onClick={updateLeaderboardSettings}
-            >Update</button>
-          </div>
-        )}
-
+      {error && <div className="alert alert-danger">{error}</div>}
+      {!error && <>
         <div>
-          <h3 style={{ color: "#7d7d7d" }}>Account</h3>
-          <div className="px-3 px-md-5 mb-5">
-            <h6 style={{ color: "#7d7d7d" }}>Basic information</h6>
-            <div className="row">
-              <div className="form-floating mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="floatingInputName"
-                  placeholder="Name"
-                  value={changedName}
-                  onChange={(e) => setChangedName(e.target.value)}
-                />
-                <label for="floatingInputName">Name</label>
+          {(optOutLeaderboard !== undefined || leaderboardNamePreference) && (
+            <div className="mb-5">
+              <h3 style={{ color: "#7d7d7d" }}>Leaderboard Settings</h3>
+              <div className="ms-2">
+                <div className="row">
+                  {optOutLeaderboard !== undefined && (
+                    <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
+                      <p>Appear on leaderboard</p>
+                      <div className="w-50 d-flex justify-content-end align-items-center">
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={!optOutLeaderboard}
+                            onChange={(e) => setOptOutLeaderboard(!e.target.checked)}
+                          />
+                          <span className="slider round"></span>
+                        </label>
+                      </div>
+                    </div>
+                  )}
+
+                  {leaderboardNamePreference && (
+                    <div className="col-12 d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary-subtle p-3">
+                      <p>Leaderboard name preference</p>
+                      <select
+                        className="form-select"
+                        value={leaderboardNamePreference}
+                        onChange={(e) => setLeaderboardNamePreference(e.target.value)}
+                      >
+                        <option value="name">Display name</option>
+                        <option value="username">Display username</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="form-floating mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="floatingInputUsername"
-                  placeholder="Username"
-                  value={changedUsername}
-                  onChange={(e) => setChangedUsername(e.target.value)}
-                />
-                <label for="floatingInputUsername">Username</label>
-              </div>
-              <div className="form-floating mb-3">
-                <input
-                  type="email"
-                  className="form-control"
-                  id="floatingInputEmail"
-                  placeholder="Email"
-                  value={changedEmail}
-                  onChange={(e) => setChangedEmail(e.target.value)}
-                />
-                <label for="floatingInputEmail">Email</label>
-              </div>
-              <div>
-                <label className="text-secondary">Class</label>
-                <select
-                  className="form-select mb-3 p-3"
-                  value={changedClass}
-                  onChange={(e) => setChangedClass(e.target.value)}
-                >
-                  <option value="" disabled>Select Class</option>
-                  {allClasses.map((studentClass) => (
-                    <option key={studentClass.id} value={studentClass.class}>
-                      {studentClass.class}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-secondary">Stream</label>
-                <select
-                  className="form-select mb-3 p-3"
-                  value={changedStream}
-                  onChange={(e) => setChangedStream(e.target.value)}
-                >
-                  <option value="" disabled>Select Stream</option>
-                  {allStreams.map((stream) => (
-                    <option key={stream.id} value={stream.stream}>
-                      {stream.stream}
-                    </option>
-                  ))}
-                  <option value="none">None</option>
-                </select>
-              </div>
+              {leaderboardSettingsUpdateError && <div className="alert alert-danger">{leaderboardSettingsUpdateError}</div>}
+              <button
+                className={`btn btn-primary me-3 px-5 mt-5 ${isLeaderboardChanged ? "" : "disabled"}`}
+                onClick={updateLeaderboardSettings}
+              >Update</button>
             </div>
-            {basicInfoUpdateSuccessMsg && <div className="alert alert-success">{basicInfoUpdateSuccessMsg}</div>}
-            {basicInfoUpdateFailMsg && <div className="alert alert-danger">{basicInfoUpdateFailMsg}</div>}
-            <button
-              className={`btn btn-primary me-3 px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
-              onClick={updateStudentBasicInfo}
-            >Update</button>
-            <button
-              className={`btn btn-primary px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
-              onClick={handleBasicInfoChangeCancel}
-            >Cancel</button>
-          </div>
-          <div className="px-3 px-md-5">
-            <h6 style={{ color: "#7d7d7d" }}>Change password</h6>
-            <div className="row">
-              <div className="form-floating mb-3">
-                <input
-                  type={showCurrentPassword ? "text" : "password"}
-                  className="form-control"
-                  id="floatingInputCurrentPassword"
-                  placeholder="Current password"
-                  autoComplete="new-password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-                <label for="floatingInputCurrentPassword">Current Password</label>
-                <i
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className={`bi ${showCurrentPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
-                  style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
-                ></i>
+          )}
+
+          <div>
+            <h3 style={{ color: "#7d7d7d" }}>Account</h3>
+            <div className="px-3 px-md-5 mb-5">
+              <h6 style={{ color: "#7d7d7d" }}>Basic information</h6>
+              <div className="row">
+                <div className="form-floating mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="floatingInputName"
+                    placeholder="Name"
+                    value={changedName}
+                    onChange={(e) => setChangedName(e.target.value)}
+                  />
+                  <label for="floatingInputName">Name</label>
+                </div>
+                <div className="form-floating mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="floatingInputUsername"
+                    placeholder="Username"
+                    value={changedUsername}
+                    onChange={(e) => setChangedUsername(e.target.value)}
+                  />
+                  <label for="floatingInputUsername">Username</label>
+                </div>
+                <div className="form-floating mb-3">
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="floatingInputEmail"
+                    placeholder="Email"
+                    value={changedEmail}
+                    onChange={(e) => setChangedEmail(e.target.value)}
+                  />
+                  <label for="floatingInputEmail">Email</label>
+                </div>
+                <div>
+                  <label className="text-secondary">Class</label>
+                  <select
+                    className="form-select mb-3 p-3"
+                    value={changedClass}
+                    onChange={(e) => setChangedClass(e.target.value)}
+                  >
+                    <option value="" disabled>Select Class</option>
+                    {allClasses.map((studentClass) => (
+                      <option key={studentClass.id} value={studentClass.class}>
+                        {studentClass.class}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-secondary">Stream</label>
+                  <select
+                    className="form-select mb-3 p-3"
+                    value={changedStream}
+                    onChange={(e) => setChangedStream(e.target.value)}
+                  >
+                    <option value="" disabled>Select Stream</option>
+                    {allStreams.map((stream) => (
+                      <option key={stream.id} value={stream.stream}>
+                        {stream.stream}
+                      </option>
+                    ))}
+                    <option value="none">None</option>
+                  </select>
+                </div>
               </div>
-              <div className="form-floating mb-3">
-                <input
-                  type={showNewPassword ? "text" : "password"}
-                  className="form-control"
-                  id="floatingInputNewPassword"
-                  placeholder="New password"
-                  autoComplete="new-password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <label for="floatingInputNewPassword">New Password</label>
-                <i
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className={`bi ${showNewPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
-                  style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
-                ></i>
-              </div>
-              <div className="form-floating mb-3">
-                <input
-                  type={showNewPassword ? "text" : "password"}
-                  className="form-control"
-                  id="floatingInputConfirmNewPassword"
-                  placeholder="New password"
-                  autoComplete="new-password"
-                  value={newPasswordConfirm}
-                  onChange={(e) => setNewPasswordConfirm(e.target.value)}
-                />
-                <label for="floatingInputConfirmNewPassword">Confirm New Password</label>
-                <i
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className={`bi ${showNewPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
-                  style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
-                ></i>
-              </div>
+              {basicInfoUpdateSuccessMsg && <div className="alert alert-success">{basicInfoUpdateSuccessMsg}</div>}
+              {basicInfoUpdateFailMsg && <div className="alert alert-danger">{basicInfoUpdateFailMsg}</div>}
+              <button
+                className={`btn btn-primary me-3 px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
+                onClick={updateStudentBasicInfo}
+              >Update</button>
+              <button
+                className={`btn btn-primary px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
+                onClick={handleBasicInfoChangeCancel}
+              >Cancel</button>
             </div>
-            {passwordUpdateError && <div className="alert alert-danger">{passwordUpdateError}</div>}
-            <button
-              className="btn btn-primary me-3 px-5"
-              onClick={() => setPasswordUpdateConfirmation(true)}
-            >Update</button>
-            <button className="btn btn-primary px-5">Cancel</button>
+            <div className="px-3 px-md-5">
+              <h6 style={{ color: "#7d7d7d" }}>Change password</h6>
+              <div className="row">
+                <div className="form-floating mb-3">
+                  <input
+                    type={showCurrentPassword ? "text" : "password"}
+                    className="form-control"
+                    id="floatingInputCurrentPassword"
+                    placeholder="Current password"
+                    autoComplete="new-password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
+                  <label for="floatingInputCurrentPassword">Current Password</label>
+                  <i
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className={`bi ${showCurrentPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
+                    style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+                  ></i>
+                </div>
+                <div className="form-floating mb-3">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    className="form-control"
+                    id="floatingInputNewPassword"
+                    placeholder="New password"
+                    autoComplete="new-password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <label for="floatingInputNewPassword">New Password</label>
+                  <i
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className={`bi ${showNewPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
+                    style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+                  ></i>
+                </div>
+                <div className="form-floating mb-3">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    className="form-control"
+                    id="floatingInputConfirmNewPassword"
+                    placeholder="New password"
+                    autoComplete="new-password"
+                    value={newPasswordConfirm}
+                    onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                  />
+                  <label for="floatingInputConfirmNewPassword">Confirm New Password</label>
+                  <i
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className={`bi ${showNewPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'} position-absolute`}
+                    style={{ top: '50%', right: '25px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+                  ></i>
+                </div>
+              </div>
+              {passwordUpdateError && <div className="alert alert-danger">{passwordUpdateError}</div>}
+              <button
+                className="btn btn-primary me-3 px-5"
+                onClick={() => setPasswordUpdateConfirmation(true)}
+              >Update</button>
+              <button className="btn btn-primary px-5">Cancel</button>
+            </div>
           </div>
         </div>
-      </div>
+      </>}
 
       {/* Password update confirmation */}
       {passwordUpdateConfirmation && (

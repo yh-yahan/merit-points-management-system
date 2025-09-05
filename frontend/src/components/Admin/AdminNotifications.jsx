@@ -4,6 +4,7 @@ import api from '../../api';
 function AdminNotifications() {
   const [search, setSearch] = useState('');
   const [notificationMessages, setNotificationMessages] = useState({ messages: [] });
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchNotification() {
@@ -12,9 +13,11 @@ function AdminNotifications() {
         setNotificationMessages({ messages: response.data.messages });
 
         await api.patch('/admin/mark-notification-as-read');
+
+        setError("");
       }
       catch (err) {
-        console.log(err);
+        setError("Unable to fetch notifications.");
       }
     }
 
@@ -55,10 +58,10 @@ function AdminNotifications() {
             ))
           ) : (
             <div
-              className="col-12 d-flex justify-content-center align-items-center p-3"
+              className="col-12 p-3"
               style={{ height: '50vh' }}
             >
-              <p className="text-danger">No notifications found</p>
+              <div className="alert alert-danger">{error}</div>
             </div>
           )}
         </div>
