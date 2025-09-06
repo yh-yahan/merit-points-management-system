@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('student_id')
                 ->references('id')
                 ->on('students')
-                ->onDelete('set null');
+                ->onDelete('cascade');
             $table->boolean('opt_out_lb');
             $table->enum('name_preference_lb', ['name', 'username']);
             $table->timestamps();
@@ -29,6 +29,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('student_settings', function (Blueprint $table) {
+            $table->dropForeign(['student_id']);
+        });
+    
+        Schema::dropIfExists('student_settings');
     }
 };

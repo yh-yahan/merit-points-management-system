@@ -29,15 +29,7 @@ class TransactionFactory extends Factory
           'description' => $this->faker->sentence,
           'points' => $this->faker->numberBetween(1, 20),
           'operation_type' => $this->faker->randomElement(['add', 'deduct']),
-          'date' => function(){
-            $start = new DateTime('2023-01-01');
-            $end = new DateTime('2025-12-31');
-            $interval = $start->diff($end);
-            $days = $interval->days;
-            $randomDay = rand(0, $days);
-            $start->add(new DateInterval("P{$randomDay}D"));
-            return $start->format('Y-m-d');
-          }
+          'date' =>  now()->format('Y-m-d'),
         ];
     }
 }

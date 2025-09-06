@@ -25,6 +25,7 @@ function Leaderboard() {
         setAllClasses(data.allClasses || []);
       }
       catch (err) {
+        console.log(err);
         if (err.response.status === 403) {
           setLeaderboard({
             students: []

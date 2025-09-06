@@ -40,6 +40,7 @@ class AdminController extends Controller
         ['setting_name' => 'allow_students_to_opt_out_leaderboard', 'setting_value' => false], 
         ['setting_name' => 'leaderboard_visibility', 'setting_value' => 'username'],
         ['setting_name' => 'primary_color', 'setting_value' => '#0275d8'], 
+        ['setting_name' => 'logo', 'setting_value' => ''], 
       ]);
 
       $admin = Admin::create([

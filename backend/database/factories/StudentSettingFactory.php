@@ -18,7 +18,7 @@ class StudentSettingFactory extends Factory
     public function definition(): array
     {
         return [
-            'student_id' => Students::inRandomOrder()->value('id'),
+            // 'student_id' => Students::inRandomOrder()->value('id'),
             'opt_out_lb' => $this->faker->boolean(),
             'name_preference_lb' => $this->faker->randomElement(['name', 'username']),
             'created_at' => now(),

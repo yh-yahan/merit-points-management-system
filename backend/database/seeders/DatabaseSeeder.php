@@ -24,15 +24,15 @@ class DatabaseSeeder extends Seeder
         $this->call([
           AdminSeeder::class, 
           TeachersSeeder::class, 
+          StreamSeeder::class, 
+          ClassSeeder::class, 
           StudentsSeeder::class, 
+          AdminSettingSeeder::class, 
+          StudentSettingSeeder::class, 
           MeritPointsRulesSeeder::class, 
           TransactionSeeder::class, 
           PointsSeeder::class, 
-          AdminSettingSeeder::class, 
-          StudentSettingSeeder::class, 
           PointThresholdSeeder::class, 
-          StreamSeeder::class, 
-          ClassSeeder::class, 
           StudentExclusionSeeder::class, 
         ]);
     }

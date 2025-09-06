@@ -15,7 +15,6 @@ class StreamSeeder extends Seeder
     {
         StudentStream::insert([
             ['stream' => 'Science'], 
-            ['stream' => 'Arts'], 
             ['stream' => 'Commerce'], 
         ]);
     }

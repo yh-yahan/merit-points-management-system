@@ -13,30 +13,31 @@ class PointThresholdSeeder extends Seeder
      */
     public function run(): void
     {
-        PointsThreshold::insert([ 
-        [
-            'points' => 200,
-            'actions' => 'Give appreciation badge', 
-            'created_at' => now(),
-            'updated_at' => now(),
-        ], 
-        [
-            'points' => 50,
-            'actions' => 'Meet parents', 
-            'created_at' => now(),
-            'updated_at' => now(),
-        ], 
-        [
-            'points' => 40,
-            'actions' => 'Meet parents', 
-            'created_at' => now(),
-            'updated_at' => now(),
-        ], 
-        [
-            'points' => 30,
-            'actions' => 'Expel', 
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]]);
+        PointsThreshold::insert([
+            [
+                'points' => 600,
+                'actions' => 'Give award',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'points' => 200,
+                'actions' => 'Give appreciation badge',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'points' => 50,
+                'actions' => 'Meet parents',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'points' => 40,
+                'actions' => 'Meet parents',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 }

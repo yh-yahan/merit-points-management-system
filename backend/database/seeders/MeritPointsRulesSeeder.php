@@ -27,6 +27,12 @@ class MeritPointsRulesSeeder extends Seeder
             'operation_type' => 'add',
         ],
         [
+            'name' => 'Helping others',
+            'description' => 'Helping others in team projects or assignments',
+            'points' => 5,
+            'operation_type' => 'add',
+        ],
+        [
             'name' => 'Late to class',
             'description' => 'Late to class (more than twice per month)',
             'points' => 1,

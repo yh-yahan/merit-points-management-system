@@ -22,7 +22,7 @@ class PointsFactory extends Factory
         $studentIds = Students::pluck('id')->toArray();
         $numStudents = count($studentIds);
 
-        if(count($studentIds) > 0){
+        if($numStudents > 0){
             $receiverId = $studentIds[self::$currentIndex];
             self::$currentIndex = (self::$currentIndex + 1) % $numStudents;
 
@@ -40,8 +40,7 @@ class PointsFactory extends Factory
                 'receiver' => $receiverId,
                 'total_points' => $total_points,
             ];
-        }
-        else{
+        } else{
             return [];
         }
     }

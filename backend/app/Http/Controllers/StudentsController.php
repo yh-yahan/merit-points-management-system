@@ -204,9 +204,9 @@ class StudentsController extends Controller
     $studentId = $accessToken->tokenable_id;
 
     $disabled = AdminSetting::where('setting_name', 'disable_leaderboard')->value('setting_value');
-    $allowStudentOptOutLeaderboard = AdminSetting::where('setting_name', 'student_opt_out_leaderboard')->value('setting_value');
+    $allowStudentOptOutLeaderboard = AdminSetting::where('setting_name', 'allow_students_to_opt_out_leaderboard')->value('setting_value');
+    $optedOutStudentIds = [];
     if ($allowStudentOptOutLeaderboard == 'true') {
-      $optedOutStudentIds = [];
       $optedOutStudentIds = StudentSetting::where('opt_out_lb', 1)
         ->pluck('student_id');
     }
