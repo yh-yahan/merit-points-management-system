@@ -64,7 +64,7 @@ class StudentsController extends Controller
           'date_joined' => now(),
         ]);
 
-        StudentSetting::insert([
+        StudentSetting::create([
           'student_id' => $students->id, 
           'opt_out_lb' => 0, 
           'name_preference_lb' => "name"

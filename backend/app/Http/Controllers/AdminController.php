@@ -34,7 +34,7 @@ class AdminController extends Controller
       ]);
 
       // setup and assign default settings for the admin
-      AdminSetting::insert([
+      AdminSetting::create([
         ['setting_name' => 'initial_point', 'setting_value' => 60], 
         ['setting_name' => 'disable_leaderboard','setting_value' => false], 
         ['setting_name' => 'allow_students_to_opt_out_leaderboard', 'setting_value' => false], 
@@ -897,7 +897,7 @@ class AdminController extends Controller
         'class' => 'required|string', 
       ]);
 
-      StudentClass::insert([
+      StudentClass::create([
         'class' => $fields['class'], 
       ]);
 
@@ -911,7 +911,7 @@ class AdminController extends Controller
         'stream' => 'required|string', 
       ]);
 
-      StudentStream::insert([
+      StudentStream::create([
         'stream' => $fields['stream'], 
       ]);
 
