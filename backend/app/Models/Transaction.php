@@ -12,25 +12,28 @@ class Transaction extends Model
     protected $table = 'transaction';
 
     protected $fillable = [
-      'created_by_id', 
-      'created_by_type', 
-      'receiver_id', 
-      'rule_id',
-      'description', 
-      'points', 
-      'operation_type', 
-      'date'
+        'created_by_id',
+        'created_by_type',
+        'receiver_id',
+        'rule_id',
+        'description',
+        'points',
+        'operation_type',
+        'date'
     ];
 
-    public function creator(){
-      return $this->morphTo(__FUNCTION__, 'created_by_type', 'created_by_id');
+    public function creator()
+    {
+        return $this->morphTo(__FUNCTION__, 'created_by_type', 'created_by_id');
     }
 
-    public function student(){
-      return $this->belongsTo(Students::class, 'receiver_id');
+    public function student()
+    {
+        return $this->belongsTo(Students::class, 'receiver_id');
     }
 
-    public function meritPointRule(){
-      return $this->belongsTo(MeritPointsRules::class, 'rule_id');
+    public function meritPointRule()
+    {
+        return $this->belongsTo(MeritPointsRules::class, 'rule_id');
     }
 }

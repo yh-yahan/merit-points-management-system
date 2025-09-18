@@ -10,10 +10,10 @@ class InvitationCodes extends Model
     use HasFactory;
 
     protected $fillable = [
-      'code', 
-      'for_user_type', 
-      'created_by', 
-      'valid_until'
+        'code',
+        'for_user_type',
+        'created_by',
+        'valid_until'
     ];
 
     public function admin()

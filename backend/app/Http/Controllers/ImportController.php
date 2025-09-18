@@ -8,7 +8,8 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportController extends Controller
 {
-    public function ImportRules(Request $request) {
+    public function ImportRules(Request $request)
+    {
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv',
         ]);

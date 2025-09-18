@@ -14,10 +14,10 @@ class AdminExportController extends Controller
         $currentYear = now()->year;
 
         $monthlySummary = Transaction::selectRaw('
-        MONTH(date) as month,
-        SUM(CASE WHEN operation_type = "add" THEN points ELSE 0 END) as total_awarded,
-        SUM(CASE WHEN operation_type = "deduct" THEN points ELSE 0 END) as total_deducted
-    ')
+                MONTH(date) as month,
+                SUM(CASE WHEN operation_type = "add" THEN points ELSE 0 END) as total_awarded,
+                SUM(CASE WHEN operation_type = "deduct" THEN points ELSE 0 END) as total_deducted
+            ')
             ->whereYear('date', $currentYear)
             ->groupByRaw('MONTH(date)')
             ->orderBy('month')

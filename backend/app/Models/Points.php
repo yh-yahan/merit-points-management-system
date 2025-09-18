@@ -10,11 +10,12 @@ class Points extends Model
     use HasFactory;
 
     protected $fillable = [
-      'receiver', 
-      'total_points'
+        'receiver',
+        'total_points'
     ];
 
-    public function student(){
-      return $this->belongsTo(Students::class, 'receiver');
+    public function student()
+    {
+        return $this->belongsTo(Students::class, 'receiver');
     }
 }

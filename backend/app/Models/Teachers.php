@@ -9,18 +9,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Teachers extends Authenticatable
 {
-  use HasApiTokens;
-  use HasFactory;
+    use HasApiTokens;
+    use HasFactory;
 
-  protected $fillable = [
-    'name', 
-    'email', 
-    'password', 
-    'description', 
-    'profile_pic', 
-  ];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'description',
+        'profile_pic',
+    ];
 
-  public function transactions(){
-    return $this->morphMany(Transaction::class, 'creator');
-  }
+    public function transactions()
+    {
+        return $this->morphMany(Transaction::class, 'creator');
+    }
 }

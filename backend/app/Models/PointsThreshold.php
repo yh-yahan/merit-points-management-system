@@ -10,9 +10,9 @@ class PointsThreshold extends Model
     use HasFactory;
 
     protected $fillable = [
-        'points', 
-        'operation_type', 
-        'actions', 
+        'points',
+        'operation_type',
+        'actions',
     ];
     protected $table = 'points_threshold';
 }

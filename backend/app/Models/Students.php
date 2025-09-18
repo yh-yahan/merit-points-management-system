@@ -9,38 +9,38 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Students extends Authenticatable
 {
-  use HasApiTokens;
+    use HasApiTokens;
 
-  protected $fillable = [
-    'name',
-    'username',
-    'email',
-    'password',
-    'class',
-    'stream',
-    'date_joined',
-    'status',
-  ];
+    protected $fillable = [
+        'name',
+        'username',
+        'email',
+        'password',
+        'class',
+        'stream',
+        'date_joined',
+        'status',
+    ];
 
-  use HasFactory;
+    use HasFactory;
 
-  public function transaction()
-  {
-    return $this->hasMany(Transaction::class, 'receiver_id');
-  }
+    public function transaction()
+    {
+        return $this->hasMany(Transaction::class, 'receiver_id');
+    }
 
-  public function points()
-  {
-    return $this->hasOne(Points::class, 'id');
-  }
+    public function points()
+    {
+        return $this->hasOne(Points::class, 'id');
+    }
 
-  public function setting()
-  {
-    return $this->hasOne(StudentSetting::class);
-  }
+    public function setting()
+    {
+        return $this->hasOne(StudentSetting::class);
+    }
 
-  public function studentExclusion()
-{
-    return $this->hasOne(StudentExclusion::class, 'student_id');
-}
+    public function studentExclusion()
+    {
+        return $this->hasOne(StudentExclusion::class, 'student_id');
+    }
 }

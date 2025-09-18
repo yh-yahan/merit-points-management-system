@@ -9,8 +9,8 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 class RuleExport implements FromCollection, WithHeadings
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         $rules = MeritPointsRules::select(

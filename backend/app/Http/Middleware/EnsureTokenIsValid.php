@@ -21,7 +21,7 @@ class EnsureTokenIsValid
         if (!$token) {
             return response()->json(['error' => 'Token not provided'], 401);
         }
-        
+
         $accessToken = PersonalAccessToken::findToken($token);
         if (!$accessToken) {
             return response()->json(['error' => 'Invalid token'], 401);

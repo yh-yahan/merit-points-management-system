@@ -10,13 +10,14 @@ class MeritPointsRules extends Model
     use HasFactory;
 
     protected $fillable = [
-      'name', 
-      'description', 
-      'points', 
-      'operation_type'
+        'name',
+        'description',
+        'points',
+        'operation_type'
     ];
 
-    public function transaction(){
-      return $this->hasMany(Transaction::class, 'rule_id');
+    public function transaction()
+    {
+        return $this->hasMany(Transaction::class, 'rule_id');
     }
 }

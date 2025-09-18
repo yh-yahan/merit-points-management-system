@@ -19,7 +19,7 @@ function AdminCreateInvitationCode() {
     try {
       const response = await api.post('/admin/create-inv-code', {
         'for_user_type': role,
-        'validaty_period': validatyPeriod
+        'validity_period': validatyPeriod
       });
       const code = response.data.code;
       setCode(code);
