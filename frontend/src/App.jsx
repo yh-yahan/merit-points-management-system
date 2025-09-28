@@ -1,15 +1,14 @@
-import Navbar from "./components/Utility/Navbar.jsx"
-import Login from "./components/Utility/Authentication/Login.jsx"
-// import Signup from "./components/Utility/Authentication/Signup.jsx"
-import InvitationCode from "./components/Utility/Authentication/InvitationCode.jsx"
-import Admin from "./components/Admin/Admin.jsx"
-import Teacher from "./components/Teacher/Teacher.jsx"
-import Student from "./components/Student/Student.jsx"
-import NotFound from "./components/Utility/NotFound.jsx"
-import UserRoutes from "./components/Utility/UserRoutes.jsx"
 import { Routes, Route, useNavigate } from "react-router-dom"
 import api from './api.js'
 import { useState, useEffect } from 'react'
+import { lazy, Suspense } from 'react'
+
+// Utilities
+const Navbar = lazy(() => import("./components/Utility/Navbar.jsx"));
+const Login = lazy(() => import("./components/Utility/Authentication/Login.jsx"));
+const InvitationCode = lazy(() => import("./components/Utility/Authentication/InvitationCode.jsx"));
+const NotFound = lazy(() => import("./components/Utility/NotFound.jsx"));
+const UserRoutes = lazy(() => import("./components/Utility/UserRoutes.jsx"));
 
 function App() {
   const [userRole, setUserRole] = useState("");
@@ -80,7 +79,11 @@ function App() {
     <>
       {error && (<div className="alert alert-danger m-5">{error}</div>)}
       {!error && (
-        <>
+        <Suspense fallback={
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+            <div className="spinner-border" style={{ color: primaryColor }}></div>
+          </div>
+        }>
           <Navbar
             isLoggedIn={isLoggedIn}
             userRole={userRole}
@@ -116,9 +119,8 @@ function App() {
             )}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </>
-      )
-      }
+        </Suspense>
+      )}
     </>
   )
 }
