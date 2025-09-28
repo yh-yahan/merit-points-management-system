@@ -40,8 +40,7 @@ function StudentsNavbar({ setIsLoggedIn, setUser, setUserRole }) {
       setUser(null);
       setLogoutError("");
       navigate('/');
-    }
-    catch (err) {
+    } catch (err) {
       setLogoutError("Unable to logout.");
     }
   }

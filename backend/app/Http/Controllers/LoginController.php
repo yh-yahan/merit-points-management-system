@@ -24,7 +24,7 @@ class LoginController extends Controller
 
         // rate limiting for login attempts
         $email = $fields['email'];
-        $key = 'login-attempt:' . $email;
+        $key = 'login-attempt:' . $email . ':' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             return response([
@@ -33,56 +33,39 @@ class LoginController extends Controller
         }
         RateLimiter::hit($key, 60);
 
-        // check email
+        $guards = ['admin', 'teacher', 'student'];
         $user = null;
-        $userToken = null;
-        $userType = null;
+        $guardUsed = null;
 
-        $adminUser = Admin::where('email', $fields['email'])->first();
-        $teacherUser = Teachers::where('email', $fields['email'])->first();
-        $studentUser = Students::where('email', $fields['email'])->first();
-
-        if ($adminUser) {
-            $user = $adminUser;
-            $userType = "admin";
-            $userToken = "adminToken";
-        } elseif ($teacherUser) {
-            $user = $teacherUser;
-            $userType = "teacher";
-            $userToken = "teachersToken";
-        } elseif ($studentUser) {
-            $user = $studentUser;
-            $userType = "student";
-            $userToken = "studentsToken";
+        foreach ($guards as $guard) {
+            if (Auth::guard($guard)->attempt([
+                'email' => $fields['email'],
+                'password' => $fields['password'],
+            ], $request->boolean('remember'))) {
+                $user = Auth::guard($guard)->user();
+                $guardUsed = $guard;
+                break;
+            }
         }
 
-        // check password
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
-            return response([
-                'message' => 'Invalid credentials'
-            ], 401);
+        if (!$user) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
-
-        $remember = $request->boolean('remember');
-
-        // login user
-        Auth::guard()->login($user, $remember);
 
         // Generate token
         $token = $user->createToken(
-            $userToken,
-            ['*'],
-            now()->addDays($remember ? 30 : 7)
+            $guardUsed . '_token',
+            [$guardUsed],
+            now()->addDays($request->boolean('remember') ? 30 : 7)
         )->plainTextToken;
 
         // set cookie
-        $cookieExpiration = $remember ? now()->addDays(30)->timestamp : now()->addDays(7)->timestamp;
+        $cookieExpiration = now()->addDays($request->boolean('remember') ? 30 : 7)->timestamp;
         $cookie = new Cookie('auth_token', $token, $cookieExpiration, '/', null, true, true, false, 'None', true);
 
         $response = [
             'user' => $user,
-            'userType' => $userType,
-            // 'token' => $token, 
+            'role' => $guardUsed,
         ];
 
         return response($response, 201)->withCookie($cookie);
@@ -92,53 +75,32 @@ class LoginController extends Controller
     {
         $token = $request->cookie('auth_token');
 
-        $user = PersonalAccessToken::findToken($token);
+        $accessToken = PersonalAccessToken::findToken($token);
 
-        if (!$user) {
-            return response()->json(['message' => 'Invalid token'], 401);
+        if (!$accessToken || now()->greaterThan($accessToken->expires_at)) {
+            return response()->json(['message' => 'Invalid or expired token'], 401);
         }
 
-        $userType = null;
-        if ($user->name == "adminToken") {
-            $userType = "admin";
-        } elseif ($user->name == "teachersToken") {
-            $userType = "teacher";
-        } elseif ($user->name == "studentsToken") {
-            $userType = "student";
-        }
+        $user = $accessToken->tokenable;
+        $role = $accessToken->abilities[0] ?? 'unknown';
 
-        // check if token is expired
-        $expired = now()->greaterThan($user->expires_at);
-
-        if ($user && !$expired) {
-            $response = [
-                'user' => $user,
-                'userType' => $userType
-            ];
-        } else {
-            return response()->json(['message' => 'Invalid token'], 401);
-        }
-
-        return response($response, 200);
+        return response([
+            'user' => $user,
+            'role' => $role,
+        ], 200);
     }
 
     public function Logout(Request $request)
     {
         $token = $request->cookie('auth_token');
-        $personalAccessToken = PersonalAccessToken::findToken($token);
+        $accessToken = PersonalAccessToken::findToken($token);
 
-        if ($personalAccessToken) {
-            $personalAccessToken->delete();
-
-            cookie()->forget('auth_token');
-
-            return response([
-                'message' => 'Logged out'
-            ], 200);
-        } else {
-            return response([
-                'message' => 'Logged out'
-            ], 200);
+        if ($accessToken) {
+            $accessToken->delete();
         }
+
+        return response([
+            'message' => 'Logged out'
+        ], 200)->withCookie(cookie()->forget('auth_token'));
     }
 }

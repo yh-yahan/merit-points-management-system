@@ -115,7 +115,7 @@ function TeacherSignup({ isLoggedIn, setUser, setIsLoggedIn, invitationCode }) {
                     {passwordError && <div className="text-danger mb-3">{passwordError}</div>}
                     {error && <div className="text-danger mb-3">{error}</div>}
                     <div className="d-grid">
-                      <button className="btn" style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }} onMouseOver={(e) => e.target.style.backgroundColor = "black"} onMouseOut={(e) => e.target.style.backgroundColor = "#c20008"} type="submit">
+                      <button className="btn" type="submit">
                         Sign up
                       </button>
                     </div>

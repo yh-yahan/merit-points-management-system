@@ -12,8 +12,6 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
   const [studentClass, setStudentClass] = useState("");
   const [stream, setStream] = useState("");
 
-  // const [user, setUser] = useState("");
-
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -81,7 +79,7 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
 
   async function fetchAcademicStructure() {
     try {
-      const response = await api.get('/student/academic-structure');
+      const response = await api.get('/academic-structure');
       const { studentClass, studentStream } = response.data;
 
       setAllClasses(studentClass);
@@ -184,11 +182,7 @@ function Signup({ isLoggedIn, setIsLoggedIn, setUser, invitationCode }) {
                     {streamError && <div className="text-danger mb-3">{streamError}</div>}
                     {error && <div className="text-danger mb-3">{error}</div>}
                     <div className="d-grid">
-                      <button className="btn"
-                        style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }}
-                        onMouseOver={(e) => e.target.style.backgroundColor = "black"}
-                        onMouseOut={(e) => e.target.style.backgroundColor = "#c20008"} 
-                        disabled={!!error}
+                      <button className="btn" 
                         type="submit">
                         Sign up
                       </button>

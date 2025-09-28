@@ -75,10 +75,9 @@ class StudentsController extends Controller
                     'total_points' => $initialPoints->setting_value,
                 ]);
 
-                // $token = $students->createToken('studentsToken')->plainTextToken;
                 $token = $students->createToken(
                     'studentsToken',
-                    ['*'],
+                    ['student'],
                     now()->addDays(7)
                 )->plainTextToken;
 
@@ -93,8 +92,7 @@ class StudentsController extends Controller
                 app('App\Http\Controllers\AdminController')->Notifications($notification);
 
                 $response = [
-                    'students' => $students,
-                    // 'token' => $token, 
+                    'students' => $students, 
                 ];
 
                 return response($response, 201)->withCookie($cookie);

@@ -25,10 +25,10 @@ function App() {
       try {
         const response = await api.post('/check-auth', { withCredentials: true });
         setIsLoggedIn(true);
-        setUserRole(response.data.userType);
+        setUserRole(response.data.role);
         setUser(response.data);
         setError("");
-        if (!response.data?.userType && location.pathname !== '/') {
+        if (!response.data?.role && location.pathname !== '/') {
           navigate('/');
         }
       } catch (err) {

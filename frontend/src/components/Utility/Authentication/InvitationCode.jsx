@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../../api.js'
 
-function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setUser }){
+function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setUser }) {
   const [invitationCode, setInvitationCode] = useState("");
   const [invitationCodePart1, setInvitationCodePart1] = useState("");
   const [invitationCodePart2, setInvitationCodePart2] = useState("");
@@ -14,19 +14,19 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
     setInvitationCode(`INV-${invitationCodePart1}-${invitationCodePart2}`);
   }, [invitationCodePart1, invitationCodePart2]);
 
-  async function handleInvitationCodeSubmit(e){
+  async function handleInvitationCodeSubmit(e) {
     e.preventDefault();
-    try{
+    try {
       const response = await api.post('/validate-inv-code', {
         invitationCode: invitationCode
       });
 
       const { for_user_type } = response.data.result;
-      
+
       setUserRole(for_user_type);
       setError('');
     }
-    catch(err){
+    catch (err) {
       if (err.response.status === 429) {
         setError("Too many attempts. Please try again later.");
       } else if (err.response.status === 401) {
@@ -36,21 +36,21 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
       }
     }
   }
-    
-  if(userRole == "student"){
-    return <StudentSignup 
-    isLoggedIn={isLoggedIn} 
-    setIsLoggedIn={setIsLoggedIn} 
-    setUser={setUser} 
-    invitationCode={invitationCode}
+
+  if (userRole == "student") {
+    return <StudentSignup
+      isLoggedIn={isLoggedIn}
+      setIsLoggedIn={setIsLoggedIn}
+      setUser={setUser}
+      invitationCode={invitationCode}
     />;
   }
-  else if(userRole == "teacher"){
-    return <TeacherSignup 
-    isLoggedIn={isLoggedIn} 
-    setIsLoggedIn={setIsLoggedIn} 
-    setUser={setUser}
-    invitationCode={invitationCode}
+  else if (userRole == "teacher") {
+    return <TeacherSignup
+      isLoggedIn={isLoggedIn}
+      setIsLoggedIn={setIsLoggedIn}
+      setUser={setUser}
+      invitationCode={invitationCode}
     />;
   }
 
@@ -72,7 +72,7 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
                           type="text"
                           className="form-control"
                           maxLength="4"
-                          required 
+                          required
                           onChange={(e) => setInvitationCodePart1(e.target.value)}
                         />
                         <span className="input-group-text">-</span>
@@ -80,22 +80,22 @@ function InvitationCode({ isLoggedIn, setUserRole, userRole, setIsLoggedIn, setU
                           type="text"
                           className="form-control"
                           maxLength="4"
-                          required 
+                          required
                           onChange={(e) => setInvitationCodePart2(e.target.value)}
                         />
                       </div>
                     </div>
                     {error && <div className="text-danger mb-3">{error}</div>}
                     <div className="d-grid">
-                      <button className="btn" 
-                        style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }} 
-                        onMouseOver={ (e) => e.target.style.backgroundColor = "black" } 
-                        onMouseOut={ (e) => e.target.style.backgroundColor = "#c20008" } 
+                      <button className="btn"
+                        style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = "black"}
+                        onMouseOut={(e) => e.target.style.backgroundColor = "#c20008"}
                         type="submit">
                         Next
                       </button>
                     </div>
-                    <p className="mt-3">Already have an account? { !isLoggedIn && <Link to="/">login</Link> }</p>
+                    <p className="mt-3">Already have an account? {!isLoggedIn && <Link to="/">login</Link>}</p>
                   </form>
                 </div>
               </div>

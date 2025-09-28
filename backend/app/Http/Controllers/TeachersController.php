@@ -54,10 +54,9 @@ class TeachersController extends Controller
                     'description' => $fields['description'],
                 ]);
 
-                // $token = $teacher->createToken('teachersToken')->plainTextToken;
                 $token = $teacher->createToken(
                     'teachersToken',
-                    ['*'],
+                    ['teacher'],
                     now()->addDays(7)
                 )->plainTextToken;
 
@@ -73,7 +72,6 @@ class TeachersController extends Controller
 
                 $response = [
                     'teacher' => $teacher,
-                    // 'token' => $token, 
                 ];
 
                 return response($response, 201)->withCookie($cookie);

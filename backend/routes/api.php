@@ -15,6 +15,7 @@ use App\Http\Controllers\LogoController;
 use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Middleware\EnsureIsStudent;
 use App\Http\Middleware\EnsureIsTeacher;
+use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\EnsureTokenIsValid;
 
 Route::prefix('v1')->group(function () {
@@ -24,6 +25,8 @@ Route::prefix('v1')->group(function () {
     Route::post('teacher/signup', [TeachersController::class, 'SignUp']);
     Route::post('student/signup', [StudentsController::class, 'SignUp']);
 
+    Route::get('academic-structure', [StudentsController::class, 'AcademicStructure']);
+
     Route::get('logo', [LogoController::class, 'GetLogo']);
     Route::get('primary-color', [ColorSchemeController::class, 'PrimaryColor']);
 
@@ -31,7 +34,7 @@ Route::prefix('v1')->group(function () {
         Route::post('logout', [LoginController::class, 'Logout']);
         Route::get('leaderboard', [LeaderboardController::class, 'Leaderboard']);
 
-        Route::middleware([EnsureIsAdmin::class])->prefix('admin')->group(function () {
+        Route::middleware(['role:admin'])->prefix('admin')->group(function () {
             Route::post('signup', [AdminController::class, 'SignUp']);
             Route::post('new-admin', [AdminController::class, 'NewAdmin']);
             Route::post('create-inv-code', [AdminController::class, 'CreateInvitationCode']);
@@ -86,7 +89,7 @@ Route::prefix('v1')->group(function () {
             Route::post('search-student', [AdminController::class, 'SearchStudent']);
         });
 
-        Route::middleware([EnsureIsTeacher::class])->prefix('teacher')->group(function () {
+        Route::middleware(['role:teacher'])->prefix('teacher')->group(function () {
             Route::get('recent-transactions', [TeachersController::class, 'RecentTransactions']);
             Route::get('student-by-class', [TeachersController::class, 'GetStudentByClass']);
             Route::post('student-details', [TeachersController::class, 'GetStudentDetails']);
@@ -99,7 +102,7 @@ Route::prefix('v1')->group(function () {
             Route::patch('update-password', [TeachersController::class, 'UpdatePassword']);
         });
 
-        Route::middleware([EnsureIsStudent::class])->prefix('student')->group(function () {
+        Route::middleware(['role:student'])->prefix('student')->group(function () {
             Route::get('dashboard', [StudentsController::class, 'Dashboard']);
             Route::get('leaderboard', [StudentsController::class, 'Leaderboard']);
             Route::get('merit-point/rules', [StudentsController::class, 'MeritPointRule']);

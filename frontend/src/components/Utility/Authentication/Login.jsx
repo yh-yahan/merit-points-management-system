@@ -15,16 +15,16 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
     e.preventDefault();
 
     try{
-      const response = await api.post('login', {
+      await api.post('login', {
         email, 
         password, 
         remember, 
       });
 
-      const { user, userType } = response.data;
+      const { data } = await api.post('/check-auth', { withCredentials: true });
 
-      setUserRole(userType);
-      setUser(user);
+      setUserRole(data.role);
+      setUser(data.user);
       setIsLoggedIn(true);
       setError("");
 
