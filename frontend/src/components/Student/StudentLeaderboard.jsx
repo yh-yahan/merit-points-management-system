@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
-import badge1 from '../../assets/1.png';
-import badge2 from '../../assets/2.png';
-import badge3 from '../../assets/3.png';
+import badge1 from '../../assets/first.png';
+import badge2 from '../../assets/second.png';
+import badge3 from '../../assets/third.png';
 
 function StudentLeaderboard() {
   const [currentClass, setCurrentClass] = useState("");
