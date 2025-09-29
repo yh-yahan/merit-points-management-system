@@ -208,11 +208,38 @@ function Overview() {
     pdf.text(`Page ${pageNumber} of ${totalPages}`, pageWidth / 2, pageHeight - 5, { align: 'center' });
   }
 
+  async function downloadChartExcel() {
+    try {
+      const response = await api.get('admin/export/chart', {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement('a');
+      a.href = url;
+
+      const contentDisposition = response.headers['content-disposition'];
+      let filename = "dashboard_charts.xlsx";
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match) filename = match[1];
+      }
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Dowload failed: ");
+    }
+  }
+
   function handleExportChange(e) {
     const format = e.target.value;
 
     if (format === 'excel') {
-      window.location.href = "https://127.0.0.1/api/v1/admin/export/chart";
+      downloadChartExcel();
     } else if (format === 'pdf') {
       exportChartsToPDF();
     }

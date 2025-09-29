@@ -12,10 +12,6 @@ use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\LogoController;
-use App\Http\Middleware\EnsureIsAdmin;
-use App\Http\Middleware\EnsureIsStudent;
-use App\Http\Middleware\EnsureIsTeacher;
-use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\EnsureTokenIsValid;
 
 Route::prefix('v1')->group(function () {
