@@ -16,11 +16,11 @@ class StudentsSeeder extends Seeder
     {
         Students::factory()->count(40)->create();
         Students::factory()->create([
-            'name' => 'studentName',
+            'name' => 'John',
             'username' => 'studentUsername',
             'email' => 'studentEmail@example.com', 
             'password' => Hash::make('studentPassword'), 
-            'class' => 'year 11',
+            'class' => '10A',
             'stream' => 'Science', 
             'status' => "active", 
             'date_joined' => date("Y-m-d"),

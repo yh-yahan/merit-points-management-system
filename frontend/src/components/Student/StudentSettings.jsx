@@ -43,6 +43,8 @@ function StudentSettings({ setIsLoggedIn }) {
 
   const navigate = useNavigate();
 
+  const isDemo = student.unchangedEmail.includes("studentEmail@example.com");
+
   useEffect(() => {
     const hasChanged = (
       changedName !== student.unchangedName ||
@@ -318,11 +320,13 @@ function StudentSettings({ setIsLoggedIn }) {
                   </select>
                 </div>
               </div>
+              {isDemo && <div className="alert alert-info">Demo accounts cannot change login credentials.</div>}
               {basicInfoUpdateSuccessMsg && <div className="alert alert-success">{basicInfoUpdateSuccessMsg}</div>}
               {basicInfoUpdateFailMsg && <div className="alert alert-danger">{basicInfoUpdateFailMsg}</div>}
               <button
                 className={`btn btn-primary me-3 px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
                 onClick={updateStudentBasicInfo}
+                disabled={isDemo}
               >Update</button>
               <button
                 className={`btn btn-primary px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
@@ -384,10 +388,12 @@ function StudentSettings({ setIsLoggedIn }) {
                   ></i>
                 </div>
               </div>
+              {isDemo && <div className="alert alert-info">Demo accounts cannot change login credentials.</div>}
               {passwordUpdateError && <div className="alert alert-danger">{passwordUpdateError}</div>}
               <button
                 className="btn btn-primary me-3 px-5"
                 onClick={() => setPasswordUpdateConfirmation(true)}
+                disabled={isDemo}
               >Update</button>
               <button className="btn btn-primary px-5">Cancel</button>
             </div>

@@ -1,24 +1,26 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import api from '../../../api.js'
+import { Alert } from "react-bootstrap"
 
-function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
+function Login({ setIsLoggedIn, setUserRole, setUser, userRole, isLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
 
+  const [showDemoInfo, setShowDemoInfo] = useState(true);
+
   const navigate = useNavigate();
 
-  // login user upon submit button pressed
-  async function login(e){
+  async function login(e) {
     e.preventDefault();
 
-    try{
+    try {
       await api.post('login', {
-        email, 
-        password, 
-        remember, 
+        email,
+        password,
+        remember,
       });
 
       const { data } = await api.post('/check-auth', { withCredentials: true });
@@ -30,14 +32,14 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
 
       navigate('/');
     }
-    catch(err){
-      if(err.response.status === 429){
+    catch (err) {
+      if (err.response.status === 429) {
         setError("Too many login attempts. Please try again later.");
       }
-      else if(err.response.status === 401){
+      else if (err.response.status === 401) {
         setError("Invalid email or password");
       }
-      else{
+      else {
         setError("An error occurred. Please try again later.");
       }
     }
@@ -48,7 +50,7 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
     setShowPassword(!showPassword);
   };
 
-  return(
+  return (
     <>
       <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
         <div className="container mt-5">
@@ -59,10 +61,10 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
                   <h2 className="text-center mb-4">Login</h2>
                   <form onSubmit={login} method="post">
                     <div className="form-floating mb-3">
-                      <input type="email" 
-                        className="form-control" 
-                        required 
-                        onChange={(e) => setEmail(e.target.value)} 
+                      <input type="email"
+                        className="form-control"
+                        required
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                       <label>Email</label>
                     </div>
@@ -84,20 +86,15 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
                     {error && <div className="text-danger mb-3">{error}</div>}
                     <div className="d-grid">
                       <div className='position-relative mb-3'>
-                        <input type="checkbox" 
-                          className="me-1" id="rememberMe" 
-                          onClick={() => setRemember(!remember)} 
+                        <input type="checkbox"
+                          className="me-1" id="rememberMe"
+                          onClick={() => setRemember(!remember)}
                         />
                         <label htmlFor="rememberMe">Remember me</label>
                       </div>
                     </div>
                     <div className="d-grid">
-                      <button className="btn" 
-                        style={{ backgroundColor: "#c20008", color: "white", transition: "background-color 0.3s" }} 
-                        onMouseOver={ (e) => e.target.style.backgroundColor = "black" } 
-                        onMouseOut={ (e) => e.target.style.backgroundColor = "#c20008" } 
-                        type="submit"
-                      >
+                      <button className="btn" type="submit">
                         Login
                       </button>
                     </div>
@@ -105,6 +102,21 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole }){
                   <p className="mt-3">Don't have an account yet? <Link to="/signup">Sign up</Link></p>
                 </div>
               </div>
+              {showDemoInfo && (
+                <Alert
+                  variant="info"
+                  dismissible
+                  onClose={() => setShowDemoInfo(false)}
+                  className="mb-4"
+                >
+                  <strong>Demo Accounts</strong>
+                  <ul className="mb-0">
+                    <li>Admin → <code>adminEmail@example.com</code> / <code>adminPassword</code></li>
+                    <li>Teacher → <code>teacherEmail@example.com</code> / <code>teacherPassword</code></li>
+                    <li>Student → <code>studentEmail@example.com</code> / <code>studentPassword</code></li>
+                  </ul>
+                </Alert>
+              )}
             </div>
           </div>
         </div>

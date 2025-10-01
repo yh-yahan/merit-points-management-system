@@ -13,6 +13,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\LogoController;
 use App\Http\Middleware\EnsureTokenIsValid;
+use App\Http\Middleware\PreventDemoEdits;
 
 Route::prefix('v1')->group(function () {
     Route::post('check-auth', [LoginController::class, 'CheckAuth']);
@@ -69,8 +70,8 @@ Route::prefix('v1')->group(function () {
             Route::patch('point-threshold', [AdminController::class, 'EditPointThreshold']);
             Route::post('point-threshold', [AdminController::class, 'AddPointThreshold']);
             Route::delete('point-threshold/{id}', [AdminController::class, 'DeletePointThreshold']);
-            Route::patch('user-info', [AdminController::class, 'ChangeBasicInfo']);
-            Route::patch('update-password', [AdminController::class, 'UpdatePassword']);
+            Route::patch('user-info', [AdminController::class, 'ChangeBasicInfo'])->middleware([PreventDemoEdits::class]);
+            Route::patch('update-password', [AdminController::class, 'UpdatePassword'])->middleware([PreventDemoEdits::class]);
             Route::post('logo', [AdminController::class, 'UploadLogo']);
 
             Route::get('invitation-code', [AdminController::class, 'GetInvitationCode']);
@@ -94,8 +95,8 @@ Route::prefix('v1')->group(function () {
             Route::get('merit-point/rules', [TeachersController::class, 'MeritPointRule']);
             Route::get('merit-point/threshold', [TeachersController::class, 'MeritPointThreshold']);
             Route::get('setting', [TeachersController::class, 'GetSetting']);
-            Route::post('setting', [TeachersController::class, 'ChangeBasicInfo']);
-            Route::patch('update-password', [TeachersController::class, 'UpdatePassword']);
+            Route::post('setting', [TeachersController::class, 'ChangeBasicInfo'])->middleware([PreventDemoEdits::class]);
+            Route::patch('update-password', [TeachersController::class, 'UpdatePassword'])->middleware([PreventDemoEdits::class]);
         });
 
         Route::middleware(['role:student'])->prefix('student')->group(function () {
@@ -105,8 +106,8 @@ Route::prefix('v1')->group(function () {
             Route::get('merit-point/threshold', [StudentsController::class, 'MeritPointThreshold']);
             Route::get('settings', [StudentsController::class, 'GetSettings']);
             Route::post('settings', [StudentsController::class, 'Setting']);
-            Route::patch('user-info', [StudentsController::class, 'ChangeBasicInfo']);
-            Route::patch('update-password', [StudentsController::class, 'UpdatePassword']);
+            Route::patch('user-info', [StudentsController::class, 'ChangeBasicInfo'])->middleware([PreventDemoEdits::class]);
+            Route::patch('update-password', [StudentsController::class, 'UpdatePassword'])->middleware([PreventDemoEdits::class]);
             Route::get('academic-structure', [StudentsController::class, 'AcademicStructure']);
         });
     });

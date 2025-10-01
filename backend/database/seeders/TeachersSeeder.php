@@ -16,7 +16,7 @@ class TeachersSeeder extends Seeder
     {
         Teachers::factory()->count(10)->create();
         Teachers::factory()->create([
-            'name' => 'teacherName',
+            'name' => 'John Smith',
             'email' => 'teacherEmail@example.com', 
             'password' => Hash::make('teacherPassword'), 
             'description' => 'This is a description for the teacher.', 

@@ -66,6 +66,8 @@ function AdminSettings({ setIsLoggedIn }) {
   const [pointThresholdDeleteError, setPointThresholdDeleteError] = useState("");
   const [removeExcludedStudentError, setRemoveExcludedStudentError] = useState("");
 
+  const isDemo = admin.unchangedEmail.includes("adminEmail@example.com");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -752,9 +754,11 @@ function AdminSettings({ setIsLoggedIn }) {
                   <label for="floatingInput">Email</label>
                 </div>
               </div>
+              {isDemo && <div className="alert alert-info">Demo accounts cannot change login credentials. Other settings remain editable.</div>}
               <button
                 className={`btn btn-primary me-3 px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
-                onClick={updateAdminBasicInfo}
+                onClick={updateAdminBasicInfo} 
+                disabled={isDemo}
               >Update</button>
               <button
                 className={`btn btn-primary px-5 ${isBasicInfoChanged ? "" : "disabled"}`}
@@ -809,9 +813,11 @@ function AdminSettings({ setIsLoggedIn }) {
                 </div>
                 {passwordChangeError && <p className="text-danger">{passwordChangeError}</p>}
               </div>
+              {isDemo && <div className="alert alert-info">Demo accounts cannot change login credentials. Other settings remain editable.</div>}
               <button
                 className={`btn btn-primary me-3 px-5 ${currentPassword && newPassword && newPasswordConfirm ? "" : "disabled"}`}
                 onClick={() => setPasswordUpdateConfirmation(true)}
+                disabled={isDemo}
               >Update</button>
               <button
                 className={`btn btn-primary px-5 ${currentPassword && newPassword && newPasswordConfirm ? "" : "disabled"}`}

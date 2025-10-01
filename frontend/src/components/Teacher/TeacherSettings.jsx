@@ -28,6 +28,8 @@ function TeacherSettings({ setIsLoggedIn }) {
 
   const navigate = useNavigate();
 
+  const isDemo = email.includes("teacherEmail@example.com");
+
   useEffect(() => {
     async function getSetting() {
       try {
@@ -214,11 +216,13 @@ function TeacherSettings({ setIsLoggedIn }) {
               style={{ maxHeight: "500px", height: "100px" }}></textarea>
             <label for="floatingTextarea">Description</label>
           </div>
+          {isDemo && <div className="alert alert-info">Demo accounts cannot change login credentials.</div>}
           {basicInfoUpdateSuccessMsg && <div className="alert alert-success">{basicInfoUpdateSuccessMsg}</div>}
           {basicInfoUpdateFailMsg && <div className="alert alert-danger">{basicInfoUpdateFailMsg}</div>}
           <button
             className={`btn btn-primary me-3 px-5 ${isUpdateEnabled ? "" : "disabled"}`}
             onClick={updateTeacherBasicInfo}
+            disabled={isDemo}
           >Update</button>
           <button
             className={`btn btn-primary me-3 px-5 ${isUpdateEnabled ? "" : "disabled"}`}
@@ -273,10 +277,12 @@ function TeacherSettings({ setIsLoggedIn }) {
             />
             <label for="floatingInput">Confirm Password</label>
           </div>
+          {isDemo && <div className="alert alert-info">Demo accounts cannot change login credentials.</div>}
           {passwordUpdateError && <div className="alert alert-danger">{passwordUpdateError}</div>}
           <button
             className={`btn btn-primary me-3 px-5 ${currentPassword && newTeacherPassword && newTeacherPasswordConfirm ? "" : "disabled"}`}
             onClick={() => setPasswordUpdateConfirmation(true)}
+            disabled={isDemo}
           >Update</button>
           <button
             className={`btn btn-primary me-3 px-5 ${currentPassword && newTeacherPassword && newTeacherPasswordConfirm ? "" : "disabled"}`}
