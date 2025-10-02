@@ -5,22 +5,23 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     unzip \
     git \
-    curl
-
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql
+    curl \
+    libzip-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip
 
 # Set working directory
 WORKDIR /var/www/html
 
+# Copy composer first (for caching dependencies)
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 # Copy project files
 COPY . .
 
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Run Laravel commands
+# Clear caches
 RUN php artisan config:clear && php artisan cache:clear
 
 # Expose port
