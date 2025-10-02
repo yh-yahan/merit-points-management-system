@@ -1,35 +1,30 @@
-# Use PHP 8.2 with Apache
-FROM php:8.2-apache
+FROM php:8.2-cli
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    unzip git curl libpng-dev libonig-dev libxml2-dev libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    libpq-dev \
+    unzip \
+    git \
+    curl
 
-# Enable Apache rewrite (for Laravel routes)
-RUN a2enmod rewrite
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_pgsql
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer from official composer image
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Copy app source code
+# Copy project files
 COPY . .
 
-# Install Laravel dependencies
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for storage and cache
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Run Laravel commands
+RUN php artisan config:clear && php artisan cache:clear
 
-# Configure Apache to serve Laravel from public/
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
-    && sed -i 's|/var/www/|/var/www/html/public|g' /etc/apache2/apache2.conf
+# Expose port
+EXPOSE 8000
 
-# Expose port 80
-EXPOSE 80
-
-# Start Apache
-CMD ["apache2-foreground"]
+# Start Laravel
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=$PORT"]
