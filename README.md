@@ -3,6 +3,9 @@
 ## Overview
 This is a website designed for school who use the merit point system to track and manage student's merit points.
 
+## Live Demo
+Demo link: https://merit-point-management-system.netlify.app
+
 ## Functionalities
 - **Dashboard** Summary of key metrics like average points of students, recent activities, etc.
 - **Reports & Analytics** Generates statistics to analyze student behavior and point trends.
@@ -20,21 +23,6 @@ This is a website designed for school who use the merit point system to track an
   - Allow opt-out or disable leaderboard completely.
 - Set initial merit points for new students.
 - Customize system appearance (primary color & school logo).
-
-## Demo accounts
-You can test the system with these demo credentials:
-
-- **Admin**
-  - Email: adminEmail@example.com
-  - Password: adminPassword
-
-- **Teacher**
-  - Email: teacherEmail@example.com
-  - Password: teacherPassword
-
-- **Student**
-  - Email: studentEmail@example.com
-  - Password: studentPassword
 
 ## Technologies Used
 - **Frontend**: React.js, Bootstrap

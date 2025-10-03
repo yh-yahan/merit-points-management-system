@@ -7,7 +7,9 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libzip-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip
+    libonig-dev \
+    libxml2-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip mbstring bcmath pcntl
 
 # Set working directory
 WORKDIR /var/www/html
