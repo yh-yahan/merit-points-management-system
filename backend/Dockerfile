@@ -12,17 +12,12 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
-COPY composer.json composer.lock ./
 
-# Run composer install (ignore memory limit)
-RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-
-# Copy app source
+# Copy full application (including artisan)
 COPY . .
 
-# Optimize autoload
-RUN composer dump-autoload --optimize
-
+# Install PHP dependencies
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 # Stage 2: Production runtime
 FROM php:8.2-fpm
