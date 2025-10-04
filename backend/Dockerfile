@@ -19,7 +19,8 @@ COPY composer.json composer.lock ./
 
 # Install PHP dependencies without running artisan scripts
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
-    --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
+    --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts \
+ && composer dump-autoload --optimize
 
 
 # =============================
@@ -42,10 +43,6 @@ COPY --from=vendor /app/vendor ./vendor
 
 # Copy full app code
 COPY . .
-
-# Run composer scripts now that artisan exists
-RUN composer run-script post-install-cmd || true \
-    && composer dump-autoload --optimize
 
 # Copy configs
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
