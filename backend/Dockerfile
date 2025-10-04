@@ -18,8 +18,10 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 
 # Install PHP dependencies without running artisan scripts
+# Then dump optimized autoload without scripts (avoids artisan errors)
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
-    --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
+    --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts \
+ && composer dump-autoload --optimize --no-scripts
 
 
 # =============================
@@ -42,9 +44,6 @@ COPY --from=vendor /app/vendor ./vendor
 
 # Copy full app code
 COPY . .
-
-# Run autoload dump now that artisan exists
-RUN composer dump-autoload --optimize
 
 # Copy configs
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
