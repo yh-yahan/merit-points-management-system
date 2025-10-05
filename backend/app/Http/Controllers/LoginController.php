@@ -63,7 +63,7 @@ class LoginController extends Controller
 
         // set cookie
         $cookieExpiration = now()->addDays($request->boolean('remember') ? 30 : 7)->timestamp;
-        $cookie = new Cookie('auth_token', $token, $cookieExpiration, '/', null, true, true, false, 'None');
+        $cookie = new Cookie('auth_token', $token, $cookieExpiration, '/', null, true, true, false, 'None', true);
 
         $response = [
             'user' => $user,

@@ -156,14 +156,14 @@ class AdminController extends Controller
         // get summary for every month
         $monthlyPoints = [];
         $monthlySummary = Transaction::selectRaw('
-        YEAR(date) as year,
-        MONTH(date) as month,
-        SUM(CASE WHEN operation_type = "add" THEN points ELSE 0 END) as total_awarded,
-        SUM(CASE WHEN operation_type = "deduct" THEN points ELSE 0 END) as total_deducted
-      ')
-            ->whereYear('date', $currentYear)
-            ->groupBy(DB::raw('YEAR(date)'), DB::raw('MONTH(date)'))
-            ->orderBy('month')
+            EXTRACT(YEAR FROM date) as year,
+            EXTRACT(MONTH FROM date) as month,
+            SUM(CASE WHEN operation_type = \'add\' THEN points ELSE 0 END) as total_awarded,
+            SUM(CASE WHEN operation_type = \'deduct\' THEN points ELSE 0 END) as total_deducted
+        ')
+            ->whereRaw('EXTRACT(YEAR FROM date) = ?', [$currentYear])
+            ->groupBy(DB::raw('EXTRACT(YEAR FROM date)'), DB::raw('EXTRACT(MONTH FROM date)'))
+            ->orderBy(DB::raw('EXTRACT(MONTH FROM date)'))
             ->get()
             ->each(function ($item) use (&$monthlyPoints) {
                 $monthlyPoints[$item->month] = [
@@ -177,7 +177,7 @@ class AdminController extends Controller
 
         // bar chart(top 5 most awarded point rules every mouth)
         $topAwardedRaw = Transaction::select(
-            DB::raw('MONTH(date) as month'),
+            DB::raw('EXTRACT(MONTH FROM date) as month'),
             'transaction.rule_id',
             DB::raw('SUM(transaction.points) as total_points'),
             'merit_points_rules.name'
@@ -185,9 +185,9 @@ class AdminController extends Controller
             ->join('merit_points_rules', 'transaction.rule_id', '=', 'merit_points_rules.id')
             ->where('transaction.operation_type', 'add')
             ->where('merit_points_rules.operation_type', 'add')
-            ->whereYear('transaction.date', $currentYear)
-            ->groupBy(DB::raw('MONTH(date)'), 'rule_id', 'merit_points_rules.name')
-            ->orderBy(DB::raw('MONTH(date)'))
+            ->whereRaw('EXTRACT(YEAR FROM transaction.date) = ?', [$currentYear])
+            ->groupBy(DB::raw('EXTRACT(MONTH FROM date)'), 'transaction.rule_id', 'merit_points_rules.name')
+            ->orderBy(DB::raw('EXTRACT(MONTH FROM date)'))
             ->get()
             ->groupBy('month');
         $barChartData = [];
@@ -211,7 +211,7 @@ class AdminController extends Controller
         }
         // bar chart(top 5 most deducted point rules every mouth)
         $topDeductedRaw = Transaction::select(
-            DB::raw('MONTH(date) as month'),
+            DB::raw('EXTRACT(MONTH FROM date) as month'),
             'transaction.rule_id',
             DB::raw('SUM(transaction.points) as total_points'),
             'merit_points_rules.name'
@@ -219,9 +219,9 @@ class AdminController extends Controller
             ->join('merit_points_rules', 'transaction.rule_id', '=', 'merit_points_rules.id')
             ->where('transaction.operation_type', 'deduct')
             ->where('merit_points_rules.operation_type', 'deduct')
-            ->whereYear('transaction.date', $currentYear)
-            ->groupBy(DB::raw('MONTH(date)'), 'rule_id', 'merit_points_rules.name')
-            ->orderBy(DB::raw('MONTH(date)'))
+            ->whereRaw('EXTRACT(YEAR FROM transaction.date) = ?', [$currentYear])
+            ->groupBy(DB::raw('EXTRACT(MONTH FROM date)'), 'transaction.rule_id', 'merit_points_rules.name')
+            ->orderBy(DB::raw('EXTRACT(MONTH FROM date)'))
             ->get()
             ->groupBy('month');
 
