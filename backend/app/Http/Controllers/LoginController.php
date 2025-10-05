@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class LoginController extends Controller
@@ -26,12 +27,13 @@ class LoginController extends Controller
         $email = $fields['email'];
         $key = 'login-attempt:' . $email . ':' . $request->ip();
 
-        if (RateLimiter::tooManyAttempts($key, 5)) {
-            return response([
-                'message' => 'Too many login attempts. Please try again later.'
-            ], 429);
+        $limiter = new \Illuminate\Cache\RateLimiter(Cache::store('file'));
+
+        if ($limiter->tooManyAttempts($key, 5)) {
+            return response(['message' => 'Too many login attempts. Please try again later.'], 429);
         }
-        RateLimiter::hit($key, 60);
+
+        $limiter->hit($key, 60);
 
         $guards = ['admin', 'teacher', 'student'];
         $user = null;
