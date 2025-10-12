@@ -254,137 +254,148 @@ function Overview() {
   return (
     <>
       <div className="mt-4 container-fluid">
-        <h1 className="mb-4">Overview</h1>
 
         {error ? <div className="alert alert-danger">{error}</div> :
           <>
-            <div className="row gx-4">
-              <div className="col-sm-3">
-                <div className="card shadow-sm p-3 mb-5 rounded">
-                  <p className="fw-lighter fs-6">Total points awarded this month</p>
-                  <p>{overview.totalAwarded}</p>
-                </div>
-              </div>
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col-md-9">
+                  <h1 className="mb-4">Overview</h1>
+                  <div className="row gx-4">
+                    <div className="col-sm-3">
+                      <div className="card shadow-sm p-3 mb-5 rounded">
+                        <p className="fw-lighter fs-6">Total points awarded this month</p>
+                        <p>{overview.totalAwarded}</p>
+                      </div>
+                    </div>
 
-              <div className="col-sm-3">
-                <div className="card shadow-sm p-3 mb-5 rounded">
-                  <p className="fw-lighter fs-6">Total points deducted this month</p>
-                  <p>{overview.totalDeducted}</p>
-                </div>
-              </div>
+                    <div className="col-sm-3">
+                      <div className="card shadow-sm p-3 mb-5 rounded">
+                        <p className="fw-lighter fs-6">Total points deducted this month</p>
+                        <p>{overview.totalDeducted}</p>
+                      </div>
+                    </div>
 
-              <div className="col-sm-3">
-                <div className="card shadow-sm p-3 mb-5 rounded">
-                  <p className="fw-lighter fs-6">Average points per student</p>
-                  <p>{overview.avgPoint}</p>
-                </div>
-              </div>
-              <div className="col-sm-3">
-                <div className="card shadow-sm p-3 mb-5 rounded">
-                  <p className="fw-lighter fs-6">Total students</p>
-                  <p>{overview.totalStudents}</p>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-10 mb-5">
-                <h3>Statistics</h3>
-                <div className="row">
-                  <div className="col-lg-10">
-                    <select className="form-select mb-3 p-2" onChange={handleSelectChange}>
-                      <option value="opt1" selected>Total merit points awarded & deducted by month</option>
-                      <option value="opt2">Most awarded merit points by category in month</option>
-                      <option value="opt3">Most deducted merit points by category in month</option>
-                    </select>
+                    <div className="col-sm-3">
+                      <div className="card shadow-sm p-3 mb-5 rounded">
+                        <p className="fw-lighter fs-6">Average points per student</p>
+                        <p>{overview.avgPoint}</p>
+                      </div>
+                    </div>
+                    <div className="col-sm-3">
+                      <div className="card shadow-sm p-3 mb-5 rounded">
+                        <p className="fw-lighter fs-6">Total students</p>
+                        <p>{overview.totalStudents}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="col-lg-2">
-                    <select className="form-select mb-3 p-2" onChange={handleExportChange}>
-                      <option value="" selected disabled>Export data</option>
-                      <option value="excel">Excel</option>
-                      <option value="pdf">PDF</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="chart-container">
-                  {showStat == "opt1" ? <Line
-                    data={lineChartData}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      scales: {
-                        x: {
-                          beginAtZero: true
-                        },
-                        y: {
-                          beginAtZero: true
-                        }
-                      }
-                    }}
-                  />
-                    :
-                    showStat == "opt2" ? <Bar
-                      data={barChartDataAwarded}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                          x: {
-                            beginAtZero: true
-                          },
-                          y: {
-                            beginAtZero: true
-                          }
-                        }
-                      }}
-                    /> :
-                      <Bar
-                        data={barChartDataDeducted}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          scales: {
-                            x: {
-                              beginAtZero: true
-                            },
-                            y: {
-                              beginAtZero: true
-                            }
-                          }
-                        }}
-                      />
-                  }
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <h3>Recent merit points activities</h3>
-                <div className="card shadow-sm p-3 mb-2 rounded">
-                  {recentData.titles.map((title, index) => (
-                    <div key={index} className="card shadow-sm p-3 mb-2 rounded">
-                      <p className="fw-bold">{title}</p>
-                      <p className="fw-lighter fs-6">{recentData.diffInWordsList[index]}</p>
-                      <p>Reason: {recentData.ruleNames[index]}</p>
-                      <div className="collapse" id={`collapse${index}`}>
-                        <div>
-                          <p>Description: {recentData.descriptions[index]}</p>
-                          <p className="fw-lighter fs-6">{recentData.cardSignatures[index]}</p>
-                          <p className="fw-lighter fs-6">{recentData.formattedCreatedAt[index]}</p>
+                  <div className="row">
+                    <div className="col-md-10 mb-5">
+                      <h3>Statistics</h3>
+                      <div className="row">
+                        <div className="col-lg-10">
+                          <select className="form-select mb-3 p-2" onChange={handleSelectChange}>
+                            <option value="opt1" selected>Total merit points awarded & deducted by month</option>
+                            <option value="opt2">Most awarded merit points by category in month</option>
+                            <option value="opt3">Most deducted merit points by category in month</option>
+                          </select>
+                        </div>
+                        <div className="col-lg-2">
+                          <select className="form-select mb-3 p-2" onChange={handleExportChange}>
+                            <option value="" selected disabled>Export data</option>
+                            <option value="excel">Excel</option>
+                            <option value="pdf">PDF</option>
+                          </select>
                         </div>
                       </div>
-                      <p className="d-inline-flex gap-1">
-                        <button
-                          className="btn show-detail-btn mt-3"
-                          type="button"
-                          data-bs-toggle="collapse"
-                          data-bs-target={`#collapse${index}`}
-                          aria-expanded="false"
-                          aria-controls={`collapse${index}`}>
-                          Show details
-                        </button>
-                      </p>
+                      <div className="chart-container">
+                        {showStat == "opt1" ? <Line
+                          data={lineChartData}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                              x: {
+                                beginAtZero: true
+                              },
+                              y: {
+                                beginAtZero: true
+                              }
+                            }
+                          }}
+                        />
+                          :
+                          showStat == "opt2" ? <Bar
+                            data={barChartDataAwarded}
+                            options={{
+                              responsive: true,
+                              maintainAspectRatio: false,
+                              scales: {
+                                x: {
+                                  beginAtZero: true
+                                },
+                                y: {
+                                  beginAtZero: true
+                                }
+                              }
+                            }}
+                          /> :
+                            <Bar
+                              data={barChartDataDeducted}
+                              options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                  x: {
+                                    beginAtZero: true
+                                  },
+                                  y: {
+                                    beginAtZero: true
+                                  }
+                                }
+                              }}
+                            />
+                        }
+                      </div>
                     </div>
-                  ))}
+                  </div>
+                </div>
+                <div className="col-md-3">
+                  <div className="p-3" style={{
+                    maxHeight: "100vh", 
+                    overflowY: "auto"
+                  }}>
+                    <div>
+                      <h3>Recent merit points activities</h3>
+                      <div className="card shadow-sm p-3 mb-2 rounded">
+                        {recentData.titles.map((title, index) => (
+                          <div key={index} className="card shadow-sm p-3 mb-2 rounded">
+                            <p className="fw-bold">{title}</p>
+                            <p className="fw-lighter fs-6">{recentData.diffInWordsList[index]}</p>
+                            <p>Reason: {recentData.ruleNames[index]}</p>
+                            <div className="collapse" id={`collapse${index}`}>
+                              <div>
+                                <p>Description: {recentData.descriptions[index]}</p>
+                                <p className="fw-lighter fs-6">{recentData.cardSignatures[index]}</p>
+                                <p className="fw-lighter fs-6">{recentData.formattedCreatedAt[index]}</p>
+                              </div>
+                            </div>
+                            <p className="d-inline-flex gap-1">
+                              <button
+                                className="btn show-detail-btn mt-3"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target={`#collapse${index}`}
+                                aria-expanded="false"
+                                aria-controls={`collapse${index}`}>
+                                Show details
+                              </button>
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
