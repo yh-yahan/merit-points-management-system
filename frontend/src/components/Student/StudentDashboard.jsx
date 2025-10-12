@@ -64,19 +64,19 @@ function StudentDashboard() {
           <div>
             <div className="row gx-4">
               <div className="col-sm-4">
-                <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+                <div className="card shadow-sm p-3 mb-5 rounded">
                   <p className="fw-lighter fs-6">Total points</p>
                   <p>{totalPoints}</p>
                 </div>
               </div>
               <div className="col-sm-4">
-                <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+                <div className="card shadow-sm p-3 mb-5 rounded">
                   <p className="fw-lighter fs-6">Total points awarded this month</p>
                   <p>{monthlyPointsAwarded}</p>
                 </div>
               </div>
               <div className="col-sm-4">
-                <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+                <div className="card shadow-sm p-3 mb-5 rounded">
                   <p className="fw-lighter fs-6">Total points deducted this month</p>
                   <p>{monthlyPointsDeducted}</p>
                 </div>
@@ -85,7 +85,7 @@ function StudentDashboard() {
             <div>
               <h3>My recent point activities</h3>
               {recentActivities.titles.map((title, index) => (
-                <div key={index} className="card shadow-sm p-3 mb-2 bg-white rounded">
+                <div key={index} className="card shadow-sm p-3 mb-2 rounded">
                   <p className="fw-bold">{title}</p>
                   <p className="fw-lighter fs-6">{recentActivities.diffInWordsList[index]}</p>
                   <p>Reason: {recentActivities.ruleNames[index]}</p>

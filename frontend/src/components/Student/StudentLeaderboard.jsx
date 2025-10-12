@@ -25,7 +25,7 @@ function StudentLeaderboard() {
         setCurrentClass(data.studentClass);
       }
       catch (err) {
-        if (err.response.status === 403){
+        if (err.response.status === 403) {
           setLeaderboard({
             students: []
           });
@@ -60,22 +60,26 @@ function StudentLeaderboard() {
       </div>
       <div className="container mt-3">
         <div className="row d-flex">
-        { error && <div className="alert alert-danger me-5 mb-5">{error}</div> }
-        { leaderboard.students.length === 0 && <p className="text-danger">No data available</p>}
+          {error && <div className="alert alert-danger me-5 mb-5">{error}</div>}
+          {leaderboard.students.length === 0 && <p className="text-danger">No data available</p>}
           {
             leaderboard.students.map((student) => (
               <div
                 className="col-12 d-flex align-items-center py-4 px-3"
-                style={{ backgroundColor: student.is_current_user ? "#e8e8e8" : "" }}
+                style={{
+                  backgroundColor: student.is_current_user
+                    ? "rgba(var(--bs-primary-rgb), 0.1)" 
+                    : "transparent"
+                }}
               >
                 <div className="me-2" style={{ width: '50px' }}>
                   {
                     student.rank == 1 ? <img className="img-fluid" src={badge1} /> :
-                    student.rank == 2 ? <img className="img-fluid" src={badge2} /> :
-                    student.rank == 3 ? <img className="img-fluid" src={badge3} /> :
-                    <div className="ms-3" style={{ width: '40px' }}>
-                      <span>{student.rank}</span>
-                    </div>
+                      student.rank == 2 ? <img className="img-fluid" src={badge2} /> :
+                        student.rank == 3 ? <img className="img-fluid" src={badge3} /> :
+                          <div className="ms-3" style={{ width: '40px' }}>
+                            <span>{student.rank}</span>
+                          </div>
                   }
                 </div>
                 <div className="flex-grow-1">

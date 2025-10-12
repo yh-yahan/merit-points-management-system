@@ -44,7 +44,7 @@ function TeacherDashboard() {
           <div>
             <h3>Recent merit points activities</h3>
             {recentData.titles.map((title, index) => (
-              <div key={index} className="card shadow-sm p-3 mb-2 bg-white rounded">
+              <div key={index} className="card shadow-sm p-3 mb-2 rounded">
                 <p className="fw-bold">{title}</p>
                 <p className="fw-lighter fs-6">{recentData.diffInWordsList[index]}</p>
                 <p>Reason: {recentData.ruleNames[index]}</p>

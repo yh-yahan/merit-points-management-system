@@ -78,7 +78,7 @@ function AdminAcademicStructure() {
 
     return (
       <div className="popup d-flex justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50">
-        <div className="popup-content p-4 bg-white rounded shadow">
+        <div className="popup-content p-4 rounded shadow">
           <h5>Confirm deletion</h5>
           <p>Are you sure you want to delete the {entityLabel} '{itemName}'?</p>
           <p className="fw-light text-danger">
@@ -223,7 +223,7 @@ function AdminAcademicStructure() {
       {
         deletionError &&
         <div className="popup d-flex justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50">
-          <div className="popup-content p-4 bg-white rounded shadow">
+          <div className="popup-content p-4 rounded shadow">
             <h5>Error</h5>
             <p className="text-danger">{deletionError}</p>
             <div className="d-flex justify-content-end">

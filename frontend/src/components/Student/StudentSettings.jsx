@@ -404,7 +404,7 @@ function StudentSettings({ setIsLoggedIn }) {
       {/* Password update confirmation */}
       {passwordUpdateConfirmation && (
         <div className="popup d-flex justify-content-center align-items-center">
-          <div className="popup-content p-4 bg-white rounded shadow">
+          <div className="popup-content p-4 rounded shadow">
             <h5>Confirm password update</h5>
             <p>Are you sure you want to update your password?</p>
             <p className="fw-light fst-italic text-danger">You will be automatically logged out once you updated your password.</p>

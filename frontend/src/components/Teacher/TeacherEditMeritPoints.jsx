@@ -208,9 +208,9 @@ function TeacherEditMeritPoints() {
           />
           {search && filteredStudents.length > 0 && (
             <>
-              {searchError && <p className="text-danger mt-1 bg-white rounded-top shadow py-3 px-2">{searchError}</p>}
+              {searchError && <p className="text-danger mt-1 rounded-top shadow py-3 px-2">{searchError}</p>}
               {!searchError && (<ul
-                className="list-group mt-1 bg-white rounded-top shadow"
+                className="list-group mt-1 rounded-top shadow"
                 ref={listRef}
               >
                 {filteredStudents.map((student, index) => (
@@ -249,7 +249,7 @@ function TeacherEditMeritPoints() {
                   </button>
                 </h2>
                 <div id="collapseZero" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
-                  <div className="card shadow-sm p-3 mb-2 bg-white rounded">
+                  <div className="card shadow-sm p-3 mb-2 rounded">
                     {studentTransaction.titles.map((title, index) => (
                       <div key={index}>
                         <p className="fw-bold">{title}</p>

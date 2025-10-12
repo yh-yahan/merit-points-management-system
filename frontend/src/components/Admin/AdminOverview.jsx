@@ -260,27 +260,27 @@ function Overview() {
           <>
             <div className="row gx-4">
               <div className="col-sm-3">
-                <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+                <div className="card shadow-sm p-3 mb-5 rounded">
                   <p className="fw-lighter fs-6">Total points awarded this month</p>
                   <p>{overview.totalAwarded}</p>
                 </div>
               </div>
 
               <div className="col-sm-3">
-                <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+                <div className="card shadow-sm p-3 mb-5 rounded">
                   <p className="fw-lighter fs-6">Total points deducted this month</p>
                   <p>{overview.totalDeducted}</p>
                 </div>
               </div>
 
               <div className="col-sm-3">
-                <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+                <div className="card shadow-sm p-3 mb-5 rounded">
                   <p className="fw-lighter fs-6">Average points per student</p>
                   <p>{overview.avgPoint}</p>
                 </div>
               </div>
               <div className="col-sm-3">
-                <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+                <div className="card shadow-sm p-3 mb-5 rounded">
                   <p className="fw-lighter fs-6">Total students</p>
                   <p>{overview.totalStudents}</p>
                 </div>
@@ -359,9 +359,9 @@ function Overview() {
             <div>
               <div>
                 <h3>Recent merit points activities</h3>
-                <div className="card shadow-sm p-3 mb-2 bg-white rounded">
+                <div className="card shadow-sm p-3 mb-2 rounded">
                   {recentData.titles.map((title, index) => (
-                    <div key={index} className="card shadow-sm p-3 mb-2 bg-white rounded">
+                    <div key={index} className="card shadow-sm p-3 mb-2 rounded">
                       <p className="fw-bold">{title}</p>
                       <p className="fw-lighter fs-6">{recentData.diffInWordsList[index]}</p>
                       <p>Reason: {recentData.ruleNames[index]}</p>

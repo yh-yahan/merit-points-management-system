@@ -60,6 +60,14 @@ function App() {
     getPrimaryColor();
   }, []);
 
+  const darkTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+  if (darkTheme.matches) {
+    document.documentElement.setAttribute("data-bs-theme", "dark");
+  } else {
+    document.documentElement.setAttribute("data-bs-theme", "light");
+  }
+
   if (loading) {
     return (
       <div
@@ -104,7 +112,7 @@ function App() {
                   element={<Login setIsLoggedIn={setIsLoggedIn}
                     setUserRole={setUserRole}
                     userRole={userRole}
-                    setUser={setUser} 
+                    setUser={setUser}
                     isLoggedIn={isLoggedIn} />}
                 />
                 <Route

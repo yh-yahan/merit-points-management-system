@@ -10,12 +10,12 @@ body, *{
 button {
   background-color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
-  color: white !important;
+  color: var(--bs-body-bg) !important;
 }
 
 .btn-danger {
   background-color: #dc4c64 !important;
-  color: white !important;
+  color: var(--bs-body-bg) !important;
   border: none;
 }
 
@@ -41,8 +41,8 @@ button {
 }
 
 a {
-  color: black !important;
-  background-color: white !important;
+  color: var(--bs-body-link-color) !important;
+  background-color: var(--bs-body-bg) !important;
 }
 
 a:hover {
@@ -50,8 +50,8 @@ a:hover {
 }
 
 .link-style {
-  color: black !important;
-  background-color: white !important;
+  color: var(--bs-body-link-color) !important;
+  background-color: var(--bs-body-bg) !important;
   border: none;
 }
 

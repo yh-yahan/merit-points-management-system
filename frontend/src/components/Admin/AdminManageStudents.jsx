@@ -162,7 +162,7 @@ function AdminManageStudents() {
         {error && <div className="alert alert-danger">{error}</div>}
         {!error && <div className="row gx-4">
           <div className="col-sm-3">
-            <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+            <div className="card shadow-sm p-3 mb-5 rounded">
               <p className="fw-lighter fs-6">Total students</p>
               <p>{totalStudents}</p>
             </div>
@@ -332,7 +332,7 @@ function AdminManageStudents() {
       {
         showDeleteStudentConfirm && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Confirm deletion</h5>
               <p>Are you sure you want to delete the student '{selectedStudent?.name}'?</p>
               <p className="fw-light text-danger">This action will permanently delete the user and cannot be undone.</p>
@@ -346,7 +346,7 @@ function AdminManageStudents() {
       }
       {deletionError &&
         <div className="popup d-flex justify-content-center align-items-center">
-          <div className="popup-content p-4 bg-white rounded shadow">
+          <div className="popup-content p-4 rounded shadow">
             <h5>Error</h5>
             <p className="text-danger">{deletionError}</p>
             <div className="d-flex justify-content-end">

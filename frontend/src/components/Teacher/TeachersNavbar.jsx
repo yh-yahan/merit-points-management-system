@@ -105,7 +105,7 @@ function TeachersNavbar({ setIsLoggedIn, setUser, setUserRole }) {
       {
         popup && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Confirm Logout</h5>
               <p>Are you sure you want to logout?</p>
               <div className="d-flex justify-content-end">
@@ -120,7 +120,7 @@ function TeachersNavbar({ setIsLoggedIn, setUser, setUserRole }) {
       {
         logoutError &&
         <div className="popup d-flex justify-content-center align-items-center">
-          <div className="popup-content p-4 bg-white rounded shadow">
+          <div className="popup-content p-4 rounded shadow">
             <h5>Error</h5>
             <p className="text-danger">{logoutError}</p>
             <div className="d-flex justify-content-end">

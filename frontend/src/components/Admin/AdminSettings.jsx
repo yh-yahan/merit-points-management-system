@@ -891,7 +891,7 @@ function AdminSettings({ setIsLoggedIn }) {
           {
             passwordUpdateConfirmation && (
               <div className="popup d-flex justify-content-center align-items-center">
-                <div className="popup-content p-4 bg-white rounded shadow">
+                <div className="popup-content p-4 rounded shadow">
                   <h5>Confirm password update</h5>
                   <p>Are you sure you want to update your password?</p>
                   <p className="fw-light fst-italic text-danger">You will be automatically logged out once you updated your password.</p>
@@ -912,7 +912,7 @@ function AdminSettings({ setIsLoggedIn }) {
       {
         pointThresholdDeleteConfirm && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Confirm deletion</h5>
               <p>Are you sure you want to delete this point threshold?</p>
               <p className="fw-light text-danger">This action will permanently delete the rule and cannot be undone.</p>
@@ -926,7 +926,7 @@ function AdminSettings({ setIsLoggedIn }) {
       }
       {
         changeSettingsError && <div className="popup d-flex justify-content-center align-items-center">
-          <div className="popup-content p-4 bg-white rounded shadow">
+          <div className="popup-content p-4 rounded shadow">
             <h5>Error</h5>
             <p className="text-danger">{changeSettingsError}</p>
             <div className="d-flex justify-content-end">
@@ -939,7 +939,7 @@ function AdminSettings({ setIsLoggedIn }) {
       }
       {
         pointThresholdSaveError && <div className="popup d-flex justify-content-center align-items-center">
-        <div className="popup-content p-4 bg-white rounded shadow">
+        <div className="popup-content p-4 rounded shadow">
           <h5>Error</h5>
           <p className="text-danger">{pointThresholdSaveError}</p>
           <div className="d-flex justify-content-end">
@@ -954,7 +954,7 @@ function AdminSettings({ setIsLoggedIn }) {
       }
       {
         pointThresholdDeleteError && <div className="popup d-flex justify-content-center align-items-center">
-        <div className="popup-content p-4 bg-white rounded shadow">
+        <div className="popup-content p-4 rounded shadow">
           <h5>Error</h5>
           <p className="text-danger">{pointThresholdDeleteError}</p>
           <div className="d-flex justify-content-end">
@@ -968,7 +968,7 @@ function AdminSettings({ setIsLoggedIn }) {
       }
       {
         removeExcludedStudentError && <div className="popup d-flex justify-content-center align-items-center">
-        <div className="popup-content p-4 bg-white rounded shadow">
+        <div className="popup-content p-4 rounded shadow">
           <h5>Error</h5>
           <p className="text-danger">{removeExcludedStudentError}</p>
           <div className="d-flex justify-content-end">

@@ -119,7 +119,7 @@ function AdminInvitationCode() {
       )}
       { popup &&
         <div className="popup d-flex justify-content-center align-items-center">
-          <div className="popup-content p-4 bg-white rounded shadow">
+          <div className="popup-content p-4 rounded shadow">
             <h5>Confirm deletion</h5>
             <p>Are you sure you want to delete the invitation code '{invitationCodeToDelete.code}'?</p>
             <p className="fw-light text-danger">This action will permanently delete the invitation code and cannot be undone.</p>
@@ -132,7 +132,7 @@ function AdminInvitationCode() {
       }
       { deletionError && 
         <div className="popup d-flex justify-content-center align-items-center">
-          <div className="popup-contend p-4 bg-white rounded shadow">
+          <div className="popup-contend p-4 rounded shadow">
             <h5>Error</h5>
             <p className="text-danger">{deletionError}</p>
             <div className="d-flex justify-content-end">

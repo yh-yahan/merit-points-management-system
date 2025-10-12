@@ -416,7 +416,7 @@ function AdminMeritPointRules() {
       {
         popup && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Confirm deletion</h5>
               <p>Are you sure you want to delete the rule '{ruleToDelete?.name}'?</p>
               <p className="fw-light text-danger">This action will permanently delete the rule and cannot be undone.</p>
@@ -432,7 +432,7 @@ function AdminMeritPointRules() {
       {
         addRuleDupErr && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Duplicate rules</h5>
               <p className="text-danger">{addRuleDupErr}</p>
               <div className="d-flex justify-content-end">
@@ -456,7 +456,7 @@ function AdminMeritPointRules() {
       {
         addRuleErr && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Error</h5>
               <p className="text-danger">{addRuleErr}</p>
               <div className="d-flex justify-content-end">
@@ -473,7 +473,7 @@ function AdminMeritPointRules() {
       {
         editRuleError && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Error</h5>
               <p className="text-danger">{editRuleError}</p>
               <div className="d-flex justify-content-end">
@@ -489,7 +489,7 @@ function AdminMeritPointRules() {
       {
         importFileError && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Error</h5>
               <p className="text-danger">{importFileError}</p>
               <div className="d-flex justify-content-end">
@@ -502,7 +502,7 @@ function AdminMeritPointRules() {
       {
         deletionError && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Error</h5>
               <p className="text-danger">{deletionError}</p>
               <div className="d-flex justify-content-end">

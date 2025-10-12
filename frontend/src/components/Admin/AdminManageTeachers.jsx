@@ -59,7 +59,7 @@ function AdminManageTeachers() {
         <div className="row gx-4">
           <div className="col-sm-6">
             { error && <div className="alert alert-danger">{error}</div>}
-            { !error && <div className="card shadow-sm p-3 mb-5 bg-white rounded">
+            { !error && <div className="card shadow-sm p-3 mb-5 rounded">
               <p className="fw-lighter fs-6">Total teachers</p>
               <p>{totalTeachers}</p>
             </div> }
@@ -77,7 +77,7 @@ function AdminManageTeachers() {
           {profilesReview.length > 0 ?
             profilesReview.map((profile, index) => (
               <div className="col-sm-6 col-md-4 col-lg-3">
-                <div className="card shadow-sm p-3 mb-5 bg-white rounded text-center">
+                <div className="card shadow-sm p-3 mb-5 rounded text-center">
                   <div className="d-flex justify-content-center mb-2">
                     <img
                       src={profile.profilePic ? `${import.meta.env.VITE_BACKEND_URL}/storage/${profile.profilePic}` : "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQAuwMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAAAQIDBAUH/8QAKBABAAICAAUDBAMBAAAAAAAAAAECAxEEEiExQVFhkRMycYEiUqEU/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD7iAAAAAAAACs3rHkFhn9SPST6vsDQZ/U9YTGSoLiInfZIAAAAAAAAAAAAAAClrxHTyre/iFATNpnugAAAAAIlpXJ/ZmA3idpYVtNZbRO43AJAAAAAAAAAAZ5LeI/a1p5YYgAAAdgBhk4mlelY3Pt2Z/8AVfxFdfgHWOavFddWr09Yb1tW8brMSCwAC1bcsqgOiBnit4aAAAAAAAAAyyTudeFC3WZkAAAc3FZZ3yR47ul50zuZnzIIAVBfFknHbcdvMKAPRrMTWLR2lLHhZ3j1PiWyKAAROpiW8TuNsGuOd1BcAAAAABFu0pRbtIMAAAARPaXnPSefkryX5Z8AqAqAAOvhPsn8t2fD15MUb89WiKAANMXaWa+LyDUAAAAABEpAc89xa8atKoAADLPijJG4+6P9ak9O4POmJrOpjUoehbkvH8uWWc4cM+fiwON0YMG55rxqI7e7alMVJ6cv7lfcesfIJAAAAa4vtZN6xqsAkAAAAAAAFMkdNx4ZOhjeup9gVPG56RA5eLyfy5InpHcDJxMzuMfSPVhNpnvMz+UCh0OgCHQ7dugA0x5r087j0l2Y71yV3WfzDz1sd5pbmj9or0BETuImO0pjuC2ON29obK0rqulgAAAAAAAAETG41KQGFomO7zbzu8z6y9i0bjTzs/C3xzM1/lX/AGAc4CoAAAAAvjxXyzqkb9wdXCzvFEek6dNKa6q8PgjDXW9zLZFAAAAAAAAAAAAEJAY5eGx5OuuWfWHLfgrx9ton89HoAPKtw+WvfHb9dVfpZP6W+HraSDyIw5Znpjt8NacJlt3iKx7y9I0Dlx8FSOt55p+IdMVisaiIiPZIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//Z"}
@@ -109,7 +109,7 @@ function AdminManageTeachers() {
       {
         showDeleteTeacherConfirm && (
           <div className="popup d-flex justify-content-center align-items-center">
-            <div className="popup-content p-4 bg-white rounded shadow">
+            <div className="popup-content p-4 rounded shadow">
               <h5>Confirm deletion</h5>
               <p>Are you sure you want to delete the teacher '{selectedTeacher?.name}'?</p>
               <p className="fw-light text-danger">This action will permanently delete the user and cannot be undone.</p>
@@ -124,7 +124,7 @@ function AdminManageTeachers() {
       {
         deletionError && 
         <div className="popup d-flex justify-content-center align-items-center">
-          <div className="popup-content p-4 bg-white rounded shadow">
+          <div className="popup-content p-4 rounded shadow">
             <h5>Error</h5>
             <p className="text-danger">{deletionError}</p>
             <div className="d-flex justify-content-end">
