@@ -174,9 +174,18 @@ class AdminController extends Controller
                     'total_deducted' => $item->total_deducted,
                 ];
             });
-        // Convert the data into separate arrays for total_awarded and total_deducted
-        $totalAwarded = array_column($monthlyPoints, 'total_awarded');
-        $totalDeducted = array_column($monthlyPoints, 'total_deducted');
+        $totalAwarded = array_fill(0, 12, 0);
+        $totalDeducted = array_fill(0, 12, 0);
+
+        foreach ($monthlyPoints as $month => $data) {
+            $monthIndex = (int)$month - 1;
+            $totalAwarded[$monthIndex] = (int)$data['total_awarded'];
+            $totalDeducted[$monthIndex] = (int)$data['total_deducted'];
+        }
+
+        $currentMonthIndex = date('n') - 1;
+        $totalAwarded[$currentMonthIndex] = (int)$totalAddedPoints;
+        $totalDeducted[$currentMonthIndex] = (int)$totalDeductedPoints;
 
         // bar chart(top 5 most awarded point rules every mouth)
         $topAwardedRaw = Transaction::select(

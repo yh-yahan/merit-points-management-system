@@ -49,13 +49,13 @@ function Overview() {
           datasets: [
             {
               label: 'Total merit point awarded',
-              data: data[1].totalAwarded,
+              data: data[1].totalAwarded.slice(0, currentMonthIndex + 1),
               borderColor: "rgba(54, 162, 235, 0.5)",
               backgroundColor: "rgba(54, 162, 235, 0.5)",
             },
             {
               label: 'Total merit point deducted',
-              data: data[1].totalDeducted,
+              data: data[1].totalDeducted.slice(0, currentMonthIndex + 1),
               borderColor: 'rgba(255, 99, 132, 0.5)',
               backgroundColor: 'rgba(255, 99, 132, 0.5)',
             }
