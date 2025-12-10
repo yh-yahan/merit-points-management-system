@@ -70,13 +70,15 @@ class AdminController extends Controller
             'validity_period' => "required",
         ]);
 
-        if ($fields['validity_period'] == "oneDay") {
-            $validUntil = Carbon::now()->addDay();
-        } else if ($fields['validity_period'] == "twoDays") {
-            $validUntil = Carbon::now()->addDays(2);
-        } else if ($fields['validity_period'] == "oneWeek") {
-            $validUntil = Carbon::now()->addWeek();
-        }
+        $validityMap = [
+            'oneDay'   => ['days' => 1, 'display' => '1 Day'],
+            'twoDays'  => ['days' => 2, 'display' => '2 Days'],
+            'oneWeek'  => ['days' => 7, 'display' => '1 Week'],
+        ];
+        $period = $validityMap[$fields['validity_period']] ?? $validityMap['oneWeek'];
+        $validUntil = Carbon::now()
+            ->addDays($period['days'])
+            ->endOfDay();
 
         // check who created the invitation code
         $token = $request->cookie('auth_token');
@@ -115,10 +117,11 @@ class AdminController extends Controller
 
         // store in database
         $invitationCode = InvitationCodes::create([
-            'code' => $code,
+            'code'          => $code,
             'for_user_type' => $fields['for_user_type'],
-            'created_by' => $createdBy,
-            'valid_until' => $validUntil
+            'created_by'    => $createdBy,
+            'valid_until'   => $validUntil,
+            'validity_display' => $period['display'],
         ]);
 
         $admin = InvitationCodes::with('admin')->find($createdBy);

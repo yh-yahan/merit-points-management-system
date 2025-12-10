@@ -3,7 +3,7 @@ import api from '../../api';
 
 function AdminCreateInvitationCode() {
   const [role, setRole] = useState('student');
-  const [validatyPeriod, setValidatyPeriod] = useState('twoDays');
+  const [validityPeriod, setValidityPeriod] = useState('oneDay');
   const [code, setCode] = useState('');
   const [isHovered, setIsHovered] = useState(false);
   const [error, setError] = useState("");
@@ -19,7 +19,7 @@ function AdminCreateInvitationCode() {
     try {
       const response = await api.post('/admin/create-inv-code', {
         'for_user_type': role,
-        'validity_period': validatyPeriod
+        'validity_period': validityPeriod
       });
       const code = response.data.code;
       setCode(code);
@@ -89,6 +89,7 @@ function AdminCreateInvitationCode() {
                     <select
                       className="form-select"
                       id="roleSelect"
+                      value={role}
                       onChange={e => setRole(e.target.value)}>
                       <option selected value="student">Student</option>
                       <option value="teacher">Teacher</option>
@@ -98,8 +99,9 @@ function AdminCreateInvitationCode() {
                   <div className="form-floating mb-3">
                     <select
                       className="form-select"
-                      id="validatySelect"
-                      onChange={e => setValidatyPeriod(e.target.value)}>
+                      id="validatySelect" 
+                      value={validityPeriod}
+                      onChange={e => setValidityPeriod(e.target.value)}>
                       <option selected value="oneDay">1 Day</option>
                       <option value="twoDays">2 Days</option>
                       <option value="oneWeek">1 Week</option>

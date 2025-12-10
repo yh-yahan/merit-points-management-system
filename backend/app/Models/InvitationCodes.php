@@ -13,7 +13,8 @@ class InvitationCodes extends Model
         'code',
         'for_user_type',
         'created_by',
-        'valid_until'
+        'valid_until', 
+        'validity_display', 
     ];
 
     public function admin()

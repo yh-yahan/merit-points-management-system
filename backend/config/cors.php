@@ -20,6 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => ['https://merit-point-management-system.netlify.app'],
+    // 'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 

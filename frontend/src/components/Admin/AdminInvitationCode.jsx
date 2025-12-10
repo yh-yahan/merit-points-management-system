@@ -43,23 +43,6 @@ function AdminInvitationCode() {
     }
   }
 
-  function calculateValidityPeriod(createdAt, validUntil) {
-    const createdDate = new Date(createdAt);
-    const validUntilDate = new Date(validUntil);
-    const diffTime = Math.abs(validUntilDate - createdDate);
-    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays == 1) {
-      return "1 Day";
-    }
-    else if (diffDays == 2) {
-      return "2 Days";
-    }
-    else if (diffDays == 7) {
-      return "1 Week";
-    }
-  }
-
   function handleDeleteClick(id) {
     setInvitationCodeId(id);
     setPopup(true);
@@ -95,13 +78,11 @@ function AdminInvitationCode() {
             <tbody>
               {
                 invitationCodes.map(invitationCode => {
-                  const validity = calculateValidityPeriod(invitationCode.created_at, invitationCode.valid_until);
-
                   return (
                     <tr key={invitationCode.id}>
                       <td>{invitationCode.code}</td>
                       <td>{invitationCode.for_user_type}</td>
-                      <td>{validity}</td>
+                      <td>{invitationCode.validity_display}</td>
                       <td>{invitationCode.created_at}</td>
                       <td>{invitationCode.valid_until}</td>
                       <td>
