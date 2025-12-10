@@ -474,7 +474,7 @@ class AdminController extends Controller
             'student_ids.*' => 'integer',
             'class' => 'nullable|string',
             'stream' => 'nullable|string',
-            'status' => 'nullable|string|in:Active,Inactive,Graduated',
+            'status' => 'nullable|string|in:active,inactive,graduated',
         ]);
 
         $updates = [];

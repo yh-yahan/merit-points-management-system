@@ -92,7 +92,7 @@ class StudentsController extends Controller
                 app('App\Http\Controllers\AdminController')->Notifications($notification);
 
                 $response = [
-                    'students' => $students, 
+                    'students' => $students,
                 ];
 
                 return response($response, 201)->withCookie($cookie);
@@ -198,153 +198,137 @@ class StudentsController extends Controller
     {
         $token = $request->cookie('auth_token');
         $accessToken = PersonalAccessToken::findToken($token);
+
+        if (!$accessToken || !$accessToken->tokenable) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $studentId = $accessToken->tokenable_id;
+        $currentStudent = Students::find($studentId);
+
+        if (!$currentStudent || $currentStudent->status !== 'active') {
+            return response()->json(['message' => 'Student not active or not found'], 403);
+        }
 
         $disabled = AdminSetting::where('setting_name', 'disable_leaderboard')->value('setting_value');
-        $allowStudentOptOutLeaderboard = AdminSetting::where('setting_name', 'allow_students_to_opt_out_leaderboard')->value('setting_value');
+        if ($disabled === 'true') {
+            return response()->json(['message' => 'Leaderboard is disabled']);
+        }
+
+        $allowOptOut = AdminSetting::where('setting_name', 'allow_students_to_opt_out_leaderboard')
+            ->value('setting_value');
+
         $optedOutStudentIds = [];
-        if ($allowStudentOptOutLeaderboard == 'true') {
-            $optedOutStudentIds = StudentSetting::where('opt_out_lb', 1)
-                ->pluck('student_id');
+        if ($allowOptOut === 'true') {
+            $optedOutStudentIds = StudentSetting::where('opt_out_lb', 1)->pluck('student_id')->toArray();
         }
 
-        if ($disabled == "true") {
-            return response()->json([
-                'message' => 'Leaderboard is disabled'
-            ]);
-        }
-
-        $studentIds = Students::pluck('id')->toArray();
-        $studentSettings = StudentSetting::whereIn('student_id', $studentIds)->get()->keyBy('student_id');
         $excludedStudentIds = StudentExclusion::pluck('student_id')->toArray();
+
+        $blockedStudentIds = array_merge($excludedStudentIds, $optedOutStudentIds);
+
         $leaderboardType = $request->input('leaderboard', 'alltime');
-        $classFilter = $request->input('classfilter', 'all');
+        $classFilter     = $request->input('classfilter', 'all');
+        $leaderboardVisibility = AdminSetting::where('setting_name', 'leaderboard_visibility')
+            ->value('setting_value');
 
-        $leaderboardVisibility = AdminSetting::where('setting_name', 'leaderboard_visibility')->value('setting_value');
-        $leaderboard = [];
+        $activeStudentIds = Students::where('status', 'active')->pluck('id');
+        $studentSettings = StudentSetting::whereIn('student_id', $activeStudentIds)
+            ->get()
+            ->keyBy('student_id');
 
-        if ($leaderboardType == 'alltime') {
-            $allTimeLeaderboard = Students::with('points')
+        $leaderboard = collect();
+
+        if ($leaderboardType === 'alltime') {
+            $leaderboard = Students::where('status', 'active')
+                ->whereNotIn('id', $blockedStudentIds)
                 ->withSum('points as total_points', 'total_points')
-                ->whereNotIn('id', $excludedStudentIds)
-                ->whereNotIn('id', $optedOutStudentIds)
-                ->when($classFilter !== 'all', function ($query) use ($classFilter) {
-                    $query->where('class', $classFilter);
-                })
-                ->orderBy('total_points', 'desc')
+                ->when($classFilter !== 'all', fn($q) => $q->where('class', $classFilter))
+                ->orderByDesc('total_points')
                 ->get()
-                ->map(function ($student) use ($leaderboardVisibility, $studentId, $studentSettings) {
-                    $field = $this->getStudentDisplayName($student, $leaderboardVisibility, $studentSettings);
+                ->map(function ($student) use ($leaderboardVisibility, $studentSettings, $studentId) {
+                    $displayName = $this->getStudentDisplayName($student, $leaderboardVisibility, $studentSettings);
 
                     return [
-                        'id' => $student->id,
-                        'name_or_username' => $field,
-                        'points' => $student->total_points ?? 0,
-                        'class' => $student->class,
+                        'id'              => $student->id,
+                        'name_or_username' => $displayName,
+                        'points'          => $student->total_points ?? 0,
+                        'class'           => $student->class,
                         'is_current_user' => $student->id == $studentId,
                     ];
-                });
-
-            $allTimeLeaderboard = $allTimeLeaderboard->map(function ($entry, $index) {
-                $entry['rank'] = $index + 1;
-                return $entry;
-            });
-
-            $leaderboard = $allTimeLeaderboard;
-        } elseif ($leaderboardType == 'weekly') {
-            $startOfWeek = Carbon::now()->startOfWeek();
-            $endOfWeek = Carbon::now()->endOfWeek();
-
-            $weeklyLeaderboard = Transaction::whereBetween('date', [$startOfWeek, $endOfWeek])
-                ->whereNotIn('receiver_id', $excludedStudentIds)
-                ->whereNotIn('receiver_id', $optedOutStudentIds)
-                ->groupBy('receiver_id')
-                ->select('receiver_id', DB::raw("
-          SUM(CASE 
-            WHEN operation_type = 'add' THEN points 
-            WHEN operation_type = 'deduct' THEN -points 
-            ELSE 0 
-          END) as total_points
-        "))
-                ->when($classFilter !== 'all', function ($query) use ($classFilter) {
-                    return $query->whereHas('student', function ($query) use ($classFilter) {
-                        $query->where('class', $classFilter);
-                    });
                 })
+                ->map(fn($entry, $index) => $entry + ['rank' => $index + 1]);
+        } elseif ($leaderboardType === 'weekly') {
+            $start = Carbon::now()->startOfWeek();
+            $end   = Carbon::now()->endOfWeek();
+
+            $data = Transaction::whereBetween('date', [$start, $end])
+                ->whereHas('student', fn($q) => $q->where('status', 'active'))
+                ->whereNotIn('receiver_id', $blockedStudentIds)
+                ->when($classFilter !== 'all', fn($q) => $q->whereHas('student', fn($qq) => $qq->where('class', $classFilter)))
+                ->groupBy('receiver_id')
+                ->selectRaw("
+                receiver_id,
+                SUM(CASE WHEN operation_type = 'add' THEN points WHEN operation_type = 'deduct' THEN -points ELSE 0 END) as total_points
+            ")
                 ->orderByDesc('total_points')
                 ->get();
 
-            $weeklyLeaderboard = $weeklyLeaderboard->map(function ($transaction, $key) use ($leaderboardVisibility, $studentId, $studentSettings) {
-                $student = Students::find($transaction->receiver_id);
-                $field = $this->getStudentDisplayName($student, $leaderboardVisibility, $studentSettings);
+            $leaderboard = $data->map(function ($row) use ($leaderboardVisibility, $studentSettings, $studentId) {
+                $student = Students::find($row->receiver_id);
+                if (!$student || $student->status !== 'active') return null;
+
+                $displayName = $this->getStudentDisplayName($student, $leaderboardVisibility, $studentSettings);
+
                 return [
                     'id' => $student->id,
-                    'name_or_username' => $field,
-                    'points' => $transaction->total_points,
+                    'name_or_username' => $displayName,
+                    'points' => (int) $row->total_points,
                     'class' => $student->class,
                     'is_current_user' => $student->id == $studentId,
                 ];
-            });
+            })
+                ->filter()
+                ->values()
+                ->map(fn($entry, $index) => $entry + ['rank' => $index + 1]);
+        } elseif ($leaderboardType === 'monthly') {
+            $start = Carbon::now()->startOfMonth();
+            $end   = Carbon::now()->endOfMonth();
 
-            $weeklyLeaderboard = $weeklyLeaderboard->map(function ($entry, $index) {
-                $entry['rank'] = $index + 1;
-                return $entry;
-            });
-
-            $leaderboard = $weeklyLeaderboard;
-        } elseif ($leaderboardType == 'monthly') {
-            $startOfMonth = Carbon::now()->startOfMonth();
-            $endOfMonth = Carbon::now()->endOfMonth();
-
-            $monthlyLeaderboard = Transaction::whereBetween('date', [$startOfMonth, $endOfMonth])
-                ->whereNotIn('receiver_id', $excludedStudentIds)
-                ->whereNotIn('receiver_id', $optedOutStudentIds)
+            $data = Transaction::whereBetween('date', [$start, $end])
+                ->whereHas('student', fn($q) => $q->where('status', 'active'))
+                ->whereNotIn('receiver_id', $blockedStudentIds)
+                ->when($classFilter !== 'all', fn($q) => $q->whereHas('student', fn($qq) => $qq->where('class', $classFilter)))
                 ->groupBy('receiver_id')
-                ->select('receiver_id', DB::raw("
-                        SUM(CASE 
-                            WHEN operation_type = 'add' THEN points 
-                            WHEN operation_type = 'deduct' THEN -points 
-                            ELSE 0 
-                        END) as total_points
-                    "))
-                ->when($classFilter !== 'all', function ($query) use ($classFilter) {
-                    return $query->whereHas('student', function ($query) use ($classFilter) {
-                        $query->where('class', $classFilter);
-                    });
-                })
+                ->selectRaw("
+                receiver_id,
+                SUM(CASE WHEN operation_type = 'add' THEN points WHEN operation_type = 'deduct' THEN -points ELSE 0 END) as total_points
+            ")
                 ->orderByDesc('total_points')
                 ->get();
 
-            $monthlyLeaderboard = $monthlyLeaderboard->map(function ($transaction, $key) use ($leaderboardVisibility, $studentId, $studentSettings) {
-                $student = Students::find($transaction->receiver_id);
-                $field = $this->getStudentDisplayName($student, $leaderboardVisibility, $studentSettings);
+            $leaderboard = $data->map(function ($row) use ($leaderboardVisibility, $studentSettings, $studentId) {
+                $student = Students::find($row->receiver_id);
+                if (!$student || $student->status !== 'active') return null;
+
+                $displayName = $this->getStudentDisplayName($student, $leaderboardVisibility, $studentSettings);
+
                 return [
-                    'id' => $student->id,
-                    'name_or_username' => $field,
-                    'points' => $transaction->total_points,
-                    'class' => $student->class,
+                    'id'              => $student->id,
+                    'name_or_username' => $displayName,
+                    'points'          => (int) $row->total_points,
+                    'class'           => $student->class,
                     'is_current_user' => $student->id == $studentId,
                 ];
-            });
-
-            $monthlyLeaderboard = $monthlyLeaderboard->map(function ($entry, $index) {
-                $entry['rank'] = $index + 1;
-                return $entry;
-            });
-
-            $leaderboard = $monthlyLeaderboard;
-
-            $studentClass = Students::find($studentId)->class;
-
-            return response()->json([
-                'students' => $leaderboard,
-                'studentClass' => $studentClass,
-            ]);
+            })
+                ->filter()
+                ->values()
+                ->map(fn($entry, $index) => $entry + ['rank' => $index + 1]);
         }
 
         return response()->json([
-            'students' => $leaderboard,
-            'studentClass' => Students::find($studentId)?->class ?? null,
+            'students'     => $leaderboard,
+            'studentClass' => $currentStudent->class,
         ]);
     }
 

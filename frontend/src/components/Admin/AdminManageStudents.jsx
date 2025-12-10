@@ -233,9 +233,9 @@ function AdminManageStudents() {
                       onChange={(e) => setChangeStatus(e.target.value)}
                     >
                       <option value="" disabled>Status</option>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Graduated">Graduated</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="graduated">Graduated</option>
                     </select></>}
 
                   <button

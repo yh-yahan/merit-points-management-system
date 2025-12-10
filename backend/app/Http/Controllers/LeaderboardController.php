@@ -40,38 +40,33 @@ class LeaderboardController extends Controller
         $leaderboardVisibility = AdminSetting::where('setting_name', 'leaderboard_visibility')->value('setting_value');
         $leaderboard = [];
 
+        $activeStudentsQuery = Students::where('status', 'active')
+            ->whereNotIn('id', $excludedStudentIds)
+            ->whereNotIn('id', $optedOutStudentIds);
+
         if ($leaderboardType == 'alltime') {
-            $allTimeLeaderboard = Students::with('points')
+            $leaderboard = $activeStudentsQuery->clone()
                 ->withSum('points as total_points', 'total_points')
-                ->whereNotIn('id', $excludedStudentIds)
-                ->whereNotIn('id', $optedOutStudentIds)
-                ->when($classFilter !== 'all', function ($query) use ($classFilter) {
-                    $query->where('class', $classFilter);
-                })
-                ->orderBy('total_points', 'desc')
+                ->when($classFilter !== 'all', fn($q) => $q->where('class', $classFilter))
+                ->orderByDesc('total_points')
                 ->get()
                 ->map(function ($student) use ($leaderboardVisibility, $studentSettings) {
-                    $field = $this->getStudentDisplayName($student, $leaderboardVisibility, $studentSettings);
+                    $displayName = $this->getStudentDisplayName($student, $leaderboardVisibility, $studentSettings);
 
                     return [
                         'id' => $student->id,
-                        'name_or_username' => $field,
+                        'name_or_username' => $displayName,
                         'points' => $student->total_points ?? 0,
                         'class' => $student->class,
                     ];
-                });
-
-            $allTimeLeaderboard = $allTimeLeaderboard->map(function ($entry, $index) {
-                $entry['rank'] = $index + 1;
-                return $entry;
-            });
-
-            $leaderboard = $allTimeLeaderboard;
+                })
+                ->map(fn($entry, $index) => $entry + ['rank' => $index + 1]);
         } elseif ($leaderboardType == 'weekly') {
             $startOfWeek = Carbon::now()->startOfWeek();
             $endOfWeek = Carbon::now()->endOfWeek();
 
             $weeklyLeaderboard = Transaction::whereBetween('date', [$startOfWeek, $endOfWeek])
+                ->whereHas('student', fn($q) => $q->where('status', 'active'))
                 ->whereNotIn('receiver_id', $excludedStudentIds)
                 ->whereNotIn('receiver_id', $optedOutStudentIds)
                 ->groupBy('receiver_id')
@@ -112,6 +107,7 @@ class LeaderboardController extends Controller
             $endOfMonth = Carbon::now()->endOfMonth();
 
             $monthlyLeaderboard = Transaction::whereBetween('date', [$startOfMonth, $endOfMonth])
+                ->whereHas('student', fn($q) => $q->where('status', 'active'))
                 ->whereNotIn('receiver_id', $excludedStudentIds)
                 ->whereNotIn('receiver_id', $optedOutStudentIds)
                 ->groupBy('receiver_id')
