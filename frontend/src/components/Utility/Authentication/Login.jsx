@@ -8,9 +8,7 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole, isLoggedIn }) {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
-
-  const [showDemoInfo, setShowDemoInfo] = useState(true);
-
+  
   const navigate = useNavigate();
 
   async function login(e) {
@@ -102,11 +100,8 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole, isLoggedIn }) {
                   <p className="mt-3">Don't have an account yet? <Link to="/signup">Sign up</Link></p>
                 </div>
               </div>
-              {showDemoInfo && (
                 <Alert
                   variant="info"
-                  dismissible
-                  onClose={() => setShowDemoInfo(false)}
                   className="mb-4"
                 >
                   <strong>Demo Accounts</strong>
@@ -116,7 +111,6 @@ function Login({ setIsLoggedIn, setUserRole, setUser, userRole, isLoggedIn }) {
                     <li>Student → <code>studentEmail@example.com</code> / <code>studentPassword</code></li>
                   </ul>
                 </Alert>
-              )}
             </div>
           </div>
         </div>
