@@ -1,7 +1,7 @@
-# Merit points management system
+# Merit/demerit point management system
 
 ## Overview
-This is a website designed for school who use the merit point system to track and manage student's merit points.
+A web app designed for school that uses merit/demerit point system to track and manage student's merit points.
 
 ## Live Demo
 Demo link: https://merit-point-management-system.netlify.app
