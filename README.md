@@ -3,6 +3,9 @@
 ## Overview
 A web app designed for school that uses merit/demerit point system to track and manage student's merit points.
 
+<img width="1202" height="906" alt="image" src="https://github.com/user-attachments/assets/a4480442-3ed0-4df6-a403-8157444db91e" />
+<img width="1194" height="899" alt="image" src="https://github.com/user-attachments/assets/32c4b131-1c0b-4174-8f13-5acfae85ed32" />
+
 ## Live Demo
 Demo link: https://merit-point-management-system.netlify.app
 
