@@ -517,7 +517,7 @@ function AdminSettings({ setIsLoggedIn }) {
                     </div>
                     <div className="col-md-6">
                       <button className="btn btn-primary" onClick={() => handleAddExcludedStudent()}>
-                        Excluded student
+                        Exclude student
                       </button>
                     </div>
                   </div>
